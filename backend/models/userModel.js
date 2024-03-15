@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
         trim:true,
         match: [ // make sure valid
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        "Please enter a valid emaial",
+        "Please enter a valid email",
         ]
     },
     password:{
@@ -39,8 +39,12 @@ const userSchema = mongoose.Schema({
         default: "bio",
         maxLength: [300, "Bio cant be more than 300 characters"]
 
+    },
+    role:{ 
+        type: String, 
+        enum: ['admin', 'staff', 'customer'],
+        required: true 
     }
-
 }, {
     timeStamps: true
 } )

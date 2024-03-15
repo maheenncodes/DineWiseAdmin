@@ -7,19 +7,17 @@ const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 const Token = require("../models/tokenModel");
 // token for each user session
-const generateToken =(id) => {
-
-    return jwt.sign({id}, process.env.JWT_SECRET,{expiresIn : "1d"});
-
+const generateToken =(id,role) => {
+    return jwt.sign({id,role}, process.env.JWT_SECRET,{expiresIn : "1d"});
 }
 
 
 const registerUser = asyncHandler(async (req,res) => {
 
-   const {name,email,password} = req.body
+   const {name,email,password,role} = req.body
 
    //validations
-   if(!name || !email || !password){
+   if(!name || !email || !password || !role){
     res.status(400)
     throw new Error("Fill all fields")
    }
@@ -27,7 +25,6 @@ const registerUser = asyncHandler(async (req,res) => {
    if(password.length < 6){
     res.status(400)
     throw new Error("password should be upto atleast 6 characters")
-    
    }
 
    //checking for existing mails
@@ -38,18 +35,15 @@ const registerUser = asyncHandler(async (req,res) => {
     throw new Error("Email already in use")
   }
   
-
-
-
   // create user
   const user = await User.create({
     name,
     email,
-    password
-
+    password,
+    role
   })
   //Generate Token
-  const token = generateToken(user._id)
+  const token = generateToken(user._id,user.role)
 
   //HTTP cookie
 
@@ -64,7 +58,7 @@ const registerUser = asyncHandler(async (req,res) => {
 
   if(user) // retireve info
   {// new user create 201 status code
-    const{_id,name,email,photo,phone,bio}= user //not password
+    const{_id,name,email,photo,phone,bio,role}= user //not password
     res.status(201).json({ 
         _id,
         name,
@@ -72,14 +66,13 @@ const registerUser = asyncHandler(async (req,res) => {
         photo,
         phone,
         bio,
+        role,
         token
     })
   }else{
     res.status(400)
     throw new Error("Invalid user data")
   }
-
-   
 });
 
 //Login user
@@ -107,7 +100,7 @@ const loginUser =asyncHandler(async (req,res)=>{
 
   //generate token
 
-  const token = generateToken(user._id)
+  const token = generateToken(user._id,user.role)
   res.cookie("token",token,{
     path:"/",
     httpOnly: true,
@@ -118,7 +111,7 @@ const loginUser =asyncHandler(async (req,res)=>{
 
   if(user && passwordCheck)
   {
-      const{_id,name,email,photo,phone,bio}= user //not password
+      const{_id,name,email,photo,phone,bio,role}= user //not password
          res.status(201).json({ 
         _id,
         name,
@@ -126,6 +119,7 @@ const loginUser =asyncHandler(async (req,res)=>{
         photo,
         phone,
         bio,
+        role,
         token
     });
   }else{
@@ -151,13 +145,13 @@ const updateUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    const { name, email, photo, phone, bio } = user;
+    const { name, email, photo, phone, bio, role } = user;
     user.email = email;
     user.name = req.body.name || name;
     user.phone = req.body.phone || phone;
     user.bio = req.body.bio || bio;
     user.photo = req.body.photo || photo;
-
+    user.role = role;
     const updatedUser = await user.save();
     res.status(200).json({
       _id: updatedUser._id,
@@ -166,6 +160,7 @@ const updateUser = asyncHandler(async (req, res) => {
       photo: updatedUser.photo,
       phone: updatedUser.phone,
       bio: updatedUser.bio,
+      role:updatedUser.role
     });
   } else {
     res.status(404);
@@ -178,7 +173,7 @@ const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    const { _id, name, email, photo, phone, bio } = user;
+    const { _id, name, email, photo, phone, bio, role } = user;
     res.status(200).json({
       _id,
       name,
@@ -186,6 +181,7 @@ const getUser = asyncHandler(async (req, res) => {
       photo,
       phone,
       bio,
+      role
     });
   } else {
     res.status(400);
