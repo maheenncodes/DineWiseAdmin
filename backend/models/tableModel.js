@@ -11,6 +11,10 @@ const tableSchema = mongoose.Schema({
     qrCode: {
         type: String,
         required:[true, "Table needs to have a QR Code"]
+    },
+    status: {
+        type: String,
+        enum:["booked","free"]
     }
 }, {timeStamps: true})
 
