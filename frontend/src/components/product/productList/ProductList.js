@@ -7,7 +7,7 @@ import Search from "../../search/Search";
 import { useDispatch, useSelector } from "react-redux";
 import {
   FILTER_PRODUCTS,
-  selectFilteredPoducts,
+  selectFilteredProducts, // Corrected import name
 } from "../../../redux/features/product/filterSlice";
 import ReactPaginate from "react-paginate";
 import { confirmAlert } from "react-confirm-alert";
@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 
 const ProductList = ({ products, isLoading }) => {
   const [search, setSearch] = useState("");
-  const filteredProducts = useSelector(selectFilteredPoducts);
+  const filteredProducts = useSelector(selectFilteredProducts);
 
   const dispatch = useDispatch();
 
@@ -84,7 +84,7 @@ const ProductList = ({ products, isLoading }) => {
       <div className="table">
         <div className="--flex-between --flex-dir-column">
           <span>
-            <h3>Inventory Items</h3>
+            <h3>Menu Items</h3>
           </span>
           <span>
             <Search
@@ -122,12 +122,12 @@ const ProductList = ({ products, isLoading }) => {
                       <td>{shortenText(name, 16)}</td>
                       <td>{category}</td>
                       <td>
-                        {"$"}
+                        {"/-"}
                         {price}
                       </td>
                       <td>{quantity}</td>
                       <td>
-                        {"$"}
+                        {"/-"}
                         {price * quantity}
                       </td>
                       <td className="icons">

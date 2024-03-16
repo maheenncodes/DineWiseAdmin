@@ -22,7 +22,7 @@ const AddProduct = () => {
   const [product, setProduct] = useState(initialState);
   const [productImage, setProductImage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-  const [description, setDescription] = useState("");
+  const [ingredients, setIngredients] = useState("");
 
   const isLoading = useSelector(selectIsLoading);
 
@@ -53,7 +53,7 @@ const AddProduct = () => {
     formData.append("category", category);
     formData.append("quantity", Number(quantity));
     formData.append("price", price);
-    formData.append("description", description);
+    formData.append("ingredients", ingredients);
     formData.append("image", productImage);
 
     console.log(...formData);
@@ -71,8 +71,8 @@ const AddProduct = () => {
         product={product}
         productImage={productImage}
         imagePreview={imagePreview}
-        description={description}
-        setDescription={setDescription}
+        ingredients={ingredients}
+        setIngredients={setIngredients}
         handleInputChange={handleInputChange}
         handleImageChange={handleImageChange}
         saveProduct={saveProduct}

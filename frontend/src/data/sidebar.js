@@ -27,7 +27,7 @@ const menu = [
   {
     title: "Staff",
     icon: <IoPeople  />,
-    path: "/",
+    path: "/staff",
   },
   {
     title: "Account",

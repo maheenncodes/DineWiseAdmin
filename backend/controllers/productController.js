@@ -14,10 +14,10 @@ cloudinary.config({
 
 // Create Prouct
 const createProduct = asyncHandler(async (req, res) => {
-  const { name, sku, category, quantity, price, description } = req.body;
+  const { name, sku, category, quantity, price, ingredients } = req.body;
 
   //   Validation
-  if (!name || !category || !quantity || !price || !description) {
+  if (!name || !category || !quantity || !price || !ingredients) {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
@@ -46,13 +46,13 @@ const createProduct = asyncHandler(async (req, res) => {
     };
   }
 
-  // Create Product
+  // Create Item
   const product = await Item.create({
     user: req.user.id,
     name,
     sku,
     category,
-    quantity,
+    quantity,  //to be removed
     price,
     ingredients,
     image: fileData,
@@ -61,13 +61,13 @@ const createProduct = asyncHandler(async (req, res) => {
   res.status(201).json(product);
 });
 
-// Get all Products
+// Get all Items
 const getProducts = asyncHandler(async (req, res) => {
   const products = await Item.find({ user: req.user.id }).sort("-createdAt");
   res.status(200).json(products);
 });
 
-// Get single product
+// Get single Item
 const getProduct = asyncHandler(async (req, res) => {
   const product = await Item.findById(req.params.id);
   // if product doesnt exist
@@ -75,7 +75,7 @@ const getProduct = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Product not found");
   }
-  // Match product to its user
+  // Match Item to its restaurant
   if (product.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error("User not authorized");
@@ -83,7 +83,7 @@ const getProduct = asyncHandler(async (req, res) => {
   res.status(200).json(product);
 });
 
-// Delete Product
+// Delete Item
 const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Item.findById(req.params.id);
   // if product doesnt exist
@@ -100,19 +100,19 @@ const deleteProduct = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Product deleted." });
 });
 
-// Update Product
+// Update Item
 const updateProduct = asyncHandler(async (req, res) => {
   const { name, category, quantity, price, ingredients } = req.body;
   const { id } = req.params;
 
   const product = await Item.findById(id);
 
-  // if product doesnt exist
+  // if item doesnt exist
   if (!product) {
     res.status(404);
     throw new Error("Product not found");
   }
-  // Match product to its user
+  // Match item to its user
   if (product.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error("User not authorized");
@@ -125,7 +125,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     let uploadedFile;
     try {
       uploadedFile = await cloudinary.uploader.upload(req.file.path, {
-        folder: "Pinvent App",
+        folder: "DineWise",
         resource_type: "image",
       });
     } catch (error) {
@@ -141,7 +141,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     };
   }
 
-  // Update Product
+  // Update item
   const updatedProduct = await Item.findByIdAndUpdate(
     { _id: id },
     {

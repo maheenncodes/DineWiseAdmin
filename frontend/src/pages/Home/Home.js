@@ -42,10 +42,10 @@ const Home = () => {
       {/* HERO SECTION */}
       <section className="container hero">
         <div className="hero-text">
-          <h2>BizzStock - A Stock Management Solution</h2>
+          <h2>DineWise - Where Dining meets convenience and delight</h2>
           <p>
-          Welcome to Bizzstock! The perfect solution for small shop owners seeking easy inventory management. 
-          Say goodbye to stock headaches and hello to streamlined organization. Join Bizzstock today and take control of your inventory with ease!
+          Welcome to DineWise! The perfect solution for managing and tracking orders. 
+          Say goodbye to mismanagament headaches and hello to streamlined organization. Join DineWise today and take control of your restaurant with ease!
           </p>
           <div className="hero-buttons">
             <button className="--btn --btn-secondary">

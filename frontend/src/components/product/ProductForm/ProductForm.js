@@ -9,8 +9,8 @@ const ProductForm = ({
   product,
   productImage,
   imagePreview,
-  description,
-  setDescription,
+  ingredients,
+  setIngredients,
   handleInputChange,
   handleImageChange,
   saveProduct,
@@ -74,11 +74,11 @@ const ProductForm = ({
             onChange={handleInputChange}
           />
 
-          <label>Product Description:</label>
+          <label>Product Ingredients:</label>
           <ReactQuill
             theme="snow"
-            value={description}
-            onChange={setDescription}
+            value={ingredients}
+            onChange={setIngredients}
             modules={ProductForm.modules}
             formats={ProductForm.formats}
           />
