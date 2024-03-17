@@ -1,6 +1,7 @@
 const Restaurant = require("../models/restuarantsModel");
 const Category = require("../models/categoryModel");
 const Item = require("../models/productModel");
+const { registerUser } = require("../controllers/userController");
 const asyncHandler = require("express-async-handler");
 const cloudinary = require("cloudinary").v2;
 
@@ -308,6 +309,22 @@ const viewMenuDetails = asyncHandler(async (req, res) => {
         res.status(404).json({ message: 'Restaurant not found' });
     }
 })
+const addRestaurantStaff = asyncHandler(async (req, res) => {
+    const { restaurantId, userId } = req.query;
+    const restaurant = await Restaurant.findById(restaurantId);
+ 
+    if (restaurant) {
+        if (!restaurant.staff) {
+            restaurant.staff = [];
+        }
+        restaurant.staff.push(userId);
+        restaurant.save();
+        res.status(200).json({message:"Staff saved successfully"})
+    }
+    else {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+})
 module.exports={
     registerRestaurant,
     addMenuItem,
@@ -316,4 +333,5 @@ module.exports={
     viewAllCategories,
     viewRestaurantDetails,
     viewMenuDetails,
+    addRestaurantStaff,
 }
