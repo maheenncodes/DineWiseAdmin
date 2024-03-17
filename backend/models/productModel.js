@@ -34,6 +34,10 @@ const itemSchema = mongoose.Schema({
     image: {
       type: String,
       required:[true, "Image for the item is required"]
+    },
+    isPopular: {
+      type: Boolean,
+      default: false
     }
   },{timestamps: true});
 

@@ -9,7 +9,6 @@ const generateQRCode = asyncHandler(async ({ tableId }) => {
         return qrCodeImage;
     }
     catch (error) {
-        console.error('Error generating QR code:', error);
         throw new Error('Error generating QR code');
     }
 })
@@ -75,6 +74,38 @@ const changeStatus = asyncHandler(async (req, res) => {
         throw new Error("Unable to change status");
     }
 })
+const editTable = asyncHandler(async (req, res) => {
+    const { tableId, tableNumber, tableCapacity, status } = req.body;
+    const table = await Table.findById(tableId);
+    if (table) {
+        table.status = status;
+        table.tableNumber = tableNumber;
+        table.tableCapacity = tableCapacity;
+        await table.save();
+        res.status(201).json({ 
+            message:"status changed successfully "
+        })
+    }
+    else {
+        res.status(404);
+        throw new Error("Unable to change status");
+    }
+})
+const deleteTable = asyncHandler(async (req, res) => {
+    const { tableId } = req.body;
+    const table = await Table.findByIdAndDelete(tableId);
+    if (table) {
+        res.status(200).json({
+            success: true,
+            message: 'Table deleted successfully',
+            data: table
+        });
+    }
+    else {
+        res.status(404);
+        throw new Error('Table not found');
+    }
+})
 const viewTable = asyncHandler(async (req, res) => {
     const { tableId } = req.body;
     const table = await Table.findById(tableId);
@@ -93,5 +124,7 @@ module.exports = {
     getTableStatus,
     getQRCode,
     changeStatus,
-    viewTable
+    viewTable,
+    editTable,
+    deleteTable
 }
