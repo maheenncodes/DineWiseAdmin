@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { registerRestaurant,addMenuItem,viewRestaurantDetails,updateMenuItem,deleteMenuItem,viewAllCategories, viewMenuDetails, addRestaurantStaff } = require("../controllers/restaurantController");
+const { registerRestaurant,addMenuItem,viewRestaurantDetails,updateMenuItem,deleteMenuItem,viewAllCategories, viewMenuDetails, addRestaurantStaff, viewStaff, editStaff, deleteStaff } = require("../controllers/restaurantController");
 const protect = require("../middleWare/authMiddleWare");
 const { upload } = require("../utils/fileUpload");
 
@@ -12,4 +12,7 @@ router.delete("/delete_item", protect, deleteMenuItem);
 router.get("/view_categories", protect, viewAllCategories);
 router.get("/view_menu_details", protect, viewMenuDetails);
 router.post("/add_staff", protect, addRestaurantStaff);
+router.get("/view_staff", protect, viewStaff);
+router.post("/edit_staff", protect, editStaff);
+router.delete("/delete_staff", protect, deleteStaff);
 module.exports = router;

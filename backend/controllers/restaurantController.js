@@ -3,6 +3,7 @@ const Category = require("../models/categoryModel");
 const Item = require("../models/productModel");
 const { registerUser } = require("../controllers/userController");
 const asyncHandler = require("express-async-handler");
+const User = require("../models/userModel");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
@@ -303,7 +304,10 @@ const viewMenuDetails = asyncHandler(async (req, res) => {
         }
         if (menuDetails.length > 0) {
             res.status(200).json(menuDetails);
-        }   
+        }
+        else {
+            res.status(200).json([]);
+        }
     }
     else {
         res.status(404).json({ message: 'Restaurant not found' });
@@ -325,6 +329,75 @@ const addRestaurantStaff = asyncHandler(async (req, res) => {
         res.status(404).json({ message: 'Restaurant not found' });
     }
 })
+const viewStaff = asyncHandler(async (req, res) => {
+    const { restaurantId } = req.query;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (restaurant) {
+        const staffDetails = [];
+        for (const member of restaurant.staff) {
+            const staff = await User.findById(member);
+            if (staff) {
+                staffDetails.push({
+                    _id: staff._id,
+                    name: staff.name,
+                    email: staff.email
+                })
+            }
+            else {
+                res.status(404).json({message: "User Id is not correct"});
+            }
+        }
+        if (staffDetails.length > 0) {
+            res.status(200).json(staffDetails);
+        }
+        else {
+            res.status(200).json([]);
+        }
+    }
+    else {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+})
+const editStaff = asyncHandler(async(req, res) => {
+    const { restaurantId, staffId } = req.query;
+    const { name, email } = req.body;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (restaurant) {
+        const memberIndex = restaurant.staff.findIndex(member => member.equals(staffId));
+        if (memberIndex !== -1) {
+            const staff = await User.findById(staffId);
+            name && (staff.name = name)
+            email && (staff.email = email)
+            staff.save()
+            res.status(200).json({message:"Staff updated successfully"})
+        }
+        else {
+            res.status(404).json({message:"Staff not found"})            
+        }
+    }
+    else {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+})
+const deleteStaff = asyncHandler(async (req, res) => {
+    const { restaurantId, staffId } = req.query;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+
+    const memberIndex = restaurant.staff.findIndex(member => member.equals(staffId));
+
+    if (memberIndex === -1) {
+        res.status(404).json({ message: 'Member not found in the restaurant' });
+    }
+
+    restaurant.staff.splice(memberIndex, 1);
+    
+    await User.findByIdAndDelete(staffId);
+    await restaurant.save();
+    res.status(200).json({message:"Staff deleted successfully"})
+})
 module.exports={
     registerRestaurant,
     addMenuItem,
@@ -334,4 +407,7 @@ module.exports={
     viewRestaurantDetails,
     viewMenuDetails,
     addRestaurantStaff,
+    viewStaff,
+    editStaff,
+    deleteStaff,
 }
