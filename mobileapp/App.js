@@ -1,0 +1,76 @@
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context'; // Import SafeAreaProvider
+import { QRScanProvider } from './QRScanContext';
+import { CartProvider } from './CartContext';
+import { OrderProvider } from './OrderContext';
+import LoginScreen from './LoginPage';
+import SignUpScreen from './SignUp';
+import HomePage from './HomePage';
+import CustomerHomepage from './CustomerHomepage';
+import AllRestaurants from './AllRestaurants';
+import HeaderComponent from './Header';
+import ScanQRScreen from './ScanQRScreen';
+import Cart from './Cart';
+import ChatBot from './ChatBot';
+import RestaurantMenu from './RestaurantMenu';
+import Item from './Item';
+import TableMade from './TableMade';
+import RestaurantHeader from './RestaurantHeader';
+import NotificationModal from './NotificationModal';
+import QRScanner from './QRScanner';
+import OrderStatus from './OrderStatus';
+import Payment from './Payment';
+import MemberDetails from './MemberDetails';
+import CartScanQRScreen from './CartScanQRScreen';
+
+const Stack = createNativeStackNavigator();
+
+function App() {
+  return (
+    <SafeAreaProvider>
+
+      <OrderProvider>
+        <QRScanProvider>
+          <CartProvider>
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName="HomePage"
+                screenOptions={{
+                  headerShown: false,
+                  headerStatusBarHeight: 0, // Set headerStatusBarHeight to 0
+                }}
+              >
+                <Stack.Screen name="HomePage" component={HomePage} />
+                <Stack.Screen name="SignUp" component={SignUpScreen} />
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="CustomerHomepage" component={CustomerHomepage} />
+                <Stack.Screen name="AllRestaurants" component={AllRestaurants} />
+                <Stack.Screen name="HeaderComponent" component={HeaderComponent} />
+                <Stack.Screen name="Table" component={ScanQRScreen} />
+                <Stack.Screen name="Cart" component={Cart} />
+                <Stack.Screen name="ChatBot" component={ChatBot} />
+                <Stack.Screen name="RestaurantMenu" component={RestaurantMenu} />
+                <Stack.Screen name="Item" component={Item} />
+                <Stack.Screen name="TableMade" component={TableMade} />
+                <Stack.Screen name="RestaurantHeader" component={RestaurantHeader} />
+                <Stack.Screen name="NotificationModal" component={NotificationModal} />
+                <Stack.Screen name="QRScanner" component={QRScanner} />
+                <Stack.Screen name="OrderStatus" component={OrderStatus} />
+                <Stack.Screen name="Payment" component={Payment} />
+                <Stack.Screen name="MemberDetails" component={MemberDetails} />
+                <Stack.Screen name="CartScanQRScreen" component={CartScanQRScreen} />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </CartProvider>
+        </QRScanProvider>
+      </OrderProvider>
+
+
+    </SafeAreaProvider>
+  );
+}
+
+
+export default App;
