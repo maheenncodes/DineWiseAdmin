@@ -111,7 +111,7 @@ const viewTable = asyncHandler(async (req, res) => {
     const table = await Table.findById(tableId);
     if (table) {
         res.status(200).json({
-            table:table
+            table
         });
     } else {
         res.status(404);

@@ -1,4 +1,6 @@
 const Restaurant = require("../models/restuarantsModel");
+const Category = require("../models/categoryModel");
+const Item = require("../models/productModel");
 const asyncHandler = require("express-async-handler");
 const cloudinary = require("cloudinary").v2;
 
@@ -40,12 +42,278 @@ const registerRestaurant = asyncHandler(async (req, res) => {
                     message: "Restaurant added successfully "
                 })
             }
+            else {
+                res.status(400).json({message: "Error while adding a new Restaurant"})
+            }
         }
         else {
             res.status(400).json({message: "Error while adding a new Restaurant"})
         }
     }
 })
+const viewRestaurantDetails = asyncHandler(async (req, res) => {
+    const { restaurantId } = req.body;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (restaurant) {
+        res.status(200).json({
+            restaurant
+        });
+    } else {
+        res.status(404).json({ message:"Restaurant not found"});
+    }
+})
+const addMenuItem = asyncHandler(async (req, res) => {
+    const
+    {
+        categoryId,
+        restaurantId,
+        isNewCategory,
+        categoryName,
+        itemName,
+        itemDescription,
+        itemIngredients,
+        itemPrice,
+        itemQuantity,
+        isPopular } = req.body;
+    
+    var imageUrl=null;
+    if (req.file) {
+        try {
+            const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
+                folder: "DineWise",
+                resource_type: "image",
+            });
+            imageUrl = uploadedImage.secure_url;
+        } catch (error) {
+            res.status(500).json({ message:'Image could not be uploaded'});
+        }
+    }
+    if (isNewCategory==='true') {
+        const restaurant = await Restaurant.findById(restaurantId);
+        if (restaurant) {
+            const category = await Category.create({
+                title: categoryName
+            })
+            if (category) {
+                restaurant.menu.push(category._id);
+                const newItem = await Item.create({
+                    name: itemName,
+                    description: itemDescription,
+                    ingredients: itemIngredients,
+                    price: itemPrice,
+                    image:imageUrl,
+                    quantity: itemQuantity,
+                    isPopular:isPopular
+                })
+                if (newItem) {
+                    if (!category.itemList) {
+                        category.itemList = [];
+                    }
+                    category.itemList.push(newItem._id);
+                    await category.save();
+                    await restaurant.save();
+                    res.status(200).json({
+                        message: 'Item added to category successfully',
+                        item: newItem
+                    });
+                }
+                else {
+                    res.status(400).json({ message: "Error while adding a new Category" })    
+                }
+            }
+            else {
+                res.status(400).json({ message: "Error while adding a new Category" })
+            }
+        }
+        else {
+            res.status(404).json({ message: 'Restaurant not found' });
+        }
+    }
+    else {
+        const restaurant = await Restaurant.findById(restaurantId);
+        if (restaurant) {
+            const categoryBool = restaurant.menu.find(menuItem => menuItem.equals(categoryId));
+            if (categoryBool) {
+                const category = await Category.findById(categoryId);
+                const newItem = await Item.create({
+                    name: itemName,
+                    description: itemDescription,
+                    ingredients: itemIngredients,
+                    price: itemPrice,
+                    image:imageUrl,
+                    quantity: itemQuantity,
+                    isPopular:isPopular
+                })
+                if (!category.itemList) {
+                    category.itemList = [];
+                }
+                category.itemList.push(newItem._id);
+                await category.save();
+                await restaurant.save();
+                res.status(200).json({
+                    message: 'Item added to category successfully',
+                    item: newItem
+                });
+            }
+            else {
+                res.status(404).json({message:"Category not found"})
+            }
+        }
+        else {
+            res.status(404).json({message:"Restaurant not found"})
+        }
+    }
+})
+
+const updateMenuItem = asyncHandler(async (req, res) => {
+     const
+    {
+        categoryId,
+        restaurantId,
+        itemId,
+        itemName,
+        itemDescription,
+        itemIngredients,
+        itemPrice,
+        itemQuantity,
+        isPopular } = req.body;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+    const category = restaurant.menu.find(menuItem => menuItem.equals(categoryId));
+    if (!category) {
+        res.status(404).json({ message: 'Category not found in the restaurant' });
+    }
+    const item = await Item.findById(itemId);
+    if (!item) {
+        res.status(404);
+        throw new Error('Item not found in the category');
+    }
+    itemName && (item.name = itemName);
+    itemDescription && (item.description = itemDescription);
+    itemIngredients && (item.ingredients = itemIngredients);
+    itemPrice && (item.price = itemPrice);
+    itemQuantity && (item.quantity = itemQuantity);
+    isPopular && (item.isPopular = isPopular);
+    
+    var imageUrl=null;
+    if (req.file) {
+        try {
+            const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
+                folder: "DineWise",
+                resource_type: "image",
+            });
+            imageUrl = uploadedImage.secure_url;
+            item.image = imageUrl;
+        } catch (error) {
+            res.status(500).json({ message:'Image could not be uploaded'});
+        }
+    }
+    await item.save();
+    res.status(200).json({
+        message: 'Item updated successfully',
+        item
+    });
+});
+
+const deleteMenuItem = asyncHandler(async (req, res) => {
+    const { restaurantId, categoryId, itemId } = req.query;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+
+    const categoryIndex = restaurant.menu.findIndex(menuItem => menuItem.equals(categoryId));
+
+    if (categoryIndex === -1) {
+        res.status(404).json({ message: 'Category not found in the restaurant' });
+    }
+
+    const category = await Category.findById(categoryId);
+
+    const itemIndex = category.itemList.findIndex(item => item.equals(itemId));
+
+    if (itemIndex === -1) {
+        res.status(404).json({ message: 'Item not found in the category' });
+    }
+
+    category.itemList.splice(itemIndex, 1);
+    
+    await Item.findByIdAndDelete(itemId);
+    await category.save();
+    if (category.itemList.length === 0) {
+        restaurant.menu.splice(categoryIndex, 1);
+        await Category.findByIdAndDelete(categoryId);
+    }
+    await restaurant.save();
+
+    res.status(200).json({
+        message: 'Item deleted successfully'
+    });
+});
+
+const viewAllCategories = asyncHandler(async (req, res) => {
+    const { restaurantId } = req.query;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (restaurant) {
+        const categoryList = [];
+        for (const menuItem of restaurant.menu) {
+            const categoryId = menuItem.toString();
+            if (!categoryList.some(cat => cat.id === categoryId)) {
+                const category = await Category.findById(menuItem);
+                if (category) {
+                    categoryList.push({
+                        id: category._id,
+                        title: category.title,
+                    });
+                }
+            }
+        }
+        res.status(200).json(categoryList);   
+    }
+    else {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+})
+const viewMenuDetails = asyncHandler(async (req, res) => {
+    const { restaurantId } = req.query;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (restaurant) {
+        const menuDetails = [];
+        for (const menuItem of restaurant.menu) {
+            const category = await Category.findById(menuItem);
+            if (category) {
+                const title = category.title;
+                const itemList = [];
+                for (const catItem of category.itemList) {
+                    const item = await Item.findById(catItem);
+                    itemList.push(item);
+                }
+                menuDetails.push({
+                    _id: category._id,
+                    categoryTitle: title,
+                    itemList:itemList
+                })
+            }
+            else {
+                res.status(404).json({message:"Category is not correct"});
+            }
+        }
+        if (menuDetails.length > 0) {
+            res.status(200).json(menuDetails);
+        }   
+    }
+    else {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+})
 module.exports={
-    registerRestaurant
+    registerRestaurant,
+    addMenuItem,
+    updateMenuItem,
+    deleteMenuItem,
+    viewAllCategories,
+    viewRestaurantDetails,
+    viewMenuDetails,
 }
