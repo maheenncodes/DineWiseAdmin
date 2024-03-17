@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { registerRestaurant,addMenuItem,viewRestaurantDetails,updateMenuItem,deleteMenuItem,viewAllCategories, viewMenuDetails, addRestaurantStaff, viewStaff, editStaff, deleteStaff, addRestaurantTable, viewAllTables, editRestaurantTable, deleteTable, getQRCode } = require("../controllers/restaurantController");
+const { registerRestaurant,addMenuItem,viewRestaurantDetails,updateMenuItem,deleteMenuItem,viewAllCategories, viewMenuDetails, addRestaurantStaff, viewStaff, editStaff, deleteStaff, addRestaurantTable, viewAllTables, editRestaurantTable, deleteTable, getQRCode, viewRestaurantsList } = require("../controllers/restaurantController");
 const protect = require("../middleWare/authMiddleWare");
 const { upload } = require("../utils/fileUpload");
 
@@ -20,4 +20,5 @@ router.get("/view_tables", protect, viewAllTables);
 router.post("/edit_table", protect, editRestaurantTable);
 router.delete("/delete_table", protect, deleteTable);
 router.get("/get_qr_code", protect, getQRCode);
+router.get("/view_restaurants_list", protect, viewRestaurantsList);
 module.exports = router;

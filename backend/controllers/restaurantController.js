@@ -500,6 +500,14 @@ const deleteStaff = asyncHandler(async (req, res) => {
     await restaurant.save();
     res.status(200).json({message:"Staff deleted successfully"})
 })
+const viewRestaurantsList = asyncHandler(async (req, res) => {
+    try {
+        const restaurants = await Restaurant.find();
+        res.status(200).json(restaurants);
+    } catch (error) {
+        res.status(400).json('Error fetching tables');
+    }
+})
 module.exports={
     registerRestaurant,
     addMenuItem,
@@ -517,4 +525,5 @@ module.exports={
     viewAllTables,
     editRestaurantTable,
     getQRCode,
+    viewRestaurantsList,
 }
