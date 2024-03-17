@@ -1,9 +1,8 @@
 const Table = require("../models/tableModel");
 const asyncHandler = require("express-async-handler");
-
-const generateQRCode = asyncHandler(async ({ tableId }) => {
+const qrcode = require('qrcode');
+const generateQRCode = asyncHandler(async (tableId) => {
     try {
-        console.log("!!!",tableId)
         const qrData = `http:zameen.com/new-projects?table_id=${tableId}`;//To be changed with actual URL
         const qrCodeImage = await qrcode.toDataURL(qrData);
         return qrCodeImage;
@@ -12,37 +11,29 @@ const generateQRCode = asyncHandler(async ({ tableId }) => {
         throw new Error('Error generating QR code');
     }
 })
-const addTable = asyncHandler(async (req,res) => {
-    const {tableNumber,capacity} = req.body
+const addTable = asyncHandler(async ({tableNumber,capacity}) => {
     const status = "free"
     const table = await Table.create({
         tableNumber,
-        capacity,
+        tableCapacity:capacity,
         status
     })
     if (table) {
         const qrCode = await generateQRCode(table._id);
         table.qrCode = qrCode;
         await table.save();
-        res.status(201).json({ 
-            message:"Table added successfully "
-        })
+        return table;
     }
     else {
-        res.status(400)
-        throw new Error("Error while adding a new table")
+        throw new Error ({ message: "Error while adding a new table" })
     }
 });
-const getTableStatus = asyncHandler(async (req, res) => {
-    const { tableId } = req.body;
+const getTableStatus = asyncHandler(async ({tableId}) => {
     const table = await Table.findById(tableId);
     if (table) {
-        res.status(200).json({
-            status: table.status
-        });
+        return {status:table.status}
     } else {
-        res.status(404);
-        throw new Error("Table not found");
+        throw new Error ("Table not found");
     }
 });
 
@@ -74,35 +65,29 @@ const changeStatus = asyncHandler(async (req, res) => {
         throw new Error("Unable to change status");
     }
 })
-const editTable = asyncHandler(async (req, res) => {
-    const { tableId, tableNumber, tableCapacity, status } = req.body;
+const editTable = asyncHandler(async({tableId, tableNumber, tableCapacity, status}) => {
     const table = await Table.findById(tableId);
     if (table) {
-        table.status = status;
-        table.tableNumber = tableNumber;
-        table.tableCapacity = tableCapacity;
+        status && (table.status = status);
+        tableNumber && (table.tableNumber = tableNumber);
+        tableCapacity && (table.tableCapacity = tableCapacity);
         await table.save();
-        res.status(201).json({ 
-            message:"status changed successfully "
-        })
+        return table;
     }
     else {
-        res.status(404);
-        throw new Error("Unable to change status");
+        throw new Error("Unable to update table");
     }
 })
-const deleteTable = asyncHandler(async (req, res) => {
-    const { tableId } = req.body;
+const deleteTable = asyncHandler(async ({ tableId }) => {
     const table = await Table.findByIdAndDelete(tableId);
     if (table) {
-        res.status(200).json({
+        return ({
             success: true,
             message: 'Table deleted successfully',
             data: table
         });
     }
     else {
-        res.status(404);
         throw new Error('Table not found');
     }
 })

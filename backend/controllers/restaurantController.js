@@ -1,9 +1,12 @@
+const fs = require('fs');
+const path = require('path');
 const Restaurant = require("../models/restuarantsModel");
 const Category = require("../models/categoryModel");
 const Item = require("../models/productModel");
-const { registerUser } = require("../controllers/userController");
+const { addTable, editTable } = require("../controllers/tableController");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const Table = require("../models/tableModel");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
@@ -313,6 +316,105 @@ const viewMenuDetails = asyncHandler(async (req, res) => {
         res.status(404).json({ message: 'Restaurant not found' });
     }
 })
+const addRestaurantTable = asyncHandler(async (req, res) => {
+    const { restaurantId } = req.query;
+    const { tableNumber, capacity } = req.body;
+    const restaurant = await Restaurant.findById(restaurantId);
+ 
+    if (restaurant) {
+        if (!restaurant.table) {
+            restaurant.table = [];
+        }
+        const table = await addTable({ tableNumber, capacity });
+        restaurant.tables.push(table._id);
+        restaurant.save();
+        res.status(200).json({message:"Table saved successfully"})
+    }
+    else {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+})
+const editRestaurantTable = asyncHandler(async (req, res) => {
+    const { restaurantId } = req.query;
+    const { tableId, tableNumber, capacity, status } = req.body;
+    const restaurant = await Restaurant.findById(restaurantId); 
+    if (restaurant) {
+        const table = await editTable({ tableId, tableNumber, tableCapacity:capacity, status });
+        if (table) {
+            res.status(200).json({message:"Table edited successfully"})   
+        }
+    }
+    else {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+})
+const deleteTable = asyncHandler(async (req, res) => {
+    const { restaurantId, tableId } = req.query;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+    const tableIndex = restaurant.tables.findIndex(table => table.equals(tableId));
+
+    if (tableIndex === -1) {
+        res.status(404).json({ message: 'Table not found in the restaurant' });
+    }
+
+    restaurant.tables.splice(tableIndex, 1);
+    
+    await Table.findByIdAndDelete(tableId);
+    await restaurant.save();
+    res.status(200).json({message:"Table deleted successfully"})
+})
+const viewAllTables = asyncHandler(async (req, res) => {
+    const { restaurantId } = req.query;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (restaurant) {
+        const tableDetails = [];
+        for (const tbl of restaurant.tables) {
+            const table = await Table.findById(tbl);
+            if (table) {
+                tableDetails.push({
+                    _id: table._id,
+                    tableNumber: table.tableNumber,
+                    capacity: table.capacity,
+                    status: table.status,
+                })
+            }
+            else {
+                res.status(404).json({message: "Table Id is not correct"});
+            }
+        }
+        if (tableDetails.length > 0) {
+            res.status(200).json(tableDetails);
+        }
+        else {
+            res.status(200).json([]);
+        }
+    }
+    else {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+})
+const getQRCode = asyncHandler(async (req, res) => {
+    const { restaurantId, tableId } = req.query;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (restaurant) {
+        const table = await Table.findById(tableId);
+        if (table && table.qrCode) {
+            const qrCodeBuffer = Buffer.from(table.qrCode.split(",")[1], 'base64');
+            res.set('Content-Type', 'image/png');
+            res.send(qrCodeBuffer);
+        }
+        else {
+            res.status(404);
+            throw new Error("Code not found");
+        }
+    }
+    else {
+        res.status(404).json({ message: 'Restaurant not found' });
+    }
+});
 const addRestaurantStaff = asyncHandler(async (req, res) => {
     const { restaurantId, userId } = req.query;
     const restaurant = await Restaurant.findById(restaurantId);
@@ -410,4 +512,9 @@ module.exports={
     viewStaff,
     editStaff,
     deleteStaff,
+    addRestaurantTable,
+    deleteTable,
+    viewAllTables,
+    editRestaurantTable,
+    getQRCode,
 }
