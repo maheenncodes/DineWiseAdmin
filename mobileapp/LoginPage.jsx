@@ -1,60 +1,49 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, SafeAreaView, Alert } from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; // Make sure to install expo-vector-icons
-import axios from 'axios'; 
+import axios from 'axios';
 
 
 const LoginScreen = ({ navigation }) => {
-  const API_BASE_URL = 'http://192.168.0.106:5000'; // Use the local IP address and the server port
-
+  API_BASE_URL = "http://192.168.0.101:5000";
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const showAlert = (title, message) => {
-    Alert.alert(title, message, [
-      {
-        text: 'OK',
-        onPress: () => console.log('OK Pressed'),
-      },
-    ]);
-  };
-
-  const handleLogin = async() => {
-    console.log(`Email: ${email}, Password: ${password}`); // This will log the email and password
+  const handleLogin = async () => {
+    console.log(`Email: ${email}, Password: ${password}`);
 
     if (!email || !password) {
-      showAlert('Login Error', 'Email or password cannot be empty.');
+      Alert.alert('Login Error', 'Email or password cannot be empty.');
       return;
     }
-    if (!email.includes('@')) {
-      showAlert('Login Error', 'Email should contain @.');
+    // Email format validation
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
-    if (password.length < 8) {
-      showAlert('Login Error', 'Password should be at least 8 characters long.');
-      return;
-    }
+
 
     try {
       // Make an API call to your backend
-      const response = await axios.post(`${API_BASE_URL}/api/users/loginCustomer`, {
-        
+      const response = await axios.post(`${API_BASE_URL}/api/users/login`, {
         email,
         password
       });
+
       // If login is successful, navigate to the CustomerHomepage
       navigation.navigate('CustomerHomepage');
       console.log('Login successful:', response.data);
     } catch (error) {
       // If there is an error, display an alert with the error message
       console.error('Login error:', error);
-      showAlert('Login Error', 'Invalid email or password.');
+      Alert.alert('Login Error', 'Invalid email or password.');
     }
-  
   };
 
 
-  
+
+
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>

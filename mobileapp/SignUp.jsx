@@ -9,12 +9,40 @@ const SignUpScreen = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = async () => {
+    // Basic input validations
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    // Email format validation
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
+
+    // Password length validation
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password should be at least 6 characters long');
+      return;
+    }
+
+    // Password match validation
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+
+
+
     try {
       const response = await axios.post('http://192.168.0.101:5000/api/users/register', {
         name,
         email,
         password,
-        role: 'user' // Assuming 'user' is the default role for signup
+        role: 'customer'
       });
       console.log('Registration response:', response.data);
       Alert.alert('Success', 'Registration successful');
