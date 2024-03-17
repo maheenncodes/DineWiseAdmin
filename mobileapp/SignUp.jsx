@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Image, ScrollView } from 'react-native';
 import axios from 'axios';
 
 const SignUpScreen = ({ navigation }) => {
@@ -67,53 +67,58 @@ const SignUpScreen = ({ navigation }) => {
 
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('./assets/logo.png')}
-          style={styles.logo}
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('./assets/logo.png')}
+            style={styles.logo}
+          />
+        </View>
+        <Text style={styles.headerText}>Sign Up</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          autoCapitalize="none"
+          onChangeText={setName}
+          value={name}
         />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          onChangeText={setEmail}
+          value={email}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          onChangeText={setPassword}
+          value={password}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm password"
+          secureTextEntry
+          onChangeText={setConfirmPassword}
+          value={confirmPassword}
+        />
+        <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+          <Text style={styles.registerButtonText}>Register</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.signInText}>Already have an account? Login Now</Text>
+        </TouchableOpacity>
       </View>
-      <Text style={styles.headerText}>Sign Up</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        autoCapitalize="none"
-        onChangeText={setName}
-        value={name}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        onChangeText={setEmail}
-        value={email}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        onChangeText={setPassword}
-        value={password}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm password"
-        secureTextEntry
-        onChangeText={setConfirmPassword}
-        value={confirmPassword}
-      />
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.registerButtonText}>Register</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.signInText}>Already have an account? Login Now</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1, // Make sure ScrollView takes up the entire screen
+  },
   container: {
     backgroundColor: '#fbf7f5',
     flex: 1,

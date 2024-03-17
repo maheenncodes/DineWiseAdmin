@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, SafeAreaView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, SafeAreaView, Alert, ScrollView } from 'react-native'; // Import ScrollView
 import { AntDesign } from '@expo/vector-icons'; // Make sure to install expo-vector-icons
 import axios from 'axios';
 
@@ -41,66 +41,66 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-
-
-
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('./assets/logo.png')} // Adjust the path to where your logo is located
-          style={styles.logo}
-          resizeMode="contain"
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('./assets/logo.png')} // Adjust the path to where your logo is located
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+        <Text style={styles.headerText}>DineWise</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={newText => setEmail(newText)}
+          autoCapitalize="none"
+          keyboardType="email-address"
         />
-      </View>
-      <Text style={styles.headerText}>DineWise</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={newText => setEmail(newText)}
-
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity>
-        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Login</Text>
-      </TouchableOpacity>
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.dividerText}>Or Login with</Text>
-        <View style={styles.divider} />
-      </View>
-      <TouchableOpacity style={styles.googleButton}>
-        <Image source={require('./assets/google.png')} style={styles.googleLogo} />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-        <Text style={styles.registerText}>Don’t have an account? Register Now</Text>
-      </TouchableOpacity>
-    </View >
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity>
+          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.loginButtonText}>Login</Text>
+        </TouchableOpacity>
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <Text style={styles.dividerText}>Or Login with</Text>
+          <View style={styles.divider} />
+        </View>
+        <TouchableOpacity style={styles.googleButton}>
+          <Image source={require('./assets/google.png')} style={styles.googleLogo} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.registerText}>Don’t have an account? Register Now</Text>
+        </TouchableOpacity>
+      </View >
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1, // Make sure ScrollView takes up the entire screen
+  },
   container: {
     backgroundColor: '#fbf7f5',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-
+    paddingBottom: 50, // Add some padding to the bottom to ensure content is not hidden behind the keyboard
   },
   logoContainer: {
-
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -177,36 +177,12 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     marginTop: 20,
-
     marginHorizontal: 10,
-  },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    padding: 7,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: 'gray',
-    width: '30%',
-    marginBottom: 20,
-    marginTop: 10,
-  },
-  googleLogo: {
-    width: 22,
-    height: 22,
-    marginRight: 10,
-  },
-  googleButtonText: {
-    color: 'black',
-    fontSize: 16,
   },
   registerText: {
     color: 'blue',
     marginTop: 30,
   },
-  // ... other styles you may need
 });
 
 export default LoginScreen;
