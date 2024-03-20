@@ -1,9 +1,9 @@
 const Table = require("../models/tableModel");
 const asyncHandler = require("express-async-handler");
 const qrcode = require('qrcode');
-const generateQRCode = asyncHandler(async (tableId) => {
+const generateQRCode = asyncHandler(async (tableId,restaurantId) => {
     try {
-        const qrData = `http:zameen.com/new-projects?table_id=${tableId}`;//To be changed with actual URL
+        const qrData = `http:zameen.com/new-projects?table_id=${tableId}&restaurant_id=${restaurantId}`;//To be changed with actual URL
         const qrCodeImage = await qrcode.toDataURL(qrData);
         return qrCodeImage;
     }
@@ -11,7 +11,7 @@ const generateQRCode = asyncHandler(async (tableId) => {
         throw new Error('Error generating QR code');
     }
 })
-const addTable = asyncHandler(async ({tableNumber,capacity}) => {
+const addTable = asyncHandler(async ({tableNumber,capacity,restaurantId}) => {
     const status = "free"
     const table = await Table.create({
         tableNumber,
@@ -19,7 +19,7 @@ const addTable = asyncHandler(async ({tableNumber,capacity}) => {
         status
     })
     if (table) {
-        const qrCode = await generateQRCode(table._id);
+        const qrCode = await generateQRCode(table._id,restaurantId);
         table.qrCode = qrCode;
         await table.save();
         return table;

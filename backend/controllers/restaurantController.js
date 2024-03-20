@@ -325,7 +325,7 @@ const addRestaurantTable = asyncHandler(async (req, res) => {
         if (!restaurant.table) {
             restaurant.table = [];
         }
-        const table = await addTable({ tableNumber, capacity });
+        const table = await addTable({ tableNumber, capacity, restaurantId });
         restaurant.tables.push(table._id);
         restaurant.save();
         res.status(200).json({message:"Table saved successfully"})

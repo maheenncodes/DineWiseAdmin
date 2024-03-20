@@ -10,7 +10,7 @@ const orderSchema = mongoose.Schema({
         ref: 'Table',
         required:[true,'Table Id is necessary']
     },
-    cartId: [{
+    cartList: [{
         type: mongoose.Schema.Types.ObjectId,
         ref:'Cart'
     }],
@@ -19,15 +19,11 @@ const orderSchema = mongoose.Schema({
         enum: ["new", "preparing", "served", "cancelled", "payment_pending", "completed"],
         default:"new"
     }],
-    time: {
-        type: Date,
-        required: [true,"Order time is necessary"] 
-    },
     totalPrice: {
         type: Number,
         default: 0,
     }
 },{timestamps: true});
 
-const Order = mongoose.model("Category", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
 module.exports = Order;
