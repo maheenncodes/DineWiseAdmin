@@ -5,8 +5,14 @@ const cartSchema = mongoose.Schema({
         ref:'User'
     },
     itemList: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Item',
+        item: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Item'
+        },
+        quantity: {
+            type: Number,
+            default: 1
+        }
     }],
     totalPrice: {
         type: Number,
@@ -20,6 +26,11 @@ const cartSchema = mongoose.Schema({
     comment: {
         type: String,
         default:""
+    },
+    status: {
+        type: String,
+        enum: ["payment_pending", "completed"],
+        default:"payment_pending"
     }
 },{timestamps: true});
 
