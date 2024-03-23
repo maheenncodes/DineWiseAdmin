@@ -1,6 +1,4 @@
 .staff {
-    
-
     .addStaff{
 
         height: 100% ;
@@ -14,41 +12,12 @@
         padding: 1rem;
         border: 1px solid #ccc;
         height: fit-content;
-
-
-        form {
-        
-            input[type="text"],
-            input[type="email"],
-            input[type="password"] {
-              display: block;
-              font-size: 1.6rem;
-              font-weight: 300;
-              padding: 1rem;
-              margin-right: auto;
-              margin-left: auto;
-              margin-bottom:  2rem;
-              
-              width: 90% ;
-              border: 1px solid #ccc;
-              border-bottom: 3px solid #ccc;
-              border-radius: 3px;
-              outline: none;
-              
-              &:focus {
-                outline: none;
-                box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
-                border-bottom: 3px solid #55c57a;
-              }
-      
-              &:focus:invalid {
-                border-bottom: 3px solid #ff7730;
-              }
-            }
-        }
-
     }
 
-    
+    .Modal{
+
+      width: 10rem;
+
+    }
 
 }
