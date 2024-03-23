@@ -11,7 +11,7 @@ const categorySchema = mongoose.Schema({
         }
     },
     itemList: [{
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Item',
     }],
 },{timestamps: true});

@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const  userRoute = require("./routes/userRoute");
 const productRoute = require("./routes/productRoute");
+const restaurantRoute = require("./routes/restaurantRoute");
+const orderRoute = require("./routes/orderRoute");
 const errorHandler = require("./middleWare/errorMiddleWare");
 const cookieParser = require("cookie-parser");
 const path = require("path");
@@ -33,7 +35,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //RouteMiddlewares
 app.use("/api/users", userRoute);
 app.use("/api/products", productRoute);
-
+app.use("/api/restaurants", restaurantRoute);
+app.use("/api/orders", orderRoute);
 
 //routes
 app.get("/",(req,res)=> {

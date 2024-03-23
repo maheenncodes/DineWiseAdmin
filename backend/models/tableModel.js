@@ -9,10 +9,13 @@ const tableSchema = mongoose.Schema({
         required: [true, "Table Capacity is necessary"]
     },
     qrCode: {
+        type: String
+    },
+    status: {
         type: String,
-        required:[true, "Table needs to have a QR Code"]
+        enum:["booked","free"]
     }
 }, {timeStamps: true})
 
-const Table = mongoose.model("Restuarant",tableSchema)
+const Table = mongoose.model("Table",tableSchema)
 module.exports = Table
