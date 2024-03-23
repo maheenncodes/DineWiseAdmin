@@ -21,20 +21,32 @@ const initialState = {
   password2: "",
 };
 
+
+
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setformData] = useState(initialState);
-  const { name, email, password, password2 } = formData;
-
+  const { name, email, password, password2, image } = formData;
+  const [LogoImage, setLogoImage] = useState("");
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setformData({ ...formData, [name]: value });
   };
+  const handleImageChange = (e) => {
+    setLogoImage(e.target.files[0]);
+    setformData({ ...formData, image: e.target.files[0] });
+    
+  };
 
-  const registerRestaurant = async (e) => {
+  const Register = async (e) => {
     e.preventDefault();
+    
+    if (!image) {
+      return toast.error("Please select an image");
+    }
   
     if (!name || !email || !password) {
       return toast.error("All fields are required");
@@ -50,42 +62,43 @@ const Register = () => {
     }
   
     const userData = {
-      name,
-      email,
-      password,
-      role: 'admin' // Assuming admin role for the user being registered
+      name : formData.name,
+      email: formData.email,
+      password: formData.password,
+      role: 'admin',
     };
     setIsLoading(true);
     try {
-      // Register the admin user
+      
       const adminData = await registerUser(userData);
       console.log(adminData);
-      // Register the restaurant
+     
+
       const restaurantData = {
-        name: userData.name, // Assuming restaurantName is obtained from somewhere
-        phoneNo: " ",
+        name: adminData.name,
+        phoneNo : "", 
         description: "",
-        openingTime: new Date(),
         closingTime: new Date(),
-        admin: adminData._id 
+        openingTime: new Date(),
+        admin: adminData._id,
+        image: formData.image,
+        
       };
+
       console.log(restaurantData);
-  
-      const restaurant = await registerRestaurant(restaurantData);
-      console.log(restaurant);
-  
+      const restaurant = await registerRestaurant(restaurantData); 
       // If both registration processes are successful, set login status and redirect
       if (restaurant) {
         await dispatch(SET_LOGIN(true));
-        // await dispatch(SET_NAME(adminData.name)); // Assuming adminData contains the registered admin's information
+        await dispatch(SET_NAME(adminData.name)); // Assuming adminData contains the registered admin's information
         navigate("/dashboard");
       } else {
-        toast.error("Error registering restaurant and admin");
+        toast.error("Error ");
       }
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      toast.error("Error registering restaurant and admin");
+      toast.error("Error registering restaurant");
     }
   };
   
@@ -111,7 +124,7 @@ const Register = () => {
                 </div>
                 <h2>Register</h2>
 
-                <form onSubmit={registerRestaurant}>
+                <form onSubmit={Register}>
                   <input
                     type="text"
                     placeholder="Name"
@@ -119,6 +132,11 @@ const Register = () => {
                     name="name"
                     value={name}
                     onChange={handleInputChange}
+                  />
+                  <input
+                    type="file"
+                    name="image"
+                    onChange={(e) => handleImageChange(e)}
                   />
                   <input
                     type="email"

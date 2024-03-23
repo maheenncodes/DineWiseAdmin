@@ -20,6 +20,7 @@ export const registerUser = async (userData) => {
     if (response.statusText === "OK") {
       toast.success("User Registered successfully");
     }
+    
     return response.data;
   } catch (error) {
     const message =
@@ -32,14 +33,31 @@ export const registerUser = async (userData) => {
 
 export const registerRestaurant = async (restaurantData) => {
   try {
+    const formData = new FormData();
+    formData.append("name", restaurantData.name);
+    formData.append("phoneNo", restaurantData.phoneNo);
+    formData.append("description", restaurantData.description);
+    formData.append("openingTime", restaurantData.openingTime);
+    formData.append("closingTime", restaurantData.closingTime);
+    formData.append("admin", restaurantData.admin);
+    formData.append("image", restaurantData.image); // Append the image file
+
     const response = await axios.post(
       `${BACKEND_URL}/api/restaurants/register`,
-      restaurantData,
-      { withCredentials: true }
+      formData,
+      { 
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data" // Set content type to multipart/form-data for file upload
+        }
+      }
     );
-    if (response.statusText === "OK") {
+
+    console.log(response.data);
+    if (response.status === 201) {
       toast.success("Restaurant Registered successfully");
     }
+    
     return response.data;
   } catch (error) {
     const message =
@@ -49,6 +67,7 @@ export const registerRestaurant = async (restaurantData) => {
     toast.error(message);
   }
 };
+
 
 
 // Login User

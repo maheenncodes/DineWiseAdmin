@@ -21,7 +21,8 @@ const restaurantSchema = mongoose.Schema({
     },
     logo:{
         type: String,
-        required: [true, "logo is necessary"]
+        required: [true, "logo is necessary"],
+        default: "https://i.ibb.co/4pDNDk1/avatar.png"
     },
     openingTime: {
         type: Date,

@@ -4,7 +4,7 @@ const { registerRestaurant,addMenuItem,viewRestaurantDetails,updateMenuItem,dele
 const protect = require("../middleWare/authMiddleWare");
 const { upload } = require("../utils/fileUpload");
 
-router.post("/register", protect, upload.single("image"), registerRestaurant);
+//router.post("/register", protect, registerRestaurant);
 router.post("/add_menu_item", protect, upload.single("image"), addMenuItem);
 router.post("/update_menu_item", protect, upload.single("image"), updateMenuItem);
 router.post("/view_details", viewRestaurantDetails);
@@ -21,4 +21,7 @@ router.post("/edit_table", protect, editRestaurantTable);
 router.delete("/delete_table", protect, deleteTable);
 router.get("/get_qr_code", protect, getQRCode);
 router.get("/view_restaurants_list", protect, viewRestaurantsList);
+
+router.post("/register", upload.single("image"), registerRestaurant);
+// router.post("/add_menu_item", protect, upload.single("image"), addMenuItem);
 module.exports = router;
