@@ -7,13 +7,7 @@ const restaurantSchema = mongoose.Schema({
     phoneNo:{
         type: String,
         required: [true, "Phone Number is necessary"],
-        validate: {
-            validator: async function(v) {
-                const count = await this.model('').countDocuments({ phoneNumber: v });
-                return count === 0;
-            },
-            message: 'Phone number must be unique'
-        }
+        unique:true
     },
     description:{
         type: String,

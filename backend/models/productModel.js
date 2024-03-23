@@ -20,10 +20,10 @@ const itemSchema = mongoose.Schema({
         message: props => `${props.value} is greater than 100 characters!`
       }
     },
-    ingredients: [{
+    ingredients: {
       type: String,
       lowercase: true
-    }],
+    },
     price: {
       type: Number,
       required: [true,"Price of the item should be inserted"]
@@ -34,6 +34,10 @@ const itemSchema = mongoose.Schema({
     image: {
       type: String,
       required:[true, "Image for the item is required"]
+    },
+    isPopular: {
+      type: Boolean,
+      default: false
     }
   },{timestamps: true});
 
