@@ -4,6 +4,22 @@ import "react-quill/dist/quill.snow.css";
 import Card from "../../card/Card";
 
 import "./ProductForm.scss";
+import Modal from "../addCategory/Add.js";
+
+
+// const handleInputChange = (e) => {
+//   const { name, value } = e.target;
+//   setformData({ ...formData, [name]: value });
+// };
+
+// const openModal = () => {
+//   setShowModal(true);
+// };
+
+// const closeModal = () => {
+//   setShowModal(false);
+// };
+
 
 const ProductForm = ({
   product,
@@ -55,7 +71,13 @@ const ProductForm = ({
             value={product?.category}
             onChange={handleInputChange}
           />
-
+           {/* <Modal className="Modal"
+                isOpen={showModal} // Pass isOpen prop to indicate whether the modal should be open or not
+                onClose={closeModal}
+                onSubmit={addCategory}
+                formData={formData}
+                handleInputChange={handleInputChange}
+            /> */}
           <label>Product Price:</label>
           <input
             type="text"

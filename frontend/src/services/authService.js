@@ -9,6 +9,34 @@ export const validateEmail = (email) => {
   );
 };
 
+//get restaurant id
+const findUserRestaurantId = async () => {
+  try {
+      
+      const response = await axios.get(`${BACKEND_URL}/api/restaurants/view_restaurants_list`);
+
+      
+      const user = await getUser(); // Assuming you have a function to fetch user details
+
+      
+      for (const restaurant of response.data) {
+         
+          if (restaurant.admin === user.id) {
+              console.log(restaurant._id);
+              return restaurant._id;
+          }
+      }
+
+      // If user is not associated with any restaurant, return null or handle accordingly
+      return null;
+  } catch (error) {
+      console.error("Error finding user's restaurant ID:", error);
+      // Handle the error as per your application's requirements
+      // You might want to return null or throw an error
+      return null;
+  }
+};
+
 // Register User
 export const registerUser = async (userData) => {
   try {

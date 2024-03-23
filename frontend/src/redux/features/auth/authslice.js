@@ -12,6 +12,7 @@ const initialState = {
     bio: "",
     photo: "",
   },
+  restaurantId: null, // Initialize restaurant ID to null
 };
 
 const authSlice = createSlice({
@@ -33,13 +34,18 @@ const authSlice = createSlice({
       state.user.bio = profile.bio;
       state.user.photo = profile.photo;
     },
+    SET_RESTAURANT_ID(state, action) {
+      state.restaurantId = action.payload;
+    },
+    
   },
 });
 
-export const { SET_LOGIN, SET_NAME, SET_USER } = authSlice.actions;
+export const { SET_LOGIN, SET_NAME, SET_USER, SET_RESTAURANT_ID } = authSlice.actions;
 
 export const selectIsLoggedIn = (state) => state.auth.isLoggedIn;
 export const selectName = (state) => state.auth.name;
 export const selectUser = (state) => state.auth.user;
+export const selectRestaurantId = (state) => state.auth.restaurantId; // Selector for restaurant ID
 
 export default authSlice.reducer;
