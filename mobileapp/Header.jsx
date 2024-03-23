@@ -5,8 +5,10 @@ import { MaterialIcons } from '@expo/vector-icons';
 import QRScanContext from './QRScanContext';
 import RestaurantHeader from './RestaurantHeader';
 import { StatusBar } from 'expo-status-bar';
+import UserDropdownModal from './UserDropdownModal';
 
 const Header = ({ navigation }) => {
+  const [showUserModal, setshowUserModal] = useState(false); // Set initial state to false
   const [searchQuery, setSearchQuery] = useState('');
   const { isScanned, setIsScanned, scannedRestaurant } = useContext(QRScanContext);
 
@@ -22,15 +24,16 @@ const Header = ({ navigation }) => {
           <MaterialIcons name="arrow-back" size={24} color="white" style={styles.backIcon} />
         </TouchableOpacity>
         <View style={styles.searchBar}>
-          <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-            <AntDesign name="search1" size={18} color="white" />
+          <TouchableOpacity onPress={() => setshowUserModal(true)}>
+            <View style={styles.profileIcon}>
+              <MaterialIcons name="person" size={24} color="white" />
+            </View>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity>
-          <View style={styles.profileIcon}>
-            <MaterialIcons name="person" size={24} color="white" />
-          </View>
-        </TouchableOpacity>
+        <UserDropdownModal
+          visible={showUserModal}
+          onClose={() => setshowUserModal(false)}
+        />
       </View>
       {isScanned && (
         <RestaurantHeader restaurant={scannedRestaurant} />

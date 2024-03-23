@@ -126,15 +126,24 @@ const loginUser = asyncHandler(async (req, res) => {
 
 //logout
 const logout = asyncHandler(async (req, res) => {
-  res.cookie("token", "", {
-    path: "/",
-    httpOnly: true,
-    expires: new Date(0),
-    sameSite: "none",
-    secure: true,
-  });
-  return res.status(200).json({ message: "Successfully Logged Out" });
+  try {
+    // Clear the token cookie
+    res.cookie("token", "", {
+      path: "/",
+      httpOnly: true,
+      expires: new Date(0),
+      sameSite: "none", // Adjust as needed
+      secure: true,     // Adjust as needed
+    });
+
+    // Send a JSON response indicating successful logout
+    return res.status(200).json({ message: "Successfully Logged Out" });
+  } catch (error) {
+    // Handle any errors that occur during logout
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 });
+
 
 // Update User
 const updateUser = asyncHandler(async (req, res) => {

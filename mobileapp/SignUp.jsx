@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Image, ScrollView } from 'react-native';
-import axios from 'axios';
+import { registerUser } from './api-user'; // Import the registerUser function
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -9,56 +9,29 @@ const SignUpScreen = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = async () => {
-    // Basic input validations
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields');
+    // Basic input validations...
+    console.log(`Email: ${email}, Password: ${password}`);
+
+    if (!email || !password) {
+      Alert.alert('Login Error', 'Email or password cannot be empty.');
       return;
     }
-
     // Email format validation
     const emailRegex = /\S+@\S+\.\S+/;
     if (!emailRegex.test(email)) {
       Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
-
-    // Password length validation
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password should be at least 6 characters long');
-      return;
-    }
-
-    // Password match validation
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
-    }
-
-
-
-
     try {
-      const response = await axios.post('http://192.168.0.101:5000/api/users/register', {
-        name,
-        email,
-        password,
-        role: 'customer'
-      });
-      console.log('Registration response:', response.data);
+      await registerUser({ name, email, password });
+      // Handle successful registration...
       Alert.alert('Success', 'Registration successful');
-      // You may choose to navigate to another screen upon successful registration
       navigation.navigate('CustomerHomepage');
     } catch (error) {
       console.error('Error during registration:', error);
-
+      // Handle errors...
       if (error.response && error.response.data && error.response.data.message) {
-        // If the error has a response object with a data property containing a message
         Alert.alert('Error', error.response.data.message);
-      } else if (error.message) {
-        // If the error message is available, show it
-        Alert.alert('Error', error.message);
-      } else {
-        // If none of the above conditions are met, show a generic error message
         Alert.alert('Error', 'An unexpected error occurred');
       }
     }

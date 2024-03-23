@@ -1,43 +1,37 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, SafeAreaView, Alert, ScrollView } from 'react-native'; // Import ScrollView
-import { AntDesign } from '@expo/vector-icons'; // Make sure to install expo-vector-icons
-import axios from 'axios';
-
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, SafeAreaView, Alert, ScrollView } from 'react-native';
+import { loginUser } from './api-user'; // Import the loginUser function
 
 const LoginScreen = ({ navigation }) => {
-  API_BASE_URL = "http://192.168.0.101:5000";
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     console.log(`Email: ${email}, Password: ${password}`);
-
     if (!email || !password) {
       Alert.alert('Login Error', 'Email or password cannot be empty.');
       return;
     }
+
     // Email format validation
     const emailRegex = /\S+@\S+\.\S+/;
     if (!emailRegex.test(email)) {
       Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
-
-
     try {
-      // Make an API call to your backend
-      const response = await axios.post(`${API_BASE_URL}/api/users/login`, {
-        email,
-        password
-      });
-
-      // If login is successful, navigate to the CustomerHomepage
+      const response = await loginUser({ email, password });
       navigation.navigate('CustomerHomepage');
       console.log('Login successful:', response.data);
     } catch (error) {
-      // If there is an error, display an alert with the error message
       console.error('Login error:', error);
-      Alert.alert('Login Error', 'Invalid email or password.');
+      if (error.response && error.response.data && error.response.data.message) {
+        // If the error has a response object with a data property containing a message
+        Alert.alert('Login Error', error.response.data.message);
+      } else {
+        // If the response object or its properties are not available, show a generic error message
+        Alert.alert('Login Error', 'An unexpected error occurred');
+      }
     }
   };
 
