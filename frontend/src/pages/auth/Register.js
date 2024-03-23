@@ -76,8 +76,8 @@ const Register = () => {
 
       const restaurantData = {
         name: adminData.name,
-        phoneNo : "", 
-        description: "",
+        phoneNo : "+92", 
+        description: "write your description",
         closingTime: new Date(),
         openingTime: new Date(),
         admin: adminData._id,
@@ -87,7 +87,7 @@ const Register = () => {
 
       console.log(restaurantData);
       const restaurant = await registerRestaurant(restaurantData); 
-      // If both registration processes are successful, set login status and redirect
+      
       if (restaurant) {
         await dispatch(SET_LOGIN(true));
         await dispatch(SET_NAME(adminData.name)); // Assuming adminData contains the registered admin's information
