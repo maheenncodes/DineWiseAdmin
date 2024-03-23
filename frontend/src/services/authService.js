@@ -30,6 +30,27 @@ export const registerUser = async (userData) => {
   }
 };
 
+export const registerRestaurant = async (restaurantData) => {
+  try {
+    const response = await axios.post(
+      `${BACKEND_URL}/api/restaurants/register`,
+      restaurantData,
+      { withCredentials: true }
+    );
+    if (response.statusText === "OK") {
+      toast.success("Restaurant Registered successfully");
+    }
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+
 // Login User
 export const loginUser = async (userData) => {
   try {
@@ -49,6 +70,8 @@ export const loginUser = async (userData) => {
     toast.error(message);
   }
 };
+
+
 
 // Logout User
 export const logoutUser = async () => {

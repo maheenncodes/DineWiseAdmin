@@ -18,6 +18,7 @@ cloudinary.config({
 const registerRestaurant = asyncHandler(async (req, res) => {
     const { name, phoneNo, description, openingTime, closingTime, admin } = req.body;
     const adminExists = await Restaurant.findOne({ admin: admin });
+    console.profile(adminExists);
     if (adminExists) {
         res.status(400).json({ message:"Admin already has a Restaurant"})
     }

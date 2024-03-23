@@ -3,7 +3,7 @@ import styles from "./auth.module.scss";
 import { TiUserAddOutline } from "react-icons/ti";
 import Card from "../../components/card/Card";
 import { toast } from "react-toastify";
-import { registerUser, validateEmail } from "../../services/authService";
+import { registerUser, registerRestaurant, validateEmail } from "../../services/authService";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authslice";
@@ -33,14 +33,14 @@ const Register = () => {
     setformData({ ...formData, [name]: value });
   };
 
-  const register = async (e) => {
+  const registerRestaurant = async (e) => {
     e.preventDefault();
-
+  
     if (!name || !email || !password) {
       return toast.error("All fields are required");
     }
     if (password.length < 6) {
-      return toast.error("Passwords must be up to 6 characters");
+      return toast.error("Passwords must be at least 6 characters long");
     }
     if (!validateEmail(email)) {
       return toast.error("Please enter a valid email");
@@ -48,24 +48,48 @@ const Register = () => {
     if (password !== password2) {
       return toast.error("Passwords do not match");
     }
-
+  
     const userData = {
       name,
       email,
       password,
+      role: 'admin' // Assuming admin role for the user being registered
     };
     setIsLoading(true);
     try {
-      const data = await registerUser(userData);
-      // console.log(data);
-      await dispatch(SET_LOGIN(true));
-      await dispatch(SET_NAME(data.name));
-      navigate("/dashboard");
+      // Register the admin user
+      const adminData = await registerUser(userData);
+      console.log(adminData);
+      // Register the restaurant
+      const restaurantData = {
+        name: userData.name, // Assuming restaurantName is obtained from somewhere
+        phoneNo: " ",
+        description: "",
+        openingTime: new Date(),
+        closingTime: new Date(),
+        admin: adminData._id 
+      };
+      console.log(restaurantData);
+  
+      const restaurant = await registerRestaurant(restaurantData);
+      console.log(restaurant);
+  
+      // If both registration processes are successful, set login status and redirect
+      if (restaurant) {
+        await dispatch(SET_LOGIN(true));
+        // await dispatch(SET_NAME(adminData.name)); // Assuming adminData contains the registered admin's information
+        navigate("/dashboard");
+      } else {
+        toast.error("Error registering restaurant and admin");
+      }
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
+      toast.error("Error registering restaurant and admin");
     }
   };
+  
+
 
   return (
     <div className={styles.auth}>
@@ -87,7 +111,7 @@ const Register = () => {
                 </div>
                 <h2>Register</h2>
 
-                <form onSubmit={register}>
+                <form onSubmit={registerRestaurant}>
                   <input
                     type="text"
                     placeholder="Name"
