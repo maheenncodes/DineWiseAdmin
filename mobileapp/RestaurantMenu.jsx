@@ -18,35 +18,37 @@ const RestaurantMenu = ({ navigation, route }) => {
     const [addedToCart, setAddedToCart] = useState(false);
     const [menuItems, setMenuItems] = useState([]); // State to store fetched menu items
 
-    const API_BASE_URL = 'http://192.168.0.106:5000'; 
+    const fetchMenuDetails = async (restaurantId) => {
+        try {
+            if (!user || !user.token) {
+                console.error('User token not found');
+                return;
+            }
 
-  
-const fetchMenuItems = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/restaurant/${restaurant._id}/menu-items`);
-    
-    if (!response.ok) {
-     
-    console.log(response)
-      // Handle non-successful response (e.g., show an error message)
-      console.error(`HTTP error! Status: ${response.status}`);
-      return;
-    }
+            console.log('User token:', user.token);
+            // Include the token in the request headers
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`
+                }
+            };
 
-    const data = await response.json();
-    console.log('Fetched menu items:', data);
-    setMenuItems(data); 
-  } catch (error) {
-    console.error(error);
-  }
-};
+            // Make request to fetch menu details for the given restaurant
+            const response = await axios.get(`${API_BASE_URL}/api/restaurants/view_menu_details?restaurantId=${restaurantId}`, config);
+            // Navigate to the Menu screen with the fetched menu details
+            navigation.navigate('MenuScreen', { menuDetails: response.data });
+        } catch (error) {
+            console.error('Error fetching menu details:', error.message);
+            // Handle error
+        }
+    };
 
 
-useEffect(() => {
-    if (restaurant && restaurant._id) {
-        fetchMenuItems();
-    }
-}, [restaurant]);
+    useEffect(() => {
+        if (restaurant && restaurant._id) {
+            fetchMenuDetails();
+        }
+    }, [restaurant]);
     useEffect(() => {
         let timer;
         if (addedToCart) {
@@ -148,7 +150,7 @@ useEffect(() => {
         <View style={styles.container}>
             <Header navigation={navigation} />
             <View style={styles.content}>
-            {menuItems.length === 0 && <Text>No menu items available.</Text>}
+                {menuItems.length === 0 && <Text>No menu items available.</Text>}
 
                 <FlatList
                     data={menuItems}

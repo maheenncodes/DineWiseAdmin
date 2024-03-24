@@ -20,5 +20,5 @@ router.get("/view_tables", protect, viewAllTables);
 router.post("/edit_table", protect, editRestaurantTable);
 router.delete("/delete_table", protect, deleteTable);
 router.get("/get_qr_code", protect, getQRCode);
-router.get("/view_restaurants_list", viewRestaurantsList);
+router.get("/view_restaurants_list", protect, viewRestaurantsList);
 module.exports = router;

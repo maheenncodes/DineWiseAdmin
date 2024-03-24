@@ -59,13 +59,7 @@ const AllRestaurants = ({ navigation }) => {
 
 
   const navigateToMenu = (restaurantId) => {
-    if (restaurantId) {
-      navigation.navigate('RestaurantMenu', {
-        restaurant: {
-          _id: restaurantId,
-        }
-      });
-    }
+    navigation.navigate('RestaurantMenu', { restaurantId });
   };
 
   const renderRestaurantItem = ({ item }) => {
