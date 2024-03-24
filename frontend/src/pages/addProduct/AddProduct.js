@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/loader/Loader";
 import ProductForm from "../../components/product/ProductForm/ProductForm";
+import { addMenuItem } from "../../services/restaurantService";
 import {
     
   createProduct,
@@ -11,9 +12,16 @@ import {
 
 const initialState = {
   name: "",
-  category: "",
   quantity: "",
   price: "",
+  description: "", // Add description to match the product form
+  ingredients: "", // Add ingredients to match the product form
+  isNewCategory: true, // Assuming default isNewCategory value
+  categoryName: "", // Add categoryName to match the product form
+  restaurantId: '65fedf23aeb13eca509bcdaf', // Add restaurantId to match the product form
+  isPopular: false, // Assuming default isPopular value
+  categoryId: "", // Add categoryId to match the product form
+
 };
 
 const AddProduct = () => {
@@ -26,7 +34,7 @@ const AddProduct = () => {
 
   const isLoading = useSelector(selectIsLoading);
 
-  const { name, description, ingredients , price, quantity } = product;
+  const { name, description, ingredients , price, quantity , category } = product;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -38,26 +46,37 @@ const AddProduct = () => {
     setImagePreview(URL.createObjectURL(e.target.files[0]));
   };
 
+ 
   
 
   const saveProduct = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("ingredients", ingredients);
-    formData.append("price", price);
-    formData.append("quantity", Number(quantity));
-    
-    
-    formData.append("image", productImage);
-
-    console.log(...formData);
-
-    await dispatch(createProduct(formData));
-
-    navigate("/dashboard");
+    try {
+      const formData = new FormData();
+      formData.append("categoryId", product.categoryId); // Assuming you have categoryId in your product state
+      formData.append("restaurantId", product.restaurantId); // Assuming you have restaurantId in your product state
+      formData.append("isNewCategory", product.isNewCategory); // Assuming you have isNewCategory in your product state
+      formData.append("categoryName", category); // Assuming you have categoryName in your product state
+      formData.append("itemName", name);
+      formData.append("itemDescription", description);
+      formData.append("itemIngredients", ingredients);
+      formData.append("itemPrice", price);
+      formData.append("itemQuantity", Number(quantity));
+      formData.append("isPopular", product.isPopular); // Assuming you have isPopular in your product state
+      
+      formData.append("image", productImage);
+  
+      console.log(...formData);
+  
+      await addMenuItem(formData); 
+  
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error while saving product:", error);
+      // Handle error if needed
+    }
   };
+  
 
   return (
     <div>

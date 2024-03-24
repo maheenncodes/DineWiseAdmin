@@ -26,7 +26,7 @@ const ProductForm = ({
   productImage,
   imagePreview,
   ingredients,
-  setIngredients,
+  handleIngredientsChange,
   handleInputChange,
   handleImageChange,
   saveProduct,
@@ -86,6 +86,14 @@ const ProductForm = ({
             value={product?.price}
             onChange={handleInputChange}
           />
+           <label>Product Description:</label>
+          <input
+            type="text"
+            placeholder="Product Description"
+            name="description"
+            value={product?.description}
+            onChange={handleInputChange}
+          />
 
           <label>Product Quantity:</label>
           <input
@@ -96,13 +104,14 @@ const ProductForm = ({
             onChange={handleInputChange}
           />
 
+
           <label>Product Ingredients:</label>
-          <ReactQuill
-            theme="snow"
-            value={ingredients}
-            onChange={setIngredients}
-            modules={ProductForm.modules}
-            formats={ProductForm.formats}
+          <textarea
+            
+            placeholder=""
+            name="ingredients"
+            value={product?.ingredients}
+            onChange={handleInputChange} 
           />
 
           <div className="--my">
@@ -116,41 +125,5 @@ const ProductForm = ({
   );
 };
 
-ProductForm.modules = {
-  toolbar: [
-    [{ header: "1" }, { header: "2" }, { font: [] }],
-    [{ size: [] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [{ align: [] }],
-    [{ color: [] }, { background: [] }],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
-    ],
-    ["clean"],
-  ],
-};
-ProductForm.formats = [
-  "header",
-  "font",
-  "size",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "color",
-  "background",
-  "list",
-  "bullet",
-  "indent",
-  "link",
-  "video",
-  "image",
-  "code-block",
-  "align",
-];
 
 export default ProductForm;
