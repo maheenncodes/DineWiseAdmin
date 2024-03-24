@@ -28,5 +28,12 @@ export const addMenuItem = async (formData) => {
       throw new Error(message);
     }
   };
-  
-  
+
+  export const fetchMenuDetails = async (restaurantId) => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/restaurants/view_menu_details?restaurantId=${restaurantId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message || error.message || "Failed to fetch menu details");
+    }
+  };

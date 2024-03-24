@@ -1,35 +1,36 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ProductList from "../../components/product/productList/ProductList";
 import ProductSummary from "../../components/product/productSummary/ProductSummary";
 import useRedirectLoggedOutUser from "../../customHook/useRedirectLoggedOutUser";
 import { selectIsLoggedIn } from "../../redux/features/auth/authslice";
-import { getProducts } from "../../redux/features/product/productSlice";
+import { fetchMenuDetails } from "../../services/restaurantService"; // Import fetchMenuDetails function
 
 const Dashboard = () => {
   useRedirectLoggedOutUser("/login");
   const dispatch = useDispatch();
-
   const isLoggedIn = useSelector(selectIsLoggedIn);
-  console.log(isLoggedIn);
-  const { products, isLoading, isError, message } = useSelector(
-    (state) => state.product
-  );
+  const [menuDetails, setMenuDetails] = useState(null); // State to hold menu details
 
   useEffect(() => {
-    if (isLoggedIn === true) {
-      dispatch(getProducts());
-    }
+    const fetchMenu = async () => {
+      try {
+        const details = await fetchMenuDetails("65fedf23aeb13eca509bcdaf"); // Replace with actual restaurant ID
+        setMenuDetails(details);
+      } catch (error) {
+        console.error("Error fetching menu details:", error.message);
+      }
+    };
 
-    if (isError) {
-      console.log(message);
+    if (isLoggedIn) {
+      fetchMenu();
     }
-  }, [isLoggedIn, isError, message, dispatch]);
+  }, [isLoggedIn]);
 
   return (
     <div>
-      <ProductSummary products={products} />
-      <ProductList products={products} isLoading={isLoading} />
+      {/* <ProductSummary products={menuDetails} /> Pass menuDetails to ProductSummary */}
+      <ProductList products={menuDetails} /> {/* Pass menuDetails to ProductList */}
     </div>
   );
 };
