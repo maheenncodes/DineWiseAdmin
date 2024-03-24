@@ -1,111 +1,109 @@
-import React, { useState , useEffect} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, FlatList, TextInput } from 'react-native';
-import { AntDesign } from '@expo/vector-icons'; // Make sure to install expo-vector-icons
-import Header from './Header';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
+import { AuthContext } from './authcontext'; // Import AuthContext
+import axios from 'axios'; // Import axios for making HTTP requests
 import Footer from './Footer';
-
+import Header from './Header';
 
 const AllRestaurants = ({ navigation }) => {
+  const { user } = useContext(AuthContext); // Access user authentication state from context
+  const [restaurants, setRestaurants] = useState([]);
+  const API_BASE_URL = 'http://192.168.0.100:5000';
 
-const API_BASE_URL = 'http://192.168.0.106:5000'; 
-const [restaurants, setRestaurants] = useState([]);
-
-  
-const fetchRestaurants = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/restaurant/getAllRestaurants`);
-    
-    if (!response.ok) {
-     
-      // Handle non-successful response (e.g., show an error message)
-      console.error(`HTTP error! Status: ${response.status}`);
-      return;
+  useEffect(() => {
+    if (user) {
+      fetchRestaurants();
+    } else {
+      console.error('User not logged in'); // Handle case where user is not logged in
     }
+  }, [user]); // Execute useEffect when user authentication state changes
 
-    const data = await response.json();
-    setRestaurants(data);
-  } catch (error) {
-    console.error(error);
-  }
-};
+  const fetchRestaurants = async () => {
+    try {
+      if (!user || !user.token) {
+        console.error('User token not found');
+        return;
+      }
 
-
-  const navigateToMenu = (restaurantId) => {
-    
-    if (restaurantId) {
-    //  navigation.navigate('RestaurantMenu', { restaurantId });
-      // Example of navigating to RestaurantMenu with a restaurant object
-      navigation.navigate('RestaurantMenu', {
-        restaurant: {
-          
-          _id: restaurantId,
-         
-          // Include any other restaurant info you need
+      console.log('User token:', user.token)
+      // Include the token in the request headers
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`
         }
-      });
+      };
 
+      // Make the authenticated request to fetch restaurants
+      const response = await axios.get(`${API_BASE_URL}/api/restaurants/view_restaurants_list`, config);
+      console.log('Restaurants fetched:', response.data);
+      setRestaurants(response.data);
+      console.log('Restaurants fetched:', response.data);
+    } catch (error) {
+      console.error('Error fetching restaurants:', error.message);
+      // Detailed error handling
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        console.error('Server responded with status:', error.response.status);
+        console.error('Response data:', error.response.data);
+        console.error('Response headers:', error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an error
+        console.error('Request setup error:', error.message);
+      }
     }
   };
 
-  const renderrestaurantItem = ({ item }) => {
-    // Assuming the image URL is stored in an array, we take the first one for display
-    const imageUrl = item.images && item.images.length > 0 ? { uri: item.images[0] } : defaultImage;
-    
+
+
+  const navigateToMenu = (restaurantId) => {
+    if (restaurantId) {
+      navigation.navigate('RestaurantMenu', {
+        restaurant: {
+          _id: restaurantId,
+        }
+      });
+    }
+  };
+
+  const renderRestaurantItem = ({ item }) => {
+    const imageUrl = item.logo ? { uri: item.logo } : { uri: 'default_image_uri_here' };
+
     return (
       <TouchableOpacity style={styles.restaurantCard} onPress={() => navigateToMenu(item._id)}>
         <Image source={{ uri: imageUrl }} style={styles.restaurantImage} resizeMode="cover" />
         <Text style={styles.restaurantName}>{item.name}</Text>
-        <Text style={styles.restaurantDescription}>Timings: {item.openingHours}</Text>
+        <Text style={styles.restaurantDescription}>Timings: {item.openingHours} - {item.closingHours}</Text>
       </TouchableOpacity>
     );
   };
- 
- 
-  useEffect(() => {
-    fetchRestaurants();
-  }, []);
-
-
 
   return (
     <View style={styles.container}>
-    <Header navigation={navigation} />
-    
-    <FlatList
-      data={restaurants}
-      renderItem={renderrestaurantItem}
-      keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
-      numColumns={2}
-      contentContainerStyle={styles.restaurantList}
-      columnWrapperStyle={styles.columnWrapper}
-    />
-    <Footer navigation={navigation} activeIcon="home" />
-  </View>
+      <Header navigation={navigation} />
+      <FlatList
+        data={restaurants}
+        renderItem={renderRestaurantItem}
+        keyExtractor={(item) => item._id}
+        numColumns={2}
+        contentContainerStyle={styles.restaurantList}
+        columnWrapperStyle={styles.columnWrapper}
+      />
+      <Footer navigation={navigation} activeIcon="home" />
+    </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: '#fbf7f5',
-    flex: 1,
-
-
   },
-  content: {
-    flex: 1,
-
-    paddingTop: 20,
-  },
-
   restaurantList: {
-    flexGrow: 1,
-    alignItems: 'center',
     paddingTop: 10,
-
     paddingHorizontal: 8,
-    flexDirection: 'column', // Ensure vertical direction
-    flexGrow: 0, // Restrict growing horizontally
-    width: '100%', // Ensure the list takes full width
-    justifyContent: 'space-between'
   },
   columnWrapper: {
     justifyContent: 'space-evenly',
@@ -136,17 +134,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#777',
   },
-  searchInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 10,
-    width: '90%',
-    alignSelf: 'center', // Center the search input
-  },
 });
-
 
 export default AllRestaurants;

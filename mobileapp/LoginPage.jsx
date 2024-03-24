@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, SafeAreaView, Alert, ScrollView } from 'react-native';
 import { loginUser } from './api-user'; // Import the loginUser function
+import { AuthContext } from './authcontext'; // Import the AuthContext
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useContext(AuthContext); // Access the login function from the context
 
   const handleLogin = async () => {
     console.log(`Email: ${email}, Password: ${password}`);
@@ -20,9 +22,8 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     try {
-      const response = await loginUser({ email, password });
-      navigation.navigate('CustomerHomepage');
-      console.log('Login successful:', response.data);
+      await login(email, password); // Call the login function with email and password
+      navigation.navigate('CustomerHomepage'); // Navigate to the next screen upon successful login
     } catch (error) {
       console.error('Login error:', error);
       if (error.response && error.response.data && error.response.data.message) {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { AuthProvider } from './authcontext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QRScanProvider } from './QRScanContext';
@@ -26,75 +27,80 @@ import OrderStatus from './OrderStatus';
 import Payment from './Payment';
 import MemberDetails from './MemberDetails';
 import CartScanQRScreen from './CartScanQRScreen';
-
+import UpdateUser from './Updateuser';
+import apiuser from './api-user'
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <SafeAreaProvider>
-      <OrderProvider>
-        <QRScanProvider>
-          <CartProvider>
-            <NavigationContainer>
-              <Stack.Navigator
-                initialRouteName="HomePage"
-                screenOptions={{
-                  headerShown: false,
-                  headerStatusBarHeight: 0,
-                }}
-              >
-                <Stack.Screen name="HomePage" component={HomePage} />
-                <Stack.Screen name="SignUp" component={SignUpScreen} />
-                <Stack.Screen name="Login" component={LoginScreen} />
-                <Stack.Screen
-                  name="CustomerHomepage"
-                  component={CustomerHomepage}
-                />
-                <Stack.Screen
-                  name="AllRestaurants"
-                  component={AllRestaurants}
-                />
-                <Stack.Screen
-                  name="HeaderComponent"
-                  component={HeaderComponent}
-                />
-                <Stack.Screen name="Table" component={ScanQRScreen} />
-                <Stack.Screen name="Cart" component={Cart} />
-                <Stack.Screen name="ChatBot" component={ChatBot} />
-                <Stack.Screen
-                  name="RestaurantMenu"
-                  component={RestaurantMenu}
-                />
-                <Stack.Screen name="Item" component={Item} />
-                <Stack.Screen name="TableMade" component={TableMade} />
-                <Stack.Screen
-                  name="RestaurantHeader"
-                  component={RestaurantHeader}
-                />
-                <Stack.Screen
-                  name="NotificationModal"
-                  component={NotificationModal}
-                />
-                <Stack.Screen name="QRScanner" component={QRScanner} />
-                <Stack.Screen
-                  name="OrderStatus"
-                  component={OrderStatus}
-                />
-                <Stack.Screen name="Payment" component={Payment} />
-                <Stack.Screen
-                  name="MemberDetails"
-                  component={MemberDetails}
-                />
-                <Stack.Screen
-                  name="CartScanQRScreen"
-                  component={CartScanQRScreen}
-                />
-              </Stack.Navigator>
-              <UserDropdownModal visible={false} />
-            </NavigationContainer>
-          </CartProvider>
-        </QRScanProvider>
-      </OrderProvider>
+      <AuthProvider>
+        <OrderProvider>
+          <QRScanProvider>
+            <CartProvider>
+              <NavigationContainer>
+                <Stack.Navigator
+                  initialRouteName="HomePage"
+                  screenOptions={{
+                    headerShown: false,
+                    headerStatusBarHeight: 0,
+                  }}
+                >
+
+                  <Stack.Screen name="HomePage" component={HomePage} />
+                  <Stack.Screen name="SignUp" component={SignUpScreen} />
+                  <Stack.Screen name="Login" component={LoginScreen} />
+                  <Stack.Screen name="UpdateUser" component={UpdateUser} />
+                  <Stack.Screen
+                    name="CustomerHomepage"
+                    component={CustomerHomepage}
+                  />
+                  <Stack.Screen
+                    name="AllRestaurants"
+                    component={AllRestaurants}
+                  />
+                  <Stack.Screen
+                    name="HeaderComponent"
+                    component={HeaderComponent}
+                  />
+                  <Stack.Screen name="Table" component={ScanQRScreen} />
+                  <Stack.Screen name="Cart" component={Cart} />
+                  <Stack.Screen name="ChatBot" component={ChatBot} />
+                  <Stack.Screen
+                    name="RestaurantMenu"
+                    component={RestaurantMenu}
+                  />
+                  <Stack.Screen name="Item" component={Item} />
+                  <Stack.Screen name="TableMade" component={TableMade} />
+                  <Stack.Screen
+                    name="RestaurantHeader"
+                    component={RestaurantHeader}
+                  />
+                  <Stack.Screen
+                    name="NotificationModal"
+                    component={NotificationModal}
+                  />
+                  <Stack.Screen name="QRScanner" component={QRScanner} />
+                  <Stack.Screen
+                    name="OrderStatus"
+                    component={OrderStatus}
+                  />
+                  <Stack.Screen name="Payment" component={Payment} />
+                  <Stack.Screen
+                    name="MemberDetails"
+                    component={MemberDetails}
+                  />
+                  <Stack.Screen
+                    name="CartScanQRScreen"
+                    component={CartScanQRScreen}
+                  />
+                </Stack.Navigator>
+                <UserDropdownModal visible={false} />
+              </NavigationContainer>
+            </CartProvider>
+          </QRScanProvider>
+        </OrderProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

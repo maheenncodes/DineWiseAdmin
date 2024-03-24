@@ -19,6 +19,8 @@ app.use(express.json());
 app.use(cors({
   origin: ["http://localhost:19000", "http://localhost:3000"], // Update with your React Native app's origin
   credentials: true,
+  methods: 'GET, POST',
+  allowedHeaders: 'Content-Type, Authorization',
 }));
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

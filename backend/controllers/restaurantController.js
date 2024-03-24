@@ -10,25 +10,25 @@ const Table = require("../models/tableModel");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const registerRestaurant = asyncHandler(async (req, res) => {
     const { name, phoneNo, description, openingTime, closingTime, admin } = req.body;
     const adminExists = await Restaurant.findOne({ admin: admin });
     if (adminExists) {
-        res.status(400).json({ message:"Admin already has a Restaurant"})
+        res.status(400).json({ message: "Admin already has a Restaurant" })
     }
     else {
         if (req.file && !adminExists) {
             let uploadedFile;
             try {
-            uploadedFile = await cloudinary.uploader.upload(req.file.path, {
-                folder: "DineWise",
-                resource_type: "image",
-            });
+                uploadedFile = await cloudinary.uploader.upload(req.file.path, {
+                    folder: "DineWise",
+                    resource_type: "image",
+                });
             } catch (error) {
                 console.error('Error uploading image to Cloudinary:', error.message);
                 res.status(500).json({ message: "Image could not be uploaded" });
@@ -37,7 +37,7 @@ const registerRestaurant = asyncHandler(async (req, res) => {
                 name,
                 phoneNo,
                 description,
-                logo:uploadedFile.secure_url,
+                logo: uploadedFile.secure_url,
                 openingTime,
                 closingTime,
                 admin
@@ -48,11 +48,11 @@ const registerRestaurant = asyncHandler(async (req, res) => {
                 })
             }
             else {
-                res.status(400).json({message: "Error while adding a new Restaurant"})
+                res.status(400).json({ message: "Error while adding a new Restaurant" })
             }
         }
         else {
-            res.status(400).json({message: "Error while adding a new Restaurant"})
+            res.status(400).json({ message: "Error while adding a new Restaurant" })
         }
     }
 })
@@ -64,24 +64,24 @@ const viewRestaurantDetails = asyncHandler(async (req, res) => {
             restaurant
         });
     } else {
-        res.status(404).json({ message:"Restaurant not found"});
+        res.status(404).json({ message: "Restaurant not found" });
     }
 })
 const addMenuItem = asyncHandler(async (req, res) => {
     const
-    {
-        categoryId,
-        restaurantId,
-        isNewCategory,
-        categoryName,
-        itemName,
-        itemDescription,
-        itemIngredients,
-        itemPrice,
-        itemQuantity,
-        isPopular } = req.body;
-    
-    var imageUrl=null;
+        {
+            categoryId,
+            restaurantId,
+            isNewCategory,
+            categoryName,
+            itemName,
+            itemDescription,
+            itemIngredients,
+            itemPrice,
+            itemQuantity,
+            isPopular } = req.body;
+
+    var imageUrl = null;
     if (req.file) {
         try {
             const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
@@ -90,10 +90,10 @@ const addMenuItem = asyncHandler(async (req, res) => {
             });
             imageUrl = uploadedImage.secure_url;
         } catch (error) {
-            res.status(500).json({ message:'Image could not be uploaded'});
+            res.status(500).json({ message: 'Image could not be uploaded' });
         }
     }
-    if (isNewCategory==='true') {
+    if (isNewCategory === 'true') {
         const restaurant = await Restaurant.findById(restaurantId);
         if (restaurant) {
             const category = await Category.create({
@@ -106,9 +106,9 @@ const addMenuItem = asyncHandler(async (req, res) => {
                     description: itemDescription,
                     ingredients: itemIngredients,
                     price: itemPrice,
-                    image:imageUrl,
+                    image: imageUrl,
                     quantity: itemQuantity,
-                    isPopular:isPopular
+                    isPopular: isPopular
                 })
                 if (newItem) {
                     if (!category.itemList) {
@@ -123,7 +123,7 @@ const addMenuItem = asyncHandler(async (req, res) => {
                     });
                 }
                 else {
-                    res.status(400).json({ message: "Error while adding a new Category" })    
+                    res.status(400).json({ message: "Error while adding a new Category" })
                 }
             }
             else {
@@ -145,9 +145,9 @@ const addMenuItem = asyncHandler(async (req, res) => {
                     description: itemDescription,
                     ingredients: itemIngredients,
                     price: itemPrice,
-                    image:imageUrl,
+                    image: imageUrl,
                     quantity: itemQuantity,
-                    isPopular:isPopular
+                    isPopular: isPopular
                 })
                 if (!category.itemList) {
                     category.itemList = [];
@@ -161,27 +161,27 @@ const addMenuItem = asyncHandler(async (req, res) => {
                 });
             }
             else {
-                res.status(404).json({message:"Category not found"})
+                res.status(404).json({ message: "Category not found" })
             }
         }
         else {
-            res.status(404).json({message:"Restaurant not found"})
+            res.status(404).json({ message: "Restaurant not found" })
         }
     }
 })
 
 const updateMenuItem = asyncHandler(async (req, res) => {
-     const
-    {
-        categoryId,
-        restaurantId,
-        itemId,
-        itemName,
-        itemDescription,
-        itemIngredients,
-        itemPrice,
-        itemQuantity,
-        isPopular } = req.body;
+    const
+        {
+            categoryId,
+            restaurantId,
+            itemId,
+            itemName,
+            itemDescription,
+            itemIngredients,
+            itemPrice,
+            itemQuantity,
+            isPopular } = req.body;
     const restaurant = await Restaurant.findById(restaurantId);
     if (!restaurant) {
         res.status(404).json({ message: 'Restaurant not found' });
@@ -201,8 +201,8 @@ const updateMenuItem = asyncHandler(async (req, res) => {
     itemPrice && (item.price = itemPrice);
     itemQuantity && (item.quantity = itemQuantity);
     isPopular && (item.isPopular = isPopular);
-    
-    var imageUrl=null;
+
+    var imageUrl = null;
     if (req.file) {
         try {
             const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
@@ -212,7 +212,7 @@ const updateMenuItem = asyncHandler(async (req, res) => {
             imageUrl = uploadedImage.secure_url;
             item.image = imageUrl;
         } catch (error) {
-            res.status(500).json({ message:'Image could not be uploaded'});
+            res.status(500).json({ message: 'Image could not be uploaded' });
         }
     }
     await item.save();
@@ -244,7 +244,7 @@ const deleteMenuItem = asyncHandler(async (req, res) => {
     }
 
     category.itemList.splice(itemIndex, 1);
-    
+
     await Item.findByIdAndDelete(itemId);
     await category.save();
     if (category.itemList.length === 0) {
@@ -275,7 +275,7 @@ const viewAllCategories = asyncHandler(async (req, res) => {
                 }
             }
         }
-        res.status(200).json(categoryList);   
+        res.status(200).json(categoryList);
     }
     else {
         res.status(404).json({ message: 'Restaurant not found' });
@@ -298,11 +298,11 @@ const viewMenuDetails = asyncHandler(async (req, res) => {
                 menuDetails.push({
                     _id: category._id,
                     categoryTitle: title,
-                    itemList:itemList
+                    itemList: itemList
                 })
             }
             else {
-                res.status(404).json({message:"Category is not correct"});
+                res.status(404).json({ message: "Category is not correct" });
             }
         }
         if (menuDetails.length > 0) {
@@ -320,7 +320,7 @@ const addRestaurantTable = asyncHandler(async (req, res) => {
     const { restaurantId } = req.query;
     const { tableNumber, capacity } = req.body;
     const restaurant = await Restaurant.findById(restaurantId);
- 
+
     if (restaurant) {
         if (!restaurant.table) {
             restaurant.table = [];
@@ -328,7 +328,7 @@ const addRestaurantTable = asyncHandler(async (req, res) => {
         const table = await addTable({ tableNumber, capacity, restaurantId });
         restaurant.tables.push(table._id);
         restaurant.save();
-        res.status(200).json({message:"Table saved successfully"})
+        res.status(200).json({ message: "Table saved successfully" })
     }
     else {
         res.status(404).json({ message: 'Restaurant not found' });
@@ -337,11 +337,11 @@ const addRestaurantTable = asyncHandler(async (req, res) => {
 const editRestaurantTable = asyncHandler(async (req, res) => {
     const { restaurantId } = req.query;
     const { tableId, tableNumber, capacity, status } = req.body;
-    const restaurant = await Restaurant.findById(restaurantId); 
+    const restaurant = await Restaurant.findById(restaurantId);
     if (restaurant) {
-        const table = await editTable({ tableId, tableNumber, tableCapacity:capacity, status });
+        const table = await editTable({ tableId, tableNumber, tableCapacity: capacity, status });
         if (table) {
-            res.status(200).json({message:"Table edited successfully"})   
+            res.status(200).json({ message: "Table edited successfully" })
         }
     }
     else {
@@ -361,10 +361,10 @@ const deleteTable = asyncHandler(async (req, res) => {
     }
 
     restaurant.tables.splice(tableIndex, 1);
-    
+
     await Table.findByIdAndDelete(tableId);
     await restaurant.save();
-    res.status(200).json({message:"Table deleted successfully"})
+    res.status(200).json({ message: "Table deleted successfully" })
 })
 const viewAllTables = asyncHandler(async (req, res) => {
     const { restaurantId } = req.query;
@@ -382,7 +382,7 @@ const viewAllTables = asyncHandler(async (req, res) => {
                 })
             }
             else {
-                res.status(404).json({message: "Table Id is not correct"});
+                res.status(404).json({ message: "Table Id is not correct" });
             }
         }
         if (tableDetails.length > 0) {
@@ -418,14 +418,14 @@ const getQRCode = asyncHandler(async (req, res) => {
 const addRestaurantStaff = asyncHandler(async (req, res) => {
     const { restaurantId, userId } = req.query;
     const restaurant = await Restaurant.findById(restaurantId);
- 
+
     if (restaurant) {
         if (!restaurant.staff) {
             restaurant.staff = [];
         }
         restaurant.staff.push(userId);
         restaurant.save();
-        res.status(200).json({message:"Staff saved successfully"})
+        res.status(200).json({ message: "Staff saved successfully" })
     }
     else {
         res.status(404).json({ message: 'Restaurant not found' });
@@ -446,7 +446,7 @@ const viewStaff = asyncHandler(async (req, res) => {
                 })
             }
             else {
-                res.status(404).json({message: "User Id is not correct"});
+                res.status(404).json({ message: "User Id is not correct" });
             }
         }
         if (staffDetails.length > 0) {
@@ -460,7 +460,7 @@ const viewStaff = asyncHandler(async (req, res) => {
         res.status(404).json({ message: 'Restaurant not found' });
     }
 })
-const editStaff = asyncHandler(async(req, res) => {
+const editStaff = asyncHandler(async (req, res) => {
     const { restaurantId, staffId } = req.query;
     const { name, email } = req.body;
     const restaurant = await Restaurant.findById(restaurantId);
@@ -471,10 +471,10 @@ const editStaff = asyncHandler(async(req, res) => {
             name && (staff.name = name)
             email && (staff.email = email)
             staff.save()
-            res.status(200).json({message:"Staff updated successfully"})
+            res.status(200).json({ message: "Staff updated successfully" })
         }
         else {
-            res.status(404).json({message:"Staff not found"})            
+            res.status(404).json({ message: "Staff not found" })
         }
     }
     else {
@@ -495,10 +495,10 @@ const deleteStaff = asyncHandler(async (req, res) => {
     }
 
     restaurant.staff.splice(memberIndex, 1);
-    
+
     await User.findByIdAndDelete(staffId);
     await restaurant.save();
-    res.status(200).json({message:"Staff deleted successfully"})
+    res.status(200).json({ message: "Staff deleted successfully" })
 })
 const viewRestaurantsList = asyncHandler(async (req, res) => {
     try {
@@ -508,7 +508,7 @@ const viewRestaurantsList = asyncHandler(async (req, res) => {
         res.status(400).json('Error fetching tables');
     }
 })
-module.exports={
+module.exports = {
     registerRestaurant,
     addMenuItem,
     updateMenuItem,

@@ -3,10 +3,14 @@ const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
 
-const protect = asyncHandler (async (req,res,next)=> {
+const protect = asyncHandler(async (req, res, next) => {
 
-    const token = req.cookies.token
-    if(!token ){
+    const authHeader = req.headers['authorization'];
+    console.log('Request Headers:', req.headers);
+    console.log('Auth Header:', authHeader);
+    const token = authHeader && authHeader.split(' ')[1];
+    console.log('T:', token);
+    if (!token) {
         res.status(401)// unauthorized
         throw new Error("Not authorized, please login")
     }
@@ -14,10 +18,9 @@ const protect = asyncHandler (async (req,res,next)=> {
     const verified = jwt.verify(token, process.env.JWT_SECRET)
     // get user from token
 
-    const user  = await User.findById(verified.id).select("-password")
+    const user = await User.findById(verified.id).select("-password")
 
-    if(!user)
-    {
+    if (!user) {
         res.status(401)// unauthorized
         throw new Error("user not found")
     }
