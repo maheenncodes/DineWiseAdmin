@@ -14,13 +14,10 @@ const initialState = {
   name: "",
   quantity: "",
   price: "",
-  description: "", // Add description to match the product form
+  description: "", 
   ingredients: "", // Add ingredients to match the product form
-  isNewCategory: true, // Assuming default isNewCategory value
-  categoryName: "", // Add categoryName to match the product form
-  restaurantId: '65fedf23aeb13eca509bcdaf', // Add restaurantId to match the product form
-  isPopular: false, // Assuming default isPopular value
-  categoryId: "", // Add categoryId to match the product form
+  category: "", // Add categoryName to match the product form
+  
 
 };
 
@@ -34,7 +31,7 @@ const AddProduct = () => {
 
   const isLoading = useSelector(selectIsLoading);
 
-  const { name, description, ingredients , price, quantity , category } = product;
+  const { name, description, ingredients , price, quantity , category  } = product;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,20 +50,20 @@ const AddProduct = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("categoryId", product.categoryId); // Assuming you have categoryId in your product state
-      formData.append("restaurantId", product.restaurantId); // Assuming you have restaurantId in your product state
-      formData.append("isNewCategory", product.isNewCategory); // Assuming you have isNewCategory in your product state
+      formData.append("categoryId", " "); // Assuming you have categoryId in your product state
+      formData.append("restaurantId", '65fedf23aeb13eca509bcdaf'); // Assuming you have restaurantId in your product state
+      formData.append("isNewCategory", true); // Assuming you have isNewCategory in your product state
       formData.append("categoryName", category); // Assuming you have categoryName in your product state
       formData.append("itemName", name);
       formData.append("itemDescription", description);
       formData.append("itemIngredients", ingredients);
       formData.append("itemPrice", price);
       formData.append("itemQuantity", Number(quantity));
-      formData.append("isPopular", product.isPopular); // Assuming you have isPopular in your product state
+      formData.append("isPopular", false); // Assuming you have isPopular in your product state
       
       formData.append("image", productImage);
   
-      console.log(...formData);
+      
   
       await addMenuItem(formData); 
   

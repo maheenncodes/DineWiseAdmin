@@ -96,7 +96,7 @@ const addMenuItem = asyncHandler(async (req, res) => {
     }
     if (isNewCategory==='true') {
         const restaurant = await Restaurant.findById(restaurantId);
-        console.log("found");
+        
         if (restaurant) {
             const category = await Category.create({
                 title: categoryName
