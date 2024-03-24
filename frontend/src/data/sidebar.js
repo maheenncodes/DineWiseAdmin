@@ -17,12 +17,12 @@ const menu = [
   {
     title: "Orders",
     icon: <MdRestaurantMenu />,
-    path: "/",
+    path: "/order",
   },
   {
     title: "Tables",
     icon: <MdTableRestaurant />,
-    path: "/",
+    path: "/table",
   },
   {
     title: "Staff",

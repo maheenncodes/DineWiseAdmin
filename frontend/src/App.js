@@ -21,7 +21,8 @@ import Profile from "./pages/profile/Profile";
 import EditProfile from "./pages/profile/EditProfile";
 import Contact from "./pages/contact/Contact";
 import Staff from "./pages/Staff/Staff";
-
+import Order from "./pages/Order/Order";
+import Table from "./pages/Table/Table";
 axios.defaults.withCredentials = true;
 
 
@@ -93,6 +94,26 @@ function App() {
             <Sidebar>
               <Layout>
                 <Staff />
+              </Layout>
+            </Sidebar>
+          }
+        />
+        <Route
+          path="/order"
+          element={
+            <Sidebar>
+              <Layout>
+                <Order />
+              </Layout>
+            </Sidebar>
+          }
+        />
+        <Route
+          path="/table"
+          element={
+            <Sidebar>
+              <Layout>
+                <Table />
               </Layout>
             </Sidebar>
           }

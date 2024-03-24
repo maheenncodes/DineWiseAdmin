@@ -26,7 +26,7 @@ const staffMembers = [
     },
   ];
 
-const Staff = () => {
+const Table = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -122,4 +122,4 @@ const Staff = () => {
     );
 };
 
-export default Staff;
+export default Table;

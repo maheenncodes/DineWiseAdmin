@@ -1,7 +1,7 @@
 import React from "react";
-import "./StaffCard.scss"; // Import styles for the staff card
+import "./OrderCard.scss"; // Import styles for the staff card
 import {  FaTrashAlt } from "react-icons/fa";
-const StaffCard = ({ user }) => {
+const OrderCard = ({ user }) => {
   return (
     <div className="staff-card" style={{ width: "70%" }}>
       <img src={user.photo} alt={user.name} className="staff-photo" />
@@ -23,4 +23,4 @@ const StaffCard = ({ user }) => {
   );
 };
 
-export default StaffCard;
+export default OrderCard;

@@ -12,7 +12,16 @@ const initialState = {
     bio: "",
     photo: "",
   },
-  restaurantId: null, // Initialize restaurant ID to null
+  restaurant: {
+    name: "",
+    phoneNo: "",
+    description: "",
+    logo: "",
+    openingTime: null,
+    closingTime: null,
+    adminName: "", // Add adminName field to store admin's name
+  },
+  restaurantId: null,
 };
 
 const authSlice = createSlice({
@@ -34,18 +43,32 @@ const authSlice = createSlice({
       state.user.bio = profile.bio;
       state.user.photo = profile.photo;
     },
+    SET_RESTAURANT(state, action) {
+      state.restaurant = action.payload;
+    },
     SET_RESTAURANT_ID(state, action) {
       state.restaurantId = action.payload;
     },
-    
+    SET_ADMIN_NAME(state, action) {
+      state.restaurant.adminName = action.payload;
+    },
   },
 });
 
-export const { SET_LOGIN, SET_NAME, SET_USER, SET_RESTAURANT_ID } = authSlice.actions;
+export const {
+  SET_LOGIN,
+  SET_NAME,
+  SET_USER,
+  SET_RESTAURANT,
+  SET_RESTAURANT_ID,
+  SET_ADMIN_NAME,
+} = authSlice.actions;
 
 export const selectIsLoggedIn = (state) => state.auth.isLoggedIn;
 export const selectName = (state) => state.auth.name;
 export const selectUser = (state) => state.auth.user;
-export const selectRestaurantId = (state) => state.auth.restaurantId; // Selector for restaurant ID
+export const selectRestaurant = (state) => state.auth.restaurant;
+export const selectRestaurantId = (state) => state.auth.restaurantId;
+export const selectAdminName = (state) => state.auth.restaurant.adminName;
 
 export default authSlice.reducer;
