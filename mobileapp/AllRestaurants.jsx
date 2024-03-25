@@ -1,58 +1,32 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
 import { AuthContext } from './authcontext'; // Import AuthContext
-import axios from 'axios'; // Import axios for making HTTP requests
+
 import Footer from './Footer';
 import Header from './Header';
+import { fetchAllRestaurants } from './api-restaurant';
 
 const AllRestaurants = ({ navigation }) => {
   const { user } = useContext(AuthContext); // Access user authentication state from context
   const [restaurants, setRestaurants] = useState([]);
   const API_BASE_URL = 'http://192.168.0.100:5000';
 
+
   useEffect(() => {
     if (user) {
       fetchRestaurants();
     } else {
-      console.error('User not logged in'); // Handle case where user is not logged in
+      console.error('User not logged in');
     }
-  }, [user]); // Execute useEffect when user authentication state changes
+  }, [user]);
 
   const fetchRestaurants = async () => {
     try {
-      if (!user || !user.token) {
-        console.error('User token not found');
-        return;
-      }
-
-
-      // Include the token in the request headers
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`
-        }
-      };
-
-      // Make the authenticated request to fetch restaurants
-      const response = await axios.get(`${API_BASE_URL}/api/restaurants/view_restaurants_list`, config);
-
-      setRestaurants(response.data);
-
+      const data = await fetchAllRestaurants(user.token); // Call fetchAllRestaurants function
+      setRestaurants(data);
     } catch (error) {
       console.error('Error fetching restaurants:', error.message);
-      // Detailed error handling
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        console.error('Server responded with status:', error.response.status);
-        console.error('Response data:', error.response.data);
-        console.error('Response headers:', error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error('No response received:', error.request);
-      } else {
-        // Something happened in setting up the request that triggered an error
-        console.error('Request setup error:', error.message);
-      }
+
     }
   };
 
@@ -65,7 +39,7 @@ const AllRestaurants = ({ navigation }) => {
 
 
   const renderRestaurantItem = ({ item }) => {
-    const imageUrl = item.logo ? { uri: item.logo } : { uri: 'default_image_uri_here' };
+    const imageUrl = item.logo
 
     return (
       <TouchableOpacity style={styles.restaurantCard} onPress={() => navigateToMenu(item)}>

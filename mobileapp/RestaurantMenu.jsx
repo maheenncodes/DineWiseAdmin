@@ -10,8 +10,7 @@ import NotificationModal from './NotificationModal';
 import QRScanContext from './QRScanContext';
 import { Alert } from 'react-native';
 import { AuthContext } from './authcontext'; // Import AuthContext
-import axios from 'axios'; // Import axios for making HTTP requests
-const API_BASE_URL = 'http://192.168.0.100:5000';
+import { fetchMenuDetails } from './api-restaurant';
 
 const RestaurantMenu = ({ navigation, route }) => {
     const { restaurant } = route.params;
@@ -22,27 +21,16 @@ const RestaurantMenu = ({ navigation, route }) => {
     const [menuItems, setMenuItems] = useState([]); // State to store fetched menu items
     const { user } = useContext(AuthContext); // Access user authentication state from context
 
-    const fetchMenuDetails = async (restaurantId) => {
+    useEffect(() => {
+        if (restaurant && restaurant._id) {
+            fetchMenuData(restaurant._id);
+        }
+    }, [restaurant]);
+
+    const fetchMenuData = async (restaurantId) => {
         try {
-            if (!user || !user.token) {
-                console.error('User token not found');
-                return;
-            }
-
-
-            // Include the token in the request headers
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`
-                }
-            };
-
-            // Make request to fetch menu details for the given restaurant
-            const response = await axios.get(`${API_BASE_URL}/api/restaurants/view_menu_details?restaurantId=${restaurantId}`, config);
-
-            // Assuming the response data is an array of menu items
-            setMenuItems(response.data); // Update the menu items state with the fetched data
-
+            const data = await fetchMenuDetails(restaurantId, user.token); // Call fetchMenuDetails function
+            setMenuItems(data);
         } catch (error) {
             console.error('Error fetching menu details:', error.message);
             // Handle error
@@ -51,13 +39,7 @@ const RestaurantMenu = ({ navigation, route }) => {
 
 
 
-    useEffect(() => {
 
-        if (restaurant && restaurant._id) {
-
-            fetchMenuDetails(restaurant._id);
-        }
-    }, [restaurant]);
     useEffect(() => {
         let timer;
         if (addedToCart) {
