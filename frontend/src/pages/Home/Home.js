@@ -1,9 +1,9 @@
 import React from "react";
-import { TbSquareRoundedLetterB } from "react-icons/tb";
+import { TbCircleLetterD } from "react-icons/tb";
 
 import { Link } from "react-router-dom";
 import "./Home.scss";
-import heroImg from "../../assets/inv-img-01.png";
+import heroImg from "../../assets/home.png";
 import { ShowOnLogin, ShowOnLogout } from "../../components/protect/HiddenLink";
 
 const Home = () => {
@@ -11,7 +11,7 @@ const Home = () => {
     <div className="home">
       <nav className="--flex-between ">
         <div className="logo">
-          <TbSquareRoundedLetterB size={35} />
+          <TbCircleLetterD size={35} />
         </div>
 
         <ul className="home-links">
@@ -56,7 +56,7 @@ const Home = () => {
         </div>
 
         <div className="hero-image">
-          <img src={heroImg} style={{ width: '600px', height: '500px' }} alt="Inventory" />
+          <img src={heroImg} style={{ width: '200px', height: '200px', marginLeft: '20rem' }} alt="Inventory" />
         </div>
       </section>
     </div>

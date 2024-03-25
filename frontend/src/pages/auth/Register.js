@@ -81,7 +81,7 @@ const Register = () => {
         closingTime: new Date(),
         openingTime: new Date(),
         admin: adminData._id,
-        image: formData.image,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png",
         
       };
 
@@ -112,7 +112,7 @@ const Register = () => {
       <div className={styles.centered}>
         <div className={styles.blueSection}>
           <img src={heroImg} alt="Inventory" />
-          <p> this is an inventory management system</p>
+          <p> Welcome to DineWise</p>
         </div>
 
         <div className={styles.whiteSection}>
@@ -132,11 +132,6 @@ const Register = () => {
                     name="name"
                     value={name}
                     onChange={handleInputChange}
-                  />
-                  <input
-                    type="file"
-                    name="image"
-                    onChange={(e) => handleImageChange(e)}
                   />
                   <input
                     type="email"
