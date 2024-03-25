@@ -4,24 +4,22 @@ import { registerUser, validateEmail } from "../../services/authService";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authslice";
-import "./Staff.scss";
-import Modal from "../../components/staff/AddStaff";
-import StaffCard from "../../components/staff/StaffCard";
+import "./Table.scss";
+import Modal from "../../components/table/AddTable";
+import TableCard from "../../components/table/TableCard";
 
 const initialState = {
     name: "",
-    email: "",
-    password: "",
-    role: "staff", // Default role
+    capacity:"", // Default role
 };
 
-const staffMembers = [
+const Tables = [
     {
-      name: "John Doe",
+      name: "12",
       photo: "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small/beautiful-woman-avatar-character-icon-free-vector.jpg",
     },
     {
-      name: "Jane Smith",
+      name: "10",
       photo: "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small/beautiful-woman-avatar-character-icon-free-vector.jpg",
     },
   ];
@@ -33,7 +31,7 @@ const Table = () => {
     const [formData, setformData] = useState(initialState);
     const [showModal, setShowModal] = useState(false);
 
-    const { name, email, password, role } = formData;
+    const { name, capacity } = formData;
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -51,32 +49,25 @@ const Table = () => {
     const registerStaff = async (e) => {
         e.preventDefault();
 
-        if (!name || !email || !password) {
+        if (!name || !capacity) {
             return toast.error("All fields are required");
         }
-        if (password.length < 6) {
-            return toast.error("Passwords must be at least 6 characters");
-        }
-        if (!validateEmail(email)) {
-            return toast.error("Please enter a valid email");
-        }
+       
 
         const userData = {
             name,
-            email,
-            password,
-            role: "staff", // Include role in user data
+            capacity,
         };
 
-        setIsLoading(true);
-        try {
-            const data = await registerUser(userData);
-            toast.success("Staff added successfully");
-            setIsLoading(false);
-            closeModal(); // Close the modal after successful registration
-        } catch (error) {
-            setIsLoading(false);
-        }
+        //setIsLoading(true);
+        // try {
+        //     const data = await registerUser(userData);
+        //     toast.success("Table added successfully");
+        //     setIsLoading(false);
+        //     closeModal(); // Close the modal after successful registration
+        // } catch (error) {
+        //     setIsLoading(false);
+        // }
     };
 
     return (
@@ -85,10 +76,10 @@ const Table = () => {
             
 
             <div className="--flex-center --mt">
-                    <h3>Staff Member</h3>
+                    <h3>Tables</h3>
             </div>
             <button className="--btn --btn-primary --mt  " style={{ width: "18rem" }} onClick={openModal}>
-                    Add Staff Member
+                    Add Table
             </button>
             
             
@@ -104,10 +95,10 @@ const Table = () => {
             />
            <div className="--flex-center" style={{ width: "100%" }}>
                 <div className="staff-list --mt --flex-dir-column --justify-center --width-100">
-                    {/* Each Staff Render */}
-                    {staffMembers.map((user, index) => (
+                    {/* Each Table Render */}
+                    {Tables.map((table, index) => (
                         <div key={index} className="--width-100  --flex-center">
-                            <StaffCard user={user} />
+                            <TableCard table={table} />
                         </div>
                     ))}
                 </div>

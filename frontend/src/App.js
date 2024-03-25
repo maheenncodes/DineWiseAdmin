@@ -134,7 +134,7 @@ function App() {
           element={
             <Sidebar>
               <Layout>
-                <EditProfile />
+                <EditProfile setRestaurantResponse={setRestaurantResponse} restaurantResponse={restaurantResponse} />
               </Layout>
             </Sidebar>
           }

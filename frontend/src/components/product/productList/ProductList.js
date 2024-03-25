@@ -70,7 +70,7 @@ const ProductList = ({ products }) => {
                             <td>{item.name}</td>
                             <td>{category.categoryTitle}</td>
                             <td>{item.price}</td>
-                            <td>
+                            <td className="icons">
                               <span>
                                 <AiOutlineEye
                                   size={25}
