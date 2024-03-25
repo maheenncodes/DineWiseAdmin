@@ -22,7 +22,7 @@ export const registerUser = async ({ name, email, password }) => {
 // Login user function
 export const loginUser = async ({ email, password }) => {
     try {
-        const response = await axios.post('http://192.168.0.100:5000/api/users/login', {
+        const response = await axios.post('http://192.168.1.12:5000/api/users/login', {
             email,
             password
         });

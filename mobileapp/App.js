@@ -28,7 +28,7 @@ import Payment from './Payment';
 import MemberDetails from './MemberDetails';
 import CartScanQRScreen from './CartScanQRScreen';
 import UpdateUser from './Updateuser';
-import apiuser from './api-user'
+import Welcome from './Welcome';
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -46,7 +46,7 @@ function App() {
                     headerStatusBarHeight: 0,
                   }}
                 >
-
+                  <Stack.Screen name="Welcome" component={Welcome} />
                   <Stack.Screen name="HomePage" component={HomePage} />
                   <Stack.Screen name="SignUp" component={SignUpScreen} />
                   <Stack.Screen name="Login" component={LoginScreen} />

@@ -14,7 +14,7 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
 
     const addToCart = (item) => {
-        const itemIndex = cartItems.findIndex((cartItem) => cartItem.id === item.id);
+        const itemIndex = cartItems.findIndex((cartItem) => cartItem.id === item._id);
 
         if (itemIndex !== -1) {
             // If item exists in the cart, update its quantity

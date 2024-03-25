@@ -1,17 +1,19 @@
 // QRScanner.js
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import QRScanContext from './QRScanContext';
+import { useNavigation } from '@react-navigation/native';
 
-const QRScanner = ({ navigation }) => {
+const QRScanner = () => {
     const { handleScan } = useContext(QRScanContext);
+    const navigation = useNavigation();
 
     const restaurantId = '65f6b800ebfe51ea62ba5e45';
     const tableId = '65fbab5aa1734426bf68554c';
 
     const handleScanPress = () => {
         handleScan(restaurantId, tableId);
-        navigation.navigate('RestaurantMenu'); // Assuming navigation to 'RestaurantMenu' after scan
+        navigation.navigate('Welcome');
     };
 
     return (

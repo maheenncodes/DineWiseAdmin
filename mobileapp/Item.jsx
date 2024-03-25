@@ -87,7 +87,10 @@ const Item = ({ navigation, route }) => {
 
             <ScrollView>
                 <View style={styles.itemImageContainer}>
-                    <Image source={item.image} style={styles.itemImage} resizeMode="cover" />
+                    <Image
+                        source={{ uri: item.image }}
+                        style={styles.itemImage}
+                    />
                     <Text style={styles.itemPrice}>{item.price}</Text>
                 </View>
                 <View style={styles.titleContainer}>

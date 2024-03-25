@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import QRScanContext from './QRScanContext';
 const RestaurantHeader = ({ restaurant }) => {
     const navigation = useNavigation();
 
     const goToMenu = () => {
         navigation.navigate('RestaurantMenu', { restaurant });
     };
+    const { scannedRestaurant } = useContext(QRScanContext);
 
+    const imageUrl = scannedRestaurant.logo;
     return (
         <View style={styles.container}>
-            <Image source={restaurant.image} style={styles.restaurantLogo} />
+            <Image source={{ uri: imageUrl }} style={styles.restaurantLogo} />
             <Text style={styles.restaurantName}>{restaurant.name}</Text>
             <TouchableOpacity onPress={goToMenu} style={styles.menuButton}>
                 <Text style={styles.menuButtonText}>Menu</Text>

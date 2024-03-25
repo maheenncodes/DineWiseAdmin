@@ -1,25 +1,22 @@
-
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Image, Modal, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
 import Header from './Header';
 import Footer from './Footer';
 import { MaterialIcons } from '@expo/vector-icons';
-import RestaurantHeader from './RestaurantHeader';
 import { useCart } from './CartContext';
 import NotificationModal from './NotificationModal';
 import QRScanContext from './QRScanContext';
-import { Alert } from 'react-native';
-import { AuthContext } from './authcontext'; // Import AuthContext
+import { AuthContext } from './authcontext';
 import { fetchMenuDetails } from './api-restaurant';
 
 const RestaurantMenu = ({ navigation, route }) => {
     const { restaurant } = route.params;
     const { cart, addToCart } = useCart();
-    const { isScanned, setIsScanned, scannedRestaurant } = useContext(QRScanContext);
+    const { isScanned, scannedRestaurant } = useContext(QRScanContext);
     const [selectedItem, setSelectedItem] = useState(null);
     const [addedToCart, setAddedToCart] = useState(false);
-    const [menuItems, setMenuItems] = useState([]); // State to store fetched menu items
-    const { user } = useContext(AuthContext); // Access user authentication state from context
+    const [menuItems, setMenuItems] = useState([]);
+    const { user } = useContext(AuthContext);
 
     useEffect(() => {
         if (restaurant && restaurant._id) {
@@ -29,23 +26,20 @@ const RestaurantMenu = ({ navigation, route }) => {
 
     const fetchMenuData = async (restaurantId) => {
         try {
-            const data = await fetchMenuDetails(restaurantId, user.token); // Call fetchMenuDetails function
+            const data = await fetchMenuDetails(restaurantId, user.token);
             setMenuItems(data);
+
         } catch (error) {
             console.error('Error fetching menu details:', error.message);
-            // Handle error
         }
     };
-
-
-
 
     useEffect(() => {
         let timer;
         if (addedToCart) {
             timer = setTimeout(() => {
                 setAddedToCart(false);
-                setSelectedItem('');
+                setSelectedItem(null);
             }, 3000);
         }
         return () => {
@@ -57,14 +51,10 @@ const RestaurantMenu = ({ navigation, route }) => {
         navigation.navigate('Item', { restaurant, item });
     };
 
-
-
     const renderMenuItem = ({ item }) => {
         const isFromScannedRestaurant = scannedRestaurant && scannedRestaurant.id === restaurant.id;
-
         const addToCartHandler = () => {
             if (!isScanned) {
-                // Show an alert indicating that QR code needs to be scanned
                 Alert.alert(
                     'QR Code Not Scanned',
                     'You need to scan the QR code to proceed. Choose an option:',
@@ -83,7 +73,6 @@ const RestaurantMenu = ({ navigation, route }) => {
                     { cancelable: true }
                 );
             } else if (scannedRestaurant && scannedRestaurant.id !== restaurant.id) {
-                // Show an alert that the item is not from the scanned restaurant
                 Alert.alert(
                     'Invalid Item',
                     'This item is not from the scanned restaurant. Do you want to view the menu of the scanned restaurant?',
@@ -91,7 +80,6 @@ const RestaurantMenu = ({ navigation, route }) => {
                         {
                             text: 'View Menu',
                             onPress: () => {
-                                // Navigate to the menu of the scanned restaurant
                                 navigation.navigate('RestaurantMenu', { restaurant: scannedRestaurant });
                             },
                         },
@@ -103,35 +91,28 @@ const RestaurantMenu = ({ navigation, route }) => {
                     { cancelable: true }
                 );
             } else {
-                // Scanning has been done and it's the default restaurant, handle add to cart
                 setSelectedItem(item);
-                addToCart(item); // Add item to the cart using the context method
+                addToCart(item);
                 setAddedToCart(true);
+
             }
         };
-        // const imageSource = item.image ? { uri: item.image } : require('./assets/menuitem1.png');
+
 
         return (
             <TouchableOpacity style={styles.menuItemCard} onPress={() => handleMenuItemPress(item)}>
                 <View style={styles.itemImageContainer}>
-                    {/* Displaying images for all items */}
-                    {item.itemList.map(menuItem => (
-                        <Image
-                            key={menuItem._id}
-                            source={{ uri: menuItem.image }}
-                            style={styles.itemImage}
-                        />
-                    ))}
+                    <Image
+                        source={{ uri: item.image }}
+                        style={styles.itemImage}
+                    />
                 </View>
                 <View style={styles.itemDetails}>
-                    {/* Displaying names for all items */}
-                    {item.itemList.map(menuItem => (
-                        <View key={menuItem._id}>
-                            <Text style={styles.itemName}>{menuItem.name}</Text>
-                            <Text style={styles.itemPrice}>{menuItem.price}</Text>
-                            <Text style={styles.itemDescription}>{menuItem.description}</Text>
-                        </View>
-                    ))}
+                    <View>
+                        <Text style={styles.itemName}>{item.name}</Text>
+                        <Text style={styles.itemPrice}>{item.price}</Text>
+                        <Text style={styles.itemDescription}>{item.description}</Text>
+                    </View>
                 </View>
                 <TouchableOpacity
                     onPress={addToCartHandler}
@@ -146,20 +127,35 @@ const RestaurantMenu = ({ navigation, route }) => {
         );
     };
 
+    // Group menu items by category
+    // Group menu items by category
+    // Group menu items by category
+    const groupedMenuItems = menuItems.reduce((acc, item) => {
+        const categoryTitle = item.categoryTitle || 'Uncategorized'; // Default category title if not provided
+        if (!acc[categoryTitle]) {
+            acc[categoryTitle] = [];
+        }
+        acc[categoryTitle] = [...acc[categoryTitle], ...item.itemList];
+        return acc;
+    }, {});
+
+
+
     return (
         <View style={styles.container}>
             <Header navigation={navigation} />
             <View style={styles.content}>
-                {menuItems.length === 0 && <Text>No menu items available.</Text>}
+                {Object.entries(groupedMenuItems).map(([category, items]) => (
+                    <View key={category}>
+                        <Text style={styles.categoryHeading}>{category}</Text>
+                        <FlatList
+                            data={items}
+                            renderItem={renderMenuItem}
+                            keyExtractor={(item) => item._id}
 
-                <FlatList
-                    data={menuItems}
-
-                    renderItem={renderMenuItem}
-                    keyExtractor={(item) => item._id} // Assuming each item has a unique _id
-
-                    contentContainerStyle={styles.menuList}
-                />
+                        />
+                    </View>
+                ))}
             </View>
             <Footer navigation={navigation} activeIcon="home" />
 
@@ -169,7 +165,7 @@ const RestaurantMenu = ({ navigation, route }) => {
                     closeModal={() => { setAddedToCart(false); setSelectedItem(null); }}
                 />
             )}
-        </View >
+        </View>
     );
 };
 
@@ -177,31 +173,11 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fbf7f5',
         flex: 1,
-
-    },
-    restaurantHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
-    },
-    restaurantLogo: {
-        width: 40,
-        height: 40,
-        marginRight: 10,
-    },
-    restaurantName: {
-        fontSize: 18,
-        fontWeight: 'bold',
     },
     content: {
         flex: 1,
         paddingHorizontal: 20,
         paddingTop: 20,
-    },
-    menuList: {
-        paddingBottom: 20,
     },
     menuItemCard: {
         flexDirection: 'row',
@@ -240,16 +216,19 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
     },
-    addToCartButton: {
-        backgroundColor: '#eb5b53',
-        borderRadius: 20,
-        padding: 10,
-    },
     disabledButton: {
         backgroundColor: 'grey',
         opacity: 0.5,
     },
-
+    categoryHeading: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginTop: 20,
+        marginBottom: 10,
+    },
+    horizontalMenuList: {
+        paddingBottom: 10,
+    },
 });
 
 export default RestaurantMenu;

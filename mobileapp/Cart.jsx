@@ -9,33 +9,28 @@ import NotificationModal from './NotificationModal';
 import { OrderContext } from './OrderContext';
 import OrderStatus from './OrderStatus';
 import QRScanContext from './QRScanContext';
+
 const Cart = ({ navigation }) => {
     const { cartItems, setCartItems } = useCart();
     const { ongoingOrder, placeOrder } = useContext(OrderContext);
     const [orderPlaced, setOrderPlaced] = useState(false);
 
-
     const removeFromCart = (id) => {
-        // Remove item logic
-        setCartItems(cartItems.filter(item => item.id !== id));
+        setCartItems(cartItems.filter(item => item._id !== id)); // Adjust filtering based on the ID property of cart items
     };
 
-
     const increaseQuantity = (id) => {
-        // Increment quantity logic using cart context
         const updatedCartItems = cartItems.map(item =>
-            item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+            item._id === id ? { ...item, quantity: item.quantity + 1 } : item
         );
-        // Update cart items
         setCartItems(updatedCartItems);
     };
 
     const decreaseQuantity = (id) => {
-        const itemIndex = cartItems.findIndex(item => item.id === id);
+        const itemIndex = cartItems.findIndex(item => item._id === id);
         if (itemIndex !== -1) {
             const updatedCartItems = [...cartItems];
             if (updatedCartItems[itemIndex].quantity > 1) {
-                // Decrement quantity if greater than 1
                 updatedCartItems[itemIndex].quantity -= 1;
                 setCartItems(updatedCartItems);
             } else {
@@ -58,23 +53,15 @@ const Cart = ({ navigation }) => {
                     { cancelable: true }
                 );
             }
-            // Recalculate total bill after modifying cart items
-            const updatedTotalPrice = calculateTotalPrice(updatedCartItems);
-
         }
     };
 
-
     const calculateTotalPrice = () => {
-        // Calculate total price logic using cart context
-        return cartItems.reduce((total, item) => {
-            const numericPrice = parseFloat(item.price.replace(/[^0-9.-]+/g, ''));
-            return total + numericPrice * item.quantity;
-        }, 0);
+        return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
     };
 
     const handlePlaceOrder = () => {
-        placeOrder(); // Updating the context when the order is placed
+        placeOrder();
         setOrderPlaced(true);
         setTimeout(() => {
             setOrderPlaced(false);
@@ -82,42 +69,30 @@ const Cart = ({ navigation }) => {
         navigation.navigate('OrderStatus');
     };
 
-
-    const renderCartItem = ({ item }) => {
-
-
-
-
-        // Extract numeric and non-numeric values
-        const [, nonNumericValue, numericValue] = item.price.match(/([^0-9]+)([0-9]+)/);
-
-
-        return (
-            <View style={styles.cartItem}>
-                <Image source={item.image} style={styles.itemImage} />
-                <View style={styles.itemDetails}>
-                    <Text style={styles.itemName}>{item.name}</Text>
-                    <Text style={styles.itemPrice}>Price: {item.price}</Text>
-                    <View style={styles.quantityContainer}>
-                        <TouchableOpacity onPress={() => decreaseQuantity(item.id)}>
-                            <AntDesign name="minus" size={20} color="#000" />
-                        </TouchableOpacity>
-                        <Text style={styles.itemQuantity}>{item.quantity}</Text>
-                        <TouchableOpacity onPress={() => increaseQuantity(item.id)}>
-                            <AntDesign name="plus" size={20} color="#000" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                <View style={styles.itemDelete}>
-                    <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-                        <AntDesign name="close" size={24} color="red" />
+    const renderCartItem = ({ item }) => (
+        console.log(item),
+        <View style={styles.cartItem}>
+            <Image source={{ uri: item.image }} style={styles.itemImage} />
+            <View style={styles.itemDetails}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemPrice}>Price: ${item.price}</Text>
+                <View style={styles.quantityContainer}>
+                    <TouchableOpacity onPress={() => decreaseQuantity(item._id)}>
+                        <AntDesign name="minus" size={20} color="#000" />
+                    </TouchableOpacity>
+                    <Text style={styles.itemQuantity}>{item.quantity}</Text>
+                    <TouchableOpacity onPress={() => increaseQuantity(item._id)}>
+                        <AntDesign name="plus" size={20} color="#000" />
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.totalPrice}>Total: {nonNumericValue}{numericValue * item.quantity}</Text>
             </View>
-        );
-    };
+            <TouchableOpacity style={styles.itemDelete} onPress={() => removeFromCart(item._id)}>
+                <AntDesign name="close" size={24} color="red" />
+            </TouchableOpacity>
+            <Text style={styles.totalPrice}>Total: ${item.price * item.quantity}</Text>
+        </View>
+    );
+
     return (
         <View style={styles.container}>
             <Header navigation={navigation} />
@@ -126,14 +101,18 @@ const Cart = ({ navigation }) => {
                     <FlatList
                         data={cartItems}
                         renderItem={renderCartItem}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item._id} // Use a combination of item ID and index for uniqueness
                         contentContainerStyle={styles.cartList}
                     />
                     <View style={styles.totalContainer}>
                         <Text style={styles.totalText}>
                             {cartItems.length > 0 ? `Total Bill: $${calculateTotalPrice()}` : ''}
                         </Text>
-                        <TouchableOpacity style={styles.orderButton} onPress={handlePlaceOrder} disabled={cartItems.length === 0}>
+                        <TouchableOpacity
+                            style={styles.orderButton}
+                            onPress={handlePlaceOrder}
+                            disabled={cartItems.length === 0}
+                        >
                             <Text style={styles.orderButtonText}>Place Order</Text>
                         </TouchableOpacity>
                         {orderPlaced && (
@@ -150,10 +129,12 @@ const Cart = ({ navigation }) => {
                 </View>
             )}
             <Footer navigation={navigation} activeIcon="shoppingcart" />
-
-        </View >
+        </View>
     );
 };
+
+
+
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fbf7f5',
@@ -212,7 +193,7 @@ const styles = StyleSheet.create({
         padding: 20,
         alignItems: 'center',
         position: 'absolute',
-        bottom: 35,
+        bottom: 80,
         left: 0,
         right: 0,
     },
