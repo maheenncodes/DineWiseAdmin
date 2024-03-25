@@ -1,35 +1,23 @@
+// QRScanner.js
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image, Animated } from 'react-native';
-import Footer from './Footer';
-import Header from './Header';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import QRScanContext from './QRScanContext';
 
-const QRScanner = ({ navigation, route }) => {
-    const { isScanned, setIsScanned, scannedRestaurant } = useContext(QRScanContext);
+const QRScanner = ({ navigation }) => {
+    const { handleScan } = useContext(QRScanContext);
 
+    const restaurantId = '65f6b800ebfe51ea62ba5e45';
+    const tableId = '65fbab5aa1734426bf68554c';
 
-    const handleScan = () => {
-        setIsScanned(true);
-        // Set the scanned restaurant details here
-
-        navigation.navigate('RestaurantMenu', { restaurant: scannedRestaurant });
-
-
+    const handleScanPress = () => {
+        handleScan(restaurantId, tableId);
+        navigation.navigate('RestaurantMenu'); // Assuming navigation to 'RestaurantMenu' after scan
     };
 
-
-
     return (
-        <View style={styles.scanQRContainer}>
-
-            <Image
-                source={require('./assets/scanqr.png')}
-                style={styles.qrCodeImage}
-                resizeMode="contain"
-            />
-            <Text style={styles.scanQRText}>Simulated QR Code Scanner</Text>
-            <TouchableOpacity style={styles.scanButton} onPress={() => handleScan()}>
-                <Text style={styles.scanButtonText}>Scan</Text>
+        <View style={styles.container}>
+            <TouchableOpacity style={styles.scanButton} onPress={handleScanPress}>
+                <Text style={styles.scanButtonText}>Scan QR Code</Text>
             </TouchableOpacity>
         </View>
     );
@@ -37,26 +25,9 @@ const QRScanner = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fbf7f5',
-        flex: 1,
-
-    },
-    scanQRContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 20,
-    },
-    qrCodeImage: {
-        width: '70%',
-        height: '30%',
-        marginBottom: 20,
-    },
-    scanQRText: {
-        fontSize: 18,
-        textAlign: 'center',
-        marginBottom: 20,
-        color: '#333',
     },
     scanButton: {
         backgroundColor: '#eb5b53',
@@ -70,6 +41,5 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 });
-
 
 export default QRScanner;
