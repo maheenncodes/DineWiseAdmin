@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 const Token = require("../models/tokenModel");
+const Restaurant = require("../models/restuarantsModel");
 // token for each user session
 const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: "1d" });
@@ -353,6 +354,18 @@ const resetPassword = asyncHandler(async (req, res) => {
   });
 });
 
+const getRestaurant = asyncHandler(async (req, res) => {
+  const { userId } = req.query;
+  const restaurant = await Restaurant.findOne({ admin: userId });
+  if (restaurant) {
+    res.status(200).json(
+      restaurant
+    );
+  }
+  else {
+    res.status(400).json({ message: "No Restaurant belongs to this user" })
+  }
+});
 
 module.exports = {
   registerUser,
@@ -364,4 +377,5 @@ module.exports = {
   changePassword,
   forgotPassword,
   resetPassword,
+  getRestaurant
 }
