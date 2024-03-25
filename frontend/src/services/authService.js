@@ -97,6 +97,18 @@ export const registerRestaurant = async (restaurantData) => {
 };
 
 
+export const getRestaurant = async (adminId) => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/api/users/getRestaurant`, {
+      params: { userId: adminId },
+      withCredentials: true,
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error; // You can handle errors in the calling function
+  }
+};
 
 // Login User
 export const loginUser = async (userData) => {

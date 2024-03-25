@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Login from "./pages/auth/Login";
@@ -29,6 +29,7 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const dispatch = useDispatch();
+  const [restaurantResponse, setRestaurantResponse] = useState(null);
 
   useEffect(() => {
     async function loginStatus() {
@@ -43,8 +44,8 @@ function App() {
       <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login setRestaurantResponse={setRestaurantResponse} />} />
+        <Route path="/register" element={<Register setRestaurantResponse={setRestaurantResponse}/>} />
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/resetpassword/:resetToken" element={<Reset />} />
 
@@ -53,7 +54,7 @@ function App() {
           element={
             <Sidebar>
               <Layout>
-                <Dashboard />
+                <Dashboard restaurantResponse={restaurantResponse} />
               </Layout>
             </Sidebar>
           }
@@ -123,7 +124,7 @@ function App() {
           element={
             <Sidebar>
               <Layout>
-                <Profile />
+                <Profile restaurantResponse={restaurantResponse}/>
               </Layout>
             </Sidebar>
           }

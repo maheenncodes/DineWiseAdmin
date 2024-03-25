@@ -19,9 +19,9 @@ const initialState = {
     logo: "",
     openingTime: null,
     closingTime: null,
-    adminName: "", // Add adminName field to store admin's name
+    _id: "",
   },
-  restaurantId: null,
+  
 };
 
 const authSlice = createSlice({
@@ -44,10 +44,12 @@ const authSlice = createSlice({
       state.user.photo = profile.photo;
     },
     SET_RESTAURANT(state, action) {
-      state.restaurant = action.payload;
-    },
-    SET_RESTAURANT_ID(state, action) {
-      state.restaurantId = action.payload;
+      const profile = action.payload;
+      state.restaurant.name = profile.name;
+      state.restaurant._id = profile.email;
+      state.user.phone = profile.phone;
+      state.user.bio = profile.bio;
+      state.user.photo = profile.photo;
     },
     SET_ADMIN_NAME(state, action) {
       state.restaurant.adminName = action.payload;

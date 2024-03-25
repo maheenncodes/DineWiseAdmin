@@ -3,10 +3,10 @@ import styles from "./auth.module.scss";
 import { TiUserAddOutline } from "react-icons/ti";
 import Card from "../../components/card/Card";
 import { toast } from "react-toastify";
-import { registerUser, registerRestaurant, validateEmail } from "../../services/authService";
+import { getRestaurant, registerUser, registerRestaurant, validateEmail } from "../../services/authService";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authslice";
+import { SET_LOGIN, SET_NAME, SET_RESTAURANT } from "../../redux/features/auth/authslice";
 import Loader from "../../components/loader/Loader";
 import heroImg from "../../assets/inventory.png";
 import { RiProductHuntLine } from "react-icons/ri";
@@ -23,7 +23,7 @@ const initialState = {
 
 
 
-const Register = () => {
+const Register = ({ setRestaurantResponse }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -44,9 +44,7 @@ const Register = () => {
   const Register = async (e) => {
     e.preventDefault();
     
-    if (!image) {
-      return toast.error("Please select an image");
-    }
+
   
     if (!name || !email || !password) {
       return toast.error("All fields are required");
@@ -73,7 +71,7 @@ const Register = () => {
       const adminData = await registerUser(userData);
       console.log(adminData);
      
-
+      
       const restaurantData = {
         name: adminData.name,
         phoneNo : "+92", 
@@ -81,7 +79,7 @@ const Register = () => {
         closingTime: new Date(),
         openingTime: new Date(),
         admin: adminData._id,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png",
+        image: image,
         
       };
 
@@ -92,6 +90,10 @@ const Register = () => {
         await dispatch(SET_LOGIN(true));
         await dispatch(SET_NAME(adminData.name)); // Assuming adminData contains the registered admin's information
         navigate("/dashboard");
+        const restaurantResponse = await getRestaurant(adminData._id);
+        setRestaurantResponse(restaurantResponse);
+        console.log(restaurantResponse);
+        //dispatch(SET_RESTAURANT(restaurantResponse));
       } else {
         toast.error("Error ");
       }
@@ -125,6 +127,8 @@ const Register = () => {
                 <h2>Register</h2>
 
                 <form onSubmit={Register}>
+
+                  
                   <input
                     type="text"
                     placeholder="Name"
@@ -140,6 +144,11 @@ const Register = () => {
                     name="email"
                     value={email}
                     onChange={handleInputChange}
+                  />1
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
                   />
                   <input
                     type="password"

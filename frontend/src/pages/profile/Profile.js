@@ -8,7 +8,7 @@ import { SET_NAME, SET_USER } from "../../redux/features/auth/authslice";
 import { getUser } from "../../services/authService";
 import "./Profile.scss";
 
-const Profile = () => {
+const Profile = ({ restaurantResponse }) => {
   useRedirectLoggedOutUser("/login");
   const dispatch = useDispatch();
 
@@ -22,12 +22,13 @@ const Profile = () => {
       const data = await getUser();
       console.log(data);
 
-      setProfile(data);
+      setProfile(restaurantResponse);
       setIsLoading(false);
       await dispatch(SET_USER(data));
       await dispatch(SET_NAME(data.name));
     }
     getUserData();
+    console.log(restaurantResponse);
   }, [dispatch]);
 
   return (
@@ -39,20 +40,23 @@ const Profile = () => {
         ) : (
           <div className="profile">
             <span className="profile-photo">
-              <img src={profile?.photo} alt="profilepic" />
+              <img src={profile?.logo} alt="profilepic" />
             </span>
             <span className="profile-data">
               <p>
                 <b>Name : </b> {profile?.name}
               </p>
               <p>
-                <b>Email : </b> {profile?.email}
+                <b>Phone : </b> {profile?.phoneNo}
               </p>
               <p>
-                <b>Phone : </b> {profile?.phone}
+                <b>Bio : </b> {profile?.description}
               </p>
               <p>
-                <b>Bio : </b> {profile?.bio}
+                <b>Openning Time : </b> {profile?.openingTime}
+              </p>
+              <p>
+                <b>Closing Time : </b> {profile?.closingTime}
               </p>
               <div>
                 <Link to="/edit-profile">

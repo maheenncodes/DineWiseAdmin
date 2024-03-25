@@ -6,7 +6,7 @@ import useRedirectLoggedOutUser from "../../customHook/useRedirectLoggedOutUser"
 import { selectIsLoggedIn } from "../../redux/features/auth/authslice";
 import { fetchMenuDetails } from "../../services/restaurantService"; // Import fetchMenuDetails function
 
-const Dashboard = () => {
+const Dashboard = ({ restaurantResponse }) => {
   useRedirectLoggedOutUser("/login");
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(selectIsLoggedIn);
@@ -15,7 +15,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const details = await fetchMenuDetails("65fedf23aeb13eca509bcdaf"); // Replace with actual restaurant ID
+        const details = await fetchMenuDetails(restaurantResponse._id); // Replace with actual restaurant ID
         setMenuDetails(details);
       } catch (error) {
         console.error("Error fetching menu details:", error.message);

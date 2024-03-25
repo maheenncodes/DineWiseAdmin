@@ -7,7 +7,7 @@ import Card from "../../components/card/Card";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { loginUser, validateEmail } from "../../services/authService";
+import { loginUser, validateEmail, getRestaurant } from "../../services/authService";
 import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authslice";
 import Loader from "../../components/loader/Loader";
 import heroImg from "../../assets/inventory.png";
@@ -20,7 +20,7 @@ const initialState = {
   password: "",
 };
 
-const Login = () => {
+const Login = ({ setRestaurantResponse } ) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +52,10 @@ const Login = () => {
       const data = await loginUser(userData);
       await dispatch(SET_LOGIN(true));
       await dispatch(SET_NAME(data.name));
+      console.log(data._id);
+      const restaurantResponse = await getRestaurant(data._id);
+      setRestaurantResponse(restaurantResponse);
+      console.log(restaurantResponse);
       navigate("/dashboard");
       setIsLoading(false);
     } catch (error) {
