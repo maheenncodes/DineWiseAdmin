@@ -25,7 +25,7 @@ const AllRestaurants = ({ navigation }) => {
         return;
       }
 
-      console.log('User token:', user.token)
+
       // Include the token in the request headers
       const config = {
         headers: {
@@ -35,9 +35,9 @@ const AllRestaurants = ({ navigation }) => {
 
       // Make the authenticated request to fetch restaurants
       const response = await axios.get(`${API_BASE_URL}/api/restaurants/view_restaurants_list`, config);
-      console.log('Restaurants fetched:', response.data);
+
       setRestaurants(response.data);
-      console.log('Restaurants fetched:', response.data);
+
     } catch (error) {
       console.error('Error fetching restaurants:', error.message);
       // Detailed error handling
@@ -58,15 +58,17 @@ const AllRestaurants = ({ navigation }) => {
 
 
 
-  const navigateToMenu = (restaurantId) => {
-    navigation.navigate('RestaurantMenu', { restaurantId });
+  const navigateToMenu = (item) => {
+
+    navigation.navigate('RestaurantMenu', { restaurant: item });
   };
+
 
   const renderRestaurantItem = ({ item }) => {
     const imageUrl = item.logo ? { uri: item.logo } : { uri: 'default_image_uri_here' };
 
     return (
-      <TouchableOpacity style={styles.restaurantCard} onPress={() => navigateToMenu(item._id)}>
+      <TouchableOpacity style={styles.restaurantCard} onPress={() => navigateToMenu(item)}>
         <Image source={{ uri: imageUrl }} style={styles.restaurantImage} resizeMode="cover" />
         <Text style={styles.restaurantName}>{item.name}</Text>
         <Text style={styles.restaurantDescription}>Timings: {item.openingHours} - {item.closingHours}</Text>

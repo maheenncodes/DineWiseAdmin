@@ -9,6 +9,9 @@ import { useCart } from './CartContext';
 import NotificationModal from './NotificationModal';
 import QRScanContext from './QRScanContext';
 import { Alert } from 'react-native';
+import { AuthContext } from './authcontext'; // Import AuthContext
+import axios from 'axios'; // Import axios for making HTTP requests
+const API_BASE_URL = 'http://192.168.0.100:5000';
 
 const RestaurantMenu = ({ navigation, route }) => {
     const { restaurant } = route.params;
@@ -17,6 +20,7 @@ const RestaurantMenu = ({ navigation, route }) => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [addedToCart, setAddedToCart] = useState(false);
     const [menuItems, setMenuItems] = useState([]); // State to store fetched menu items
+    const { user } = useContext(AuthContext); // Access user authentication state from context
 
     const fetchMenuDetails = async (restaurantId) => {
         try {
@@ -25,7 +29,7 @@ const RestaurantMenu = ({ navigation, route }) => {
                 return;
             }
 
-            console.log('User token:', user.token);
+
             // Include the token in the request headers
             const config = {
                 headers: {
@@ -35,8 +39,10 @@ const RestaurantMenu = ({ navigation, route }) => {
 
             // Make request to fetch menu details for the given restaurant
             const response = await axios.get(`${API_BASE_URL}/api/restaurants/view_menu_details?restaurantId=${restaurantId}`, config);
-            // Navigate to the Menu screen with the fetched menu details
-            navigation.navigate('MenuScreen', { menuDetails: response.data });
+
+            // Assuming the response data is an array of menu items
+            setMenuItems(response.data); // Update the menu items state with the fetched data
+
         } catch (error) {
             console.error('Error fetching menu details:', error.message);
             // Handle error
@@ -44,9 +50,12 @@ const RestaurantMenu = ({ navigation, route }) => {
     };
 
 
+
     useEffect(() => {
+
         if (restaurant && restaurant._id) {
-            fetchMenuDetails();
+
+            fetchMenuDetails(restaurant._id);
         }
     }, [restaurant]);
     useEffect(() => {
@@ -120,16 +129,27 @@ const RestaurantMenu = ({ navigation, route }) => {
         };
         // const imageSource = item.image ? { uri: item.image } : require('./assets/menuitem1.png');
 
-
         return (
             <TouchableOpacity style={styles.menuItemCard} onPress={() => handleMenuItemPress(item)}>
                 <View style={styles.itemImageContainer}>
-                    <Image source={item.image} style={styles.itemImage} />
+                    {/* Displaying images for all items */}
+                    {item.itemList.map(menuItem => (
+                        <Image
+                            key={menuItem._id}
+                            source={{ uri: menuItem.image }}
+                            style={styles.itemImage}
+                        />
+                    ))}
                 </View>
                 <View style={styles.itemDetails}>
-                    <Text style={styles.itemName}>{item.name}</Text>
-                    <Text style={styles.itemPrice}>{item.price}</Text>
-                    <Text style={styles.itemDescription}>{item.description}</Text>
+                    {/* Displaying names for all items */}
+                    {item.itemList.map(menuItem => (
+                        <View key={menuItem._id}>
+                            <Text style={styles.itemName}>{menuItem.name}</Text>
+                            <Text style={styles.itemPrice}>{menuItem.price}</Text>
+                            <Text style={styles.itemDescription}>{menuItem.description}</Text>
+                        </View>
+                    ))}
                 </View>
                 <TouchableOpacity
                     onPress={addToCartHandler}
@@ -144,8 +164,6 @@ const RestaurantMenu = ({ navigation, route }) => {
         );
     };
 
-
-
     return (
         <View style={styles.container}>
             <Header navigation={navigation} />
@@ -154,6 +172,7 @@ const RestaurantMenu = ({ navigation, route }) => {
 
                 <FlatList
                     data={menuItems}
+
                     renderItem={renderMenuItem}
                     keyExtractor={(item) => item._id} // Assuming each item has a unique _id
 
