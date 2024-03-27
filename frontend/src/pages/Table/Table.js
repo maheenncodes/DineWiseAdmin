@@ -26,6 +26,7 @@ const staffMembers = [
     },
   ];
 
+
 const Table = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();

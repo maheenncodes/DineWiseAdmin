@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { registerUser, validateEmail } from "../../services/authService";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authslice";
 import "./Order.scss";
 import OrderCard from "../../components/orders/OrderCard";
+import Cookies from 'js-cookie';
+
 
 const initialState = {
     name: "",
@@ -14,62 +14,61 @@ const initialState = {
     role: "staff", // Default role
 };
 
-const staffMembers = [
-    {
-      name: "John Doe",
-      photo: "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small/beautiful-woman-avatar-character-icon-free-vector.jpg",
-    },
-    {
-      name: "Jane Smith",
-      photo: "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small/beautiful-woman-avatar-character-icon-free-vector.jpg",
-    },
-  ];
-
 const Order = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setformData] = useState(initialState);
-    const [showModal, setShowModal] = useState(false);
+    const [orders, setOrders] = useState([]); // State to store fetched orders
 
-    const { name, email, password, role } = formData;
+    useEffect(() => {
+        const fetchOrders = async () => {
+            setIsLoading(true);
+            try {
+                const authToken = Cookies.get('token');
+                console.log(authToken);
 
+                const response = await fetch("http://localhost:5000/api/orders/view_all", {
+                    //get token from local storage using getItem
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`, // Include the token in the Authorization header
+                        'Content-Type': 'application/json'
+                      }
+                });
+                if (!response.ok) {
+                    throw new Error('Could not fetch orders');
+                }
+                const data = await response.json();
+                setOrders(data); // Assuming the response is an array of orders
+                setIsLoading(false);
+            } catch (error) {
+                setIsLoading(false);
+                toast.error(error.message || 'Failed to fetch orders');
+            }
+        };
 
-    
-
-    
+        fetchOrders();
+    }, []);
 
     return (
-        <div >
-
-            
-
+        <div>
             <div className="--flex-center --mt">
-                    <h3>Orders</h3>
+                <h3>Orders</h3>
             </div>
-            
-            
-            
-             
-           
-            <div className="viewStaff"></div>
-
-           <div className="--flex-center" style={{ width: "100%" }}>
+            <div className="--flex-center" style={{ width: "100%" }}>
                 <div className="staff-list --mt --flex-dir-column --justify-center --width-100">
-                    {/* Each Staff Render */}
-                    {staffMembers.map((user, index) => (
-                        <div key={index} className="--width-100  --flex-center">
-                            <OrderCard user={user} />
-                        </div>
-                    ))}
+                    {isLoading ? (
+                        <p>Loading...</p>
+                    ) : (
+                        orders.map((order, index) => (
+                            <div key={index} className="--width-100 --flex-center">
+                                <OrderCard user={order} />
+                            </div>
+                        ))
+                    )}
                 </div>
-            
-        </div>
-
-
-
-
-
+            </div>
         </div>
     );
 };

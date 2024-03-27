@@ -6,6 +6,7 @@ import { AiOutlineEye } from "react-icons/ai";
 import Search from "../../search/Search";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { useNavigate } from 'react-router-dom';
 
 const ProductList = ({ products }) => {
   const shortenText = (text, n) => {
@@ -16,6 +17,36 @@ const ProductList = ({ products }) => {
     return text;
   };
 
+  const navigate = useNavigate();
+
+  const handlenavigate = (item) => {
+    try {
+      navigate(`/product-detail/${item._id}`);
+    } catch (error) {
+      console.log(error);
+    }
+    console.log(item);
+  };
+
+  const delProduct = (id) => {
+    console.log(id);
+
+    fetch(`http://localhost:5000/api/products/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        // dispatch(getProducts());
+      })
+      .catch((err) => console.log(err));
+  };
+
   const confirmDelete = (id) => {
     confirmAlert({
       title: "Delete Product",
@@ -23,11 +54,11 @@ const ProductList = ({ products }) => {
       buttons: [
         {
           label: "Delete",
-          // onClick: () => delProduct(id),
+          onClick: () => delProduct(id),
         },
         {
           label: "Cancel",
-          // onClick: () => alert('Click No')
+          onClick: () => alert('Click No')
         },
       ],
     });
@@ -75,21 +106,37 @@ const ProductList = ({ products }) => {
                                 <AiOutlineEye
                                   size={25}
                                   color={"black"}
-                                  // onClick={}
+                                  onClick={() =>{
+                                    try {
+                                      navigate(`/product-detail/${item._id}`);
+                                    } catch (error) {
+                                      console.log(error);
+                                    }
+                                    console.log(item);
+                                  }}
                                 />
                               </span>
                               <span>
                                 <FaEdit
                                   size={20}
                                   color={"black"}
-                                  // onClick={}
+                                  onClick={
+                                    () => {
+                                      try {
+                                        navigate(`/edit-product/${item._id}`);
+                                      } catch (error) {
+                                        console.log(error);
+                                      }
+                                      console.log(item);
+                                    }
+                                  }
                                 />
                               </span>
                               <span>
                                 <FaTrashAlt
                                   size={20}
                                   color={"red"}
-                                  // onClick={}
+                                  onClick={() => confirmDelete(item._id)}
                                 />
                               </span>
                             </td>

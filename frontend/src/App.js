@@ -31,6 +31,8 @@ function App() {
   const dispatch = useDispatch();
   const [restaurantResponse, setRestaurantResponse] = useState(null);
 
+  
+
   useEffect(() => {
     async function loginStatus() {
       const status = await getLoginStatus();
