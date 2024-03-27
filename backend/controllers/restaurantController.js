@@ -283,41 +283,50 @@ const viewAllCategories = asyncHandler(async (req, res) => {
         res.status(404).json({ message: 'Restaurant not found' });
     }
 })
+
 const viewMenuDetails = asyncHandler(async (req, res) => {
     const { restaurantId } = req.query;
-    const restaurant = await Restaurant.findById(restaurantId);
-    if (restaurant) {
-        const menuDetails = [];
-        for (const menuItem of restaurant.menu) {
-            const category = await Category.findById(menuItem);
-            if (category) {
-                const title = category.title;
-                const itemList = [];
-                for (const catItem of category.itemList) {
-                    const item = await Item.findById(catItem);
-                    itemList.push(item);
-                }
-                menuDetails.push({
-                    _id: category._id,
-                    categoryTitle: title,
-                    itemList:itemList
-                })
-            }
-            else {
-                res.status(404).json({message:"Category is not correct"});
-            }
+  
+    try {
+      const restaurant = await Restaurant.findById(restaurantId);
+      if (!restaurant) {
+        return res.status(404).json({ message: 'Restaurant not found' });
+      }
+  
+      const menuDetails = [];
+      for (const menuItem of restaurant.menu) {
+        const category = await Category.findById(menuItem);
+        if (!category) {
+          // Handle case where category is not found
+          console.error(`Category not found for menuItem: ${menuItem}`);
+          // Instead of returning an error response, continue to the next iteration
+          continue;
         }
-        if (menuDetails.length > 0) {
-            res.status(200).json(menuDetails);
+  
+        const itemList = [];
+        for (const catItem of category.itemList) {
+          const item = await Item.findById(catItem);
+          if (!item) {
+            return res.status(404).json({ message: 'Item not found' });
+          }
+          itemList.push(item);
         }
-        else {
-            res.status(200).json([]);
-        }
+  
+        menuDetails.push({
+          _id: category._id,
+          categoryTitle: category.title,
+          itemList: itemList,
+        });
+      }
+  
+      // Send menu details even if some categories were not found
+      res.status(200).json(menuDetails);
+    } catch (error) {
+      console.error('Error fetching menu details:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
     }
-    else {
-        res.status(404).json({ message: 'Restaurant not found' });
-    }
-})
+  });
+  
 const addRestaurantTable = asyncHandler(async (req, res) => {
     const { restaurantId } = req.query;
     const { tableNumber, capacity } = req.body;
@@ -379,7 +388,7 @@ const viewAllTables = asyncHandler(async (req, res) => {
                 tableDetails.push({
                     _id: table._id,
                     tableNumber: table.tableNumber,
-                    capacity: table.capacity,
+                    capacity: table.tableCapacity,
                     status: table.status,
                 })
             }

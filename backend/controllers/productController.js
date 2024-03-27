@@ -71,15 +71,16 @@ const getProducts = asyncHandler(async (req, res) => {
 const getProduct = asyncHandler(async (req, res) => {
   const product = await Item.findById(req.params.id);
   // if product doesnt exist
+  console.log(product);
   if (!product) {
     res.status(404);
     throw new Error("Product not found");
   }
   // Match Item to its restaurant
-  if (product.user.toString() !== req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
+  // if (product.user.toString() !== req.user.id) {
+  //   res.status(401);
+  //   throw new Error("User not authorized");
+  // }
   res.status(200).json(product);
 });
 
@@ -92,10 +93,10 @@ const deleteProduct = asyncHandler(async (req, res) => {
     throw new Error("Product not found");
   }
   // Match product to its user
-  if (product.user.toString() !== req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
+  // if (product.user.toString() !== req.user.id) {
+  //   res.status(401);
+  //   throw new Error("User not authorized");
+  // }
   await product.deleteOne(product._id);
   res.status(200).json({ message: "Product deleted." });
 });
@@ -113,10 +114,10 @@ const updateProduct = asyncHandler(async (req, res) => {
     throw new Error("Product not found");
   }
   // Match item to its user
-  if (product.user.toString() !== req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
+  // if (product.user.toString() !== req.user.id) {
+  //   res.status(401);
+  //   throw new Error("User not authorized");
+  // }
 
   // Handle Image upload
   let fileData = {};

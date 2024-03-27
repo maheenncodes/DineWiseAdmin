@@ -98,6 +98,7 @@ const ProductList = ({ products }) => {
                         {category.itemList.map((item, i) => (
                           <tr key={item._id}>
                             <td>{index * category.itemList.length + i + 1}</td>
+                            {console.log(item)}
                             <td>{item.name}</td>
                             <td>{category.categoryTitle}</td>
                             <td>{item.price}</td>

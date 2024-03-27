@@ -46,7 +46,9 @@ const deletesProduct = async (id) => {
 };
 // Get a Product
 const getProduct = async (id) => {
+  console.log(API_URL + id);
   const response = await axios.get(API_URL + id);
+  console.log(response.data);
   return response.data;
 };
 // Update Product

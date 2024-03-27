@@ -14,7 +14,7 @@ const initialState = {
     role: "staff", // Default role
 };
 
-const Order = () => {
+const Order = ({resturantId}) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -25,21 +25,16 @@ const Order = () => {
         const fetchOrders = async () => {
             setIsLoading(true);
             try {
-                const authToken = Cookies.get('token');
-                console.log(authToken);
-
-                const response = await fetch("http://localhost:5000/api/orders/view_all", {
+                const response = await fetch(`http://localhost:5000/api/orders/view_current_orders_restaurant?resturantId=${resturantId}`, {
                     //get token from local storage using getItem
                     method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`, // Include the token in the Authorization header
-                        'Content-Type': 'application/json'
-                      }
+                    credentials: "include"
                 });
                 if (!response.ok) {
                     throw new Error('Could not fetch orders');
                 }
                 const data = await response.json();
+                console.log(data);
                 setOrders(data); // Assuming the response is an array of orders
                 setIsLoading(false);
             } catch (error) {
@@ -65,6 +60,7 @@ const Order = () => {
                             <div key={index} className="--width-100 --flex-center">
                                 <OrderCard user={order} />
                             </div>
+                            
                         ))
                     )}
                 </div>

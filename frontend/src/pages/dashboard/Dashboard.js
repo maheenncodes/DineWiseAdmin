@@ -17,6 +17,7 @@ const Dashboard = ({ restaurantResponse }) => {
       try {
         const details = await fetchMenuDetails(restaurantResponse._id); // Replace with actual restaurant ID
         setMenuDetails(details);
+        console.log(details);
       } catch (error) {
         console.error("Error fetching menu details:", error.message);
       }

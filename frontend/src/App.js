@@ -106,7 +106,7 @@ function App() {
           element={
             <Sidebar>
               <Layout>
-                <Order />
+                <Order restaurantResponse={restaurantResponse}/>
               </Layout>
             </Sidebar>
           }
@@ -116,7 +116,7 @@ function App() {
           element={
             <Sidebar>
               <Layout>
-                <Table />
+                <Table restaurantResponse={restaurantResponse}/>
               </Layout>
             </Sidebar>
           }

@@ -9,7 +9,7 @@ const OrderCard = ({ user }) => {
 
         <div >
             <h2>{user.name}</h2>
-            <p>Email: {user.email}</p>
+            <p>Email: {user.status}</p>
         </div>
         
         <span className=" delete --mr">

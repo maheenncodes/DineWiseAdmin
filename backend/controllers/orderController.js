@@ -154,8 +154,7 @@ const changeStatus = asyncHandler(async (req, res) => {
 })
 const viewCurrentOrdersRestaurant = asyncHandler(async (req, res) => {
     const { restaurantId } = req.query;
-    const orders = await Order.find({ restaurantId: restaurantId, status: { $ne: 'completed' } });
-    console.log(orders);
+    const orders = await Order.find({});
     const ordersArray = [];
     if (orders) {
         for (const order of orders) {

@@ -73,7 +73,7 @@ export const deleteProduct = createAsyncThunk(
 
 // Get a product
 export const getProduct = createAsyncThunk(
-  "products/getProduct",
+  "http://localhost:5000/api/products",
   async (id, thunkAPI) => {
     try {
       return await productService.getProduct(id);
@@ -83,7 +83,7 @@ export const getProduct = createAsyncThunk(
           error.response.data &&
           error.response.data.message) ||
         error.message ||
-        error.toString();
+        error;
       console.log(message);
       return thunkAPI.rejectWithValue(message);
     }
