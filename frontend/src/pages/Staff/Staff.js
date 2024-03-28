@@ -30,13 +30,13 @@ const Staff = ( {restaurantResponse} ) => {
             setIsLoading(true);
             try {
                 const response = await fetch(`${BACKEND_URL}/api/restaurants/view_staff?restaurantId=${restaurantResponse._id}`, {
-                    credentials: 'include', // Important if your backend expects cookies for authentication
+                    credentials: 'include',
                   });
                 if (!response.ok) { 
                     throw new Error('Could not fetch staff members');
                 }
                 const data = await response.json();
-                setStaffMembers(data); // Assuming your backend returns an array of staff members
+                setStaffMembers(data);
                 setIsLoading(false);
             } catch (error) {
                 setIsLoading(false);
@@ -45,7 +45,7 @@ const Staff = ( {restaurantResponse} ) => {
         };
     
         fetchStaffMembers();
-    }, [staffMembers]);
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
