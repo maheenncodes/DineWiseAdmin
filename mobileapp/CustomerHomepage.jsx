@@ -1,21 +1,34 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, SafeAreaView, Image, FlatList, ScrollView } from 'react-native';
 import Header from './Header';
 import { AntDesign } from '@expo/vector-icons';
 import QRScanContext from './QRScanContext';
 import Footer from './Footer';
-
-
+import { AuthContext } from './authcontext'; // Import AuthContext
+import { fetchAllRestaurants } from './api-restaurant';
 const CustomerHomepage = ({ navigation }) => {
   const { isScanned, setIsScanned } = useContext(QRScanContext);
 
-  const popularRestaurants = [
-    { id: '1', name: 'Cafe Aylanto', image: require('./assets/poprest1.png') },
-    { id: '2', name: 'Qawali Lounge', image: require('./assets/poprest2.jpg') },
-    { id: '3', name: 'Cosa Nostra', image: require('./assets/poprest3.jpg') },
-    { id: '4', name: 'Rinas Kitchenette ', image: require('./assets/poprest4.jpg') },
-    // ... other restaurants
-  ];
+  const { user } = useContext(AuthContext); // Access user authentication state from context
+  const [restaurants, setRestaurants] = useState([]);
+
+  useEffect(() => {
+    if (user) {
+      fetchRestaurants();
+    } else {
+      console.error('User not logged in');
+    }
+  }, [user]);
+
+  const fetchRestaurants = async () => {
+    try {
+      const data = await fetchAllRestaurants(user.token); // Call fetchAllRestaurants function
+      setRestaurants(data);
+    } catch (error) {
+      console.error('Error fetching restaurants:', error.message);
+
+    }
+  };
 
   const popularDishes = [
     {
@@ -134,18 +147,19 @@ const CustomerHomepage = ({ navigation }) => {
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
-            data={popularRestaurants}
-            keyExtractor={(item) => item.id}
+            data={restaurants}
+            keyExtractor={(item) => item._id.toString()} // Convert id to string if it's not already a string
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => navigateToMenu(item)}>
-                <View style={styles.restaurantCard}>
-                  <Image source={item.image} style={styles.restaurantImage} />
+                <View style={styles.restaurantCard} key={item.id}>
+                  <Image source={{ uri: item.logo }} style={styles.restaurantImage} />
                   <Text style={styles.restName}>{item.name}</Text>
                 </View>
               </TouchableOpacity>
             )}
             contentContainerStyle={styles.restaurantList}
           />
+
         </View>
         <View style={styles.betweenComponents}>
 

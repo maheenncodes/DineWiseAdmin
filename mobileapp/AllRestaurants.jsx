@@ -9,7 +9,7 @@ import { fetchAllRestaurants } from './api-restaurant';
 const AllRestaurants = ({ navigation }) => {
   const { user } = useContext(AuthContext); // Access user authentication state from context
   const [restaurants, setRestaurants] = useState([]);
-  const API_BASE_URL = 'http://192.168.0.100:5000';
+
 
 
   useEffect(() => {
