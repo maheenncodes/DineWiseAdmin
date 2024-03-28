@@ -29,6 +29,8 @@ import MemberDetails from './MemberDetails';
 import CartScanQRScreen from './CartScanQRScreen';
 import UpdateUser from './Updateuser';
 import Welcome from './Welcome';
+
+
 const Stack = createNativeStackNavigator();
 
 function App() {

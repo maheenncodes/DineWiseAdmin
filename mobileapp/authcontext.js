@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
         const checkLoggedIn = async () => {
             const token = await AsyncStorage.getItem('token');
             if (token) {
-                console.log('loggedin check : User logged in:', userData);
+                console.log('User logged in:', token); // Corrected: Log the token instead of userData
                 // If token exists, set the user
                 setUser({ token });
             }
@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
 
         checkLoggedIn();
     }, []);
+
 
     const login = async (email, password) => {
         try {

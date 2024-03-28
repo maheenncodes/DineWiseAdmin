@@ -3,7 +3,7 @@ const Table = require("../models/tableModel");
 const Restaurant = require("../models/restuarantsModel");
 const Cart = require("../models/cartModel");
 const User = require("../models/userModel");
-const Item = require("../models/productModel"); 
+const Item = require("../models/productModel");
 const asyncHandler = require("express-async-handler");
 const addToTable = asyncHandler(async (req, res) => {
     const { restaurantId, tableId } = req.query;
@@ -13,11 +13,11 @@ const addToTable = asyncHandler(async (req, res) => {
         const order = await Order.create({
             restaurantId: restaurantId,
             tableId: tableId,
-            status:"new"
+            status: "new"
         })
         table.status = "booked"
         const cart = await Cart.create({
-            customerId:userId
+            customerId: userId
         })
         order.cartList.push(cart.id);
         await table.save();
@@ -29,11 +29,11 @@ const addToTable = asyncHandler(async (req, res) => {
         })
     }
     else {
-        const order = await Order.findOne({ restaurantId: restaurantId, tableId: tableId, status:{$ne:'completed'} })
-        if (order && order.cartList.length<table.tableCapacity) {
+        const order = await Order.findOne({ restaurantId: restaurantId, tableId: tableId, status: { $ne: 'completed' } })
+        if (order && order.cartList.length < table.tableCapacity) {
             for (const cart of order.cartList) {
                 const cartObj = await Cart.findById(cart);
-                if (cartObj.customerId==userId) {
+                if (cartObj.customerId == userId) {
                     res.status(200).json({
                         cartId: cartObj._id,
                         orderId: order._id,
@@ -42,7 +42,7 @@ const addToTable = asyncHandler(async (req, res) => {
                 }
             }
             const cart = await Cart.create({
-                customerId:userId
+                customerId: userId
             })
             order.cartList.push(cart.id);
             await order.save();
@@ -51,7 +51,7 @@ const addToTable = asyncHandler(async (req, res) => {
                 orderId: order._id,
                 message: "Customer added to order successfully."
             })
-        }        
+        }
     }
 })
 const placeOrder = asyncHandler(async (req, res) => {
@@ -69,8 +69,8 @@ const placeOrder = asyncHandler(async (req, res) => {
             quantity:2
         }
     ]
-    */ 
-    const order = await Order.findOne({ restaurantId: restaurantId, tableId: tableId, status: {$ne:'completed'} });
+    */
+    const order = await Order.findOne({ restaurantId: restaurantId, tableId: tableId, status: { $ne: 'completed' } });
     if (order) {
         for (const cart of order.cartList) {
             const cartObj = await Cart.findById(cart);
@@ -87,7 +87,7 @@ const placeOrder = asyncHandler(async (req, res) => {
                     else {
                         res.status(400).json({
                             message: "Not able to place the order."
-                        })                
+                        })
                     }
                 }
                 res.status(200).json({
@@ -119,14 +119,16 @@ const viewAllMembers = asyncHandler(async (req, res) => {
                     itemList.push({
                         name: itemObj.name,
                         price: itemObj.price,
-                        quantity:item.quantity
+                        quantity: item.quantity,
+                        image: itemObj.image
                     })
                 }
                 membersList.push({
                     user: user.name,
                     itemList: itemList,
                     totalPrice: cartObj.totalPrice,
-                    status:cartObj.status
+                    status: cartObj.status,
+                    photo: user.photo
                 })
             }
         }
@@ -144,8 +146,8 @@ const changeStatus = asyncHandler(async (req, res) => {
     if (order) {
         order.status = status;
         await order.save();
-        res.status(201).json({ 
-            message:"status changed successfully "
+        res.status(201).json({
+            message: "status changed successfully "
         })
     }
     else {
@@ -171,23 +173,23 @@ const viewCurrentOrdersRestaurant = asyncHandler(async (req, res) => {
                         itemList.push({
                             name: itemObj.name,
                             price: itemObj.price,
-                            quantity:item.quantity
+                            quantity: item.quantity
                         })
                     }
                     membersList.push({
                         user: user.name,
                         itemList: itemList,
                         totalPrice: cartObj.totalPrice,
-                        status:cartObj.status
+                        status: cartObj.status
                     })
                 }
             }
-            ordersArray.push({ table:table.tableNumber, status:order.status, membersList, totalPrice:order.totalPrice});
+            ordersArray.push({ table: table.tableNumber, status: order.status, membersList, totalPrice: order.totalPrice });
         }
-        res.status(200).json(ordersArray);   
+        res.status(200).json(ordersArray);
     }
     else {
-        res.status(400).json({ message: "No order is pending" });  
+        res.status(400).json({ message: "No order is pending" });
     }
 })
 module.exports = {

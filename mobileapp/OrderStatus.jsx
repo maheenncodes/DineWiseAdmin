@@ -11,10 +11,7 @@ const OrderStatus = ({ navigation }) => {
     const { cartItems } = useCart();
 
     const calculateTotalBill = () => {
-        return cartItems.reduce((total, item) => {
-            const numericPrice = parseFloat(item.price.replace(/[^0-9.-]+/g, ''));
-            return total + numericPrice * item.quantity;
-        }, 0);
+        return totalBill = cartItems.reduce((total, item) => total + item.price, 0).toFixed(2);
     };
 
     const handlePayBill = () => {

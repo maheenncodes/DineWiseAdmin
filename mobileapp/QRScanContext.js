@@ -3,7 +3,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 const QRScanContext = createContext();
-const API_BASE_URL = 'http://192.168.1.12:5000';
+const API_BASE_URL = 'http://192.168.18.68:5000';
 
 export const QRScanProvider = ({ children }) => {
     const [isScanned, setIsScanned] = useState(false);
@@ -21,6 +21,7 @@ export const QRScanProvider = ({ children }) => {
         staff: [],
         tables: []
     });
+    const [scannedTableId, setTableId] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
 
 
@@ -31,8 +32,7 @@ export const QRScanProvider = ({ children }) => {
             const restaurantData = restaurantResponse.data.restaurant;
 
             if (restaurantData) {
-                console.log("restaurantData", restaurantResponse.data.restaurant);
-                console.log("sr", scannedRestaurant)
+
                 setScannedRestaurant(restaurantData);
 
                 setIsScanned(true);

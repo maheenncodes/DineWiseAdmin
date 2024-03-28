@@ -1,3 +1,5 @@
+console.warn = () => { }; // Suppress all warnings
+
 import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';

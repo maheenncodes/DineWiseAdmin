@@ -19,7 +19,7 @@ const Welcome = ({ navigation }) => {
                     resizeMode="contain"
                 />
                 <Text style={styles.welcomeText}>Welcome to Restaurant "{scannedRestaurant.name}"</Text>
-                <Text style={styles.tableText}>Table "{scannedRestaurant.table}"</Text>
+
                 <TouchableOpacity style={styles.viewMenuButton} onPress={() => navigation.navigate('RestaurantMenu', scannedRestaurant._id)}>
                     <Text style={styles.viewMenuButtonText}>View Menu</Text>
                 </TouchableOpacity>

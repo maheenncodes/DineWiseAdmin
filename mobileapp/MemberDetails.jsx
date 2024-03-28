@@ -1,33 +1,34 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import Header from './Header';
 import Footer from './Footer';
 
 const MemberDetails = ({ navigation, route }) => {
     const { member } = route.params;
-    const orderedItems = member.orderedItems;
+    const orderedItems = member.itemList;
 
-    const totalBill = member.bill.toFixed(2); // Rounded to 2 decimal places
+    const totalBill = orderedItems.reduce((total, item) => total + item.price, 0).toFixed(2);
 
     return (
         <View style={styles.container}>
             <Header navigation={navigation} />
 
             <View style={styles.profileContainer}>
-                <Image source={member.image} style={styles.profileImage} />
+                <Image source={{ uri: member.photo }} style={styles.profileImage} />
                 <View style={styles.profileDetails}>
-                    <Text style={styles.profileName}>{member.name}</Text>
+                    <Text style={styles.profileName}>{member.user}</Text>
                 </View>
             </View>
             <ScrollView>
                 <View style={styles.orderDetails}>
                     <Text style={styles.orderTitle}>Ordered Items</Text>
-                    {orderedItems.map((item) => (
-                        <View style={styles.itemContainer} key={item.id}>
-                            <Image source={item.image} style={styles.foodIcon} />
+                    {orderedItems.map((item, index) => (
+                        <View style={styles.itemContainer} key={index}>
+                            <Image source={{ uri: item.image }} style={styles.foodIcon} />
                             <View style={styles.itemDetails}>
                                 <Text style={styles.itemName}>{item.name}</Text>
-                                <Text>${item.price}</Text>
+                                <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
+                                <Text style={styles.itemPrice}>Price: ${item.price}</Text>
                             </View>
                         </View>
                     ))}
@@ -45,7 +46,6 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fbf7f5',
         flex: 1,
-
     },
     totalBillContainer: {
         alignItems: 'center',
@@ -111,6 +111,14 @@ const styles = StyleSheet.create({
     itemName: {
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    itemQuantity: {
+        fontSize: 16,
+        color: '#555',
+    },
+    itemPrice: {
+        fontSize: 16,
+        color: '#555',
     },
 });
 
