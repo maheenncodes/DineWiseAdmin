@@ -45,7 +45,7 @@ const Staff = ( {restaurantResponse} ) => {
         };
     
         fetchStaffMembers();
-    }, []);
+    }, [staffMembers]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
