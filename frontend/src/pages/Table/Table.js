@@ -34,22 +34,26 @@ const Table = ({restaurantResponse}) => {
   const [formData, setformData] = useState(initialState);
   const [showModal, setShowModal] = useState(false);
   const [Tables, setTables] = useState([]);
+  const [QRcode , setQRcode] = useState([]);
 
   const { name, capacity } = formData;
 
   useEffect(() => {
-    // Fetch all tables from the database
     const fetchTables = async () => {
       try {
-        const data = await axios.get(`http://localhost:5000/api/restaurants/view_tables?restaurantId=65fedf23aeb13eca509bcdaf`,
-        { withCredentials: true }
+        const response = await axios.get(
+          `http://localhost:5000/api/restaurants/view_tables?restaurantId=${restaurantResponse}`,
+          { withCredentials: true }
         );
-        setTables(data.data);
+        setTables(response.data);
+        console.log(restaurantResponse);
+
       } catch (error) {
-        console.log(error);
+        console.error('Error fetching tables:', error);
       }
     };
-    fetchTables();
+
+    fetchTables(); // Call fetchTables inside useEffect
   }, []);
 
   const handleInputChange = (e) => {
@@ -115,7 +119,7 @@ const Table = ({restaurantResponse}) => {
           {/* Each Table Render */}
           {Tables.map((table, index) => (
             <div key={index} className="--width-100  --flex-center">
-              <TableCard table={table} />
+              <TableCard table={table} restaurantResponse={restaurantResponse}/>
             </div>
           ))}
         </div>

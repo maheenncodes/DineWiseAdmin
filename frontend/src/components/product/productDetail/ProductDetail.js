@@ -47,7 +47,7 @@ const ProductDetail = () => {
             <Card cardClass="group">
               {product?.image ? (
                 <img
-                  src={product.image.filePath}
+                  src={product.image}
                   alt={product.image.fileName}
                 />
               ) : (

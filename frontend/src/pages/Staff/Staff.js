@@ -1,123 +1,120 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { registerUser, validateEmail } from "../../services/authService";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authslice";
-import "./Staff.scss";
 import Modal from "../../components/staff/AddStaff";
 import StaffCard from "../../components/staff/StaffCard";
+import "./Staff.scss";
+import { fetchMenuDetails } from "../../services/restaurantService"; // Import fetchMenuDetails function
 
-const initialState = {
-    name: "",
-    email: "",
-    password: "",
-    role: "staff", // Default role
-};
+export const BACKEND_URL = "http://localhost:5000";
 
-const staffMembers = [
-    {
-      name: "John Doe",
-      photo: "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small/beautiful-woman-avatar-character-icon-free-vector.jpg",
-    },
-    {
-      name: "Jane Smith",
-      photo: "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small/beautiful-woman-avatar-character-icon-free-vector.jpg",
-    },
-  ];
 
-const Staff = () => {
+const Staff = ( {restaurantResponse} ) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const [formData, setformData] = useState(initialState);
+    // Initialize formData with default values
+    const [formData, setformData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        role: "staff",
+    });
     const [showModal, setShowModal] = useState(false);
+    const [staffMembers, setStaffMembers] = useState([]);
 
-    const { name, email, password, role } = formData;
+    useEffect(() => {
+        const fetchStaffMembers = async () => {
+            setIsLoading(true);
+            try {
+                console.log(restaurantResponse._id);
+                const response = await fetch(`${BACKEND_URL}/api/restaurants/view_staff?restaurantId=${restaurantResponse._id}`, {
+                    credentials: 'include', // Important if your backend expects cookies for authentication
+                  });
+                if (!response.ok) { 
+                    throw new Error('Could not fetch staff members');
+                }
+                const data = await response.json();
+                setStaffMembers(data); // Assuming your backend returns an array of staff members
+                console.log(data);
+                setIsLoading(false);
+            } catch (error) {
+                setIsLoading(false);
+                toast.error(error.message || 'Failed to fetch staff members');
+            }
+        };
+    
+        fetchStaffMembers();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setformData({ ...formData, [name]: value });
+        console.log(formData);
     };
 
-    const openModal = () => {
-        setShowModal(true);
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-    };
+    const openModal = () => setShowModal(true);
+    const closeModal = () => setShowModal(false);
 
     const registerStaff = async (e) => {
         e.preventDefault();
 
-        if (!name || !email || !password) {
+        if (!formData.name || !formData.email || !formData.password) {
             return toast.error("All fields are required");
         }
-        if (password.length < 6) {
+        if (formData.password.length < 6) {
             return toast.error("Passwords must be at least 6 characters");
         }
-        if (!validateEmail(email)) {
+        if (!validateEmail(formData.email)) {
             return toast.error("Please enter a valid email");
         }
 
-        const userData = {
-            name,
-            email,
-            password,
-            role: "staff", // Include role in user data
-        };
-
         setIsLoading(true);
         try {
-            const data = await registerUser(userData);
+            await registerUser(formData);
             toast.success("Staff added successfully");
-            setIsLoading(false);
-            closeModal(); // Close the modal after successful registration
+            setStaffMembers([...staffMembers, formData]); // Optionally update the list
+            closeModal();
         } catch (error) {
+            toast.error("An error occurred while adding the staff member");
+        } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div >
-
-            
-
+        <div>
             <div className="--flex-center --mt">
-                    <h3>Staff Member</h3>
+                <h3>Staff Member</h3>
             </div>
-            <button className="--btn --btn-primary --mt  " style={{ width: "18rem" }} onClick={openModal}>
-                    Add Staff Member
+            <button className="--btn --btn-primary --mt" style={{ width: "18rem" }} onClick={openModal}>
+                Add Staff Member
             </button>
-            
-            
-             
-           
-            <div className="viewStaff"></div>
-            <Modal className="Modal"
-                isOpen={showModal} // Pass isOpen prop to indicate whether the modal should be open or not
-                onClose={closeModal}
-                onSubmit={registerStaff}
-                formData={formData}
-                handleInputChange={handleInputChange}
-            />
-           <div className="--flex-center" style={{ width: "100%" }}>
+            {showModal && (
+                <Modal
+                    isOpen={showModal}
+                    onClose={closeModal}
+                    onSubmit={registerStaff}
+                    formData={formData}
+                    handleInputChange={handleInputChange}
+                />
+            )}
+
+            <div className="--flex-center" style={{ width: "100%" }}>
                 <div className="staff-list --mt --flex-dir-column --justify-center --width-100">
-                    {/* Each Staff Render */}
-                    {staffMembers.map((user, index) => (
-                        <div key={index} className="--width-100  --flex-center">
-                            <StaffCard user={user} />
-                        </div>
-                    ))}
+                    {isLoading ? (
+                        <p>Loading...</p>
+                    ) : (
+                        staffMembers.map((user, index) => (
+                            <div key={index} className="--width-100 --flex-center">
+                                <StaffCard restaurantId={restaurantResponse._id} user={user} />
+                            </div>
+                        ))
+                    )}
                 </div>
-            
-        </div>
-
-
-
-
-
+            </div>
         </div>
     );
 };

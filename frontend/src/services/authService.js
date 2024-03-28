@@ -1,8 +1,8 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
+// export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+export const BACKEND_URL = "http://localhost:5000";
 export const validateEmail = (email) => {
   return email.match(
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -38,7 +38,7 @@ const findUserRestaurantId = async () => {
 };
 
 // Register User
-export const registerUser = async (userData) => {
+export const registerUser = async (userData , restaurantId) => {
   try {
     const response = await axios.post(
       `${BACKEND_URL}/api/users/register`,
@@ -48,8 +48,15 @@ export const registerUser = async (userData) => {
     if (response.statusText === "OK") {
       toast.success("User Registered successfully");
     }
-    
-    return response.data;
+    const user = response.data;
+    console.log(user._id);
+    const userId = user._id;
+    const response2 = await axios.post(
+      `${BACKEND_URL}/api/restaurants/add_staff?restaurantId=${restaurantId}&userId=${userId}`,
+      { withCredentials: true }
+    );
+    console.log(response2.data);
+    return response2;
   } catch (error) {
     const message =
       (error.response && error.response.data && error.response.data.message) ||
