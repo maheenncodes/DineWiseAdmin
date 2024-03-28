@@ -9,7 +9,7 @@ const TableCard = ({ table , restaurantResponse }) => {
     const fetchQRCode = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/restaurants/get_qr_code?restaurantId=65fedf23aeb13eca509bcdaf&tableId=${table._id}`,
+          `http://localhost:5000/api/restaurants/get_qr_code?restaurantId=${restaurantResponse}&tableId=${table._id}`,
           { withCredentials: true }
         );
         setQR_Code(response.data);
@@ -20,6 +20,19 @@ const TableCard = ({ table , restaurantResponse }) => {
 
     fetchQRCode();
   }, [table._id]);
+
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/restaurants/delete_table?tableId=${table._id}&restaurantId=${restaurantResponse._id}`,
+        { withCredentials: true }
+      );
+      console.log(response);
+    } catch (error) {
+      console.error('Error deleting table:', error);
+    }
+  }
+
 
 
   return (
@@ -39,7 +52,7 @@ const TableCard = ({ table , restaurantResponse }) => {
             <FaEdit size={20} color={"red"} />
           </span>
           <span className="delete --mr">
-            <FaTrashAlt size={20} color={"red"} />
+            <FaTrashAlt size={20} color={"red"} onClick={handleDelete}/>
           </span>
         </div>
       </div>

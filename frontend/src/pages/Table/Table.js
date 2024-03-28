@@ -9,87 +9,68 @@ import Modal from "../../components/table/AddTable";
 import TableCard from "../../components/table/TableCard";
 import axios from "axios";
 
+
+
 const initialState = {
   name: "",
-  capacity: "", // Default role
+  capacity: "",
 };
 
-const Tables = [
-  {
-    name: "12",
-    photo:
-      "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small/beautiful-woman-avatar-character-icon-free-vector.jpg",
-  },
-  {
-    name: "10",
-    photo:
-      "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small/beautiful-woman-avatar-character-icon-free-vector.jpg",
-  },
-];
-
-const Table = ({restaurantResponse}) => {
+const Table = ({ restaurantResponse }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setformData] = useState(initialState);
+  const [formData, setFormData] = useState(initialState);
   const [showModal, setShowModal] = useState(false);
-  const [Tables, setTables] = useState([]);
-  const [QRcode , setQRcode] = useState([]);
+  const [tables, setTables] = useState([]);
 
-  const { name, capacity } = formData;
+  const { tableNumber, capacity } = formData;
 
   useEffect(() => {
-    const fetchTables = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/restaurants/view_tables?restaurantId=${restaurantResponse._id}`,
-          { withCredentials: true }
-        );
-        setTables(response.data);
-        console.log(restaurantResponse);
-
-      } catch (error) {
-        console.error('Error fetching tables:', error);
-      }
-    };
-
-    fetchTables(); // Call fetchTables inside useEffect
+    fetchTables();
   }, []);
+
+  const fetchTables = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/restaurants/view_tables?restaurantId=${restaurantResponse._id}`,
+        { withCredentials: true }
+      );
+      setTables(response.data);
+    } catch (error) {
+      console.error('Error fetching tables:', error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setformData({ ...formData, [name]: value });
+    setFormData({ ...formData, [name]: value });
   };
 
-  const openModal = () => {
-    setShowModal(true);
-  };
+  const openModal = () => setShowModal(true);
 
-  const closeModal = () => {
-    setShowModal(false);
-  };
+  const closeModal = () => setShowModal(false);
 
-  const registerStaff = async (e) => {
-    e.preventDefault();
-
-    if (!name || !capacity) {
+  const addTable = async () => {
+    if (!tableNumber || !capacity) {
       return toast.error("All fields are required");
     }
 
-    const userData = {
-      name,
-      capacity,
-    };
+    setIsLoading(true);
 
-    //setIsLoading(true);
-    // try {
-    //     const data = await registerUser(userData);
-    //     toast.success("Table added successfully");
-    //     setIsLoading(false);
-    //     closeModal(); // Close the modal after successful registration
-    // } catch (error) {
-    //     setIsLoading(false);
-    // }
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/restaurants/add_table?restaurantId=${restaurantResponse._id}`,
+        formData, // Send form data directly
+        { withCredentials: true }
+      );
+      setTables([...tables, response.data]); // Update tables state with the new table
+      toast.success("Table added successfully");
+      setIsLoading(false);
+      closeModal(); // Close the modal after successful registration
+    } catch (error) {
+      setIsLoading(false);
+      toast.error("Error adding table");
+    }
   };
 
   return (
@@ -110,14 +91,14 @@ const Table = ({restaurantResponse}) => {
         className="Modal"
         isOpen={showModal} // Pass isOpen prop to indicate whether the modal should be open or not
         onClose={closeModal}
-        onSubmit={registerStaff}
+        onSubmit={addTable}
         formData={formData}
         handleInputChange={handleInputChange}
       />
       <div className="--flex-center" style={{ width: "100%" }}>
         <div className="staff-list --mt --flex-dir-column --justify-center --width-100">
           {/* Each Table Render */}
-          {Tables.map((table, index) => (
+          {tables.map((table, index) => (
             <div key={index} className="--width-100  --flex-center">
               <TableCard table={table} restaurantResponse={restaurantResponse}/>
             </div>

@@ -13,10 +13,10 @@ const AddTable = ({ isOpen, onClose, onSubmit, formData, handleInputChange }) =>
           <form onSubmit={onSubmit}>
             <input
               type="text"
-              placeholder="Name"
+              placeholder="tableNumber"
               required
-              name="name"
-              value={formData.name}
+              name="tableNumber"
+              value={formData.tableNumber}
               onChange={handleInputChange}
             />
             <input
