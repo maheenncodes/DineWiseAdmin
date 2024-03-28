@@ -8,8 +8,8 @@ const OrderCard = ({ user }) => {
       <div className="staff-details  --flex-between">
 
         <div >
-            <h2>{user.name}</h2>
-            <p>Email: {user.status}</p>
+            <h2>{user.user}</h2>
+            <p>Email: {user.email}</p>
         </div>
         
         <span className=" delete --mr">

@@ -96,7 +96,7 @@ function App() {
           element={
             <Sidebar>
               <Layout>
-                <Staff />
+                <Staff restaurantResponse={restaurantResponse}/>
               </Layout>
             </Sidebar>
           }

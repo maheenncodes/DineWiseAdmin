@@ -428,49 +428,59 @@ const getQRCode = asyncHandler(async (req, res) => {
 });
 const addRestaurantStaff = asyncHandler(async (req, res) => {
     const { restaurantId, userId } = req.query;
+    console.log(restaurantId, userId);
     const restaurant = await Restaurant.findById(restaurantId);
+    console.log(restaurant);
  
     if (restaurant) {
         if (!restaurant.staff) {
+            console.log("staff not found");
             restaurant.staff = [];
         }
         restaurant.staff.push(userId);
-        restaurant.save();
+        await restaurant.save();
         res.status(200).json({message:"Staff saved successfully"})
     }
     else {
         res.status(404).json({ message: 'Restaurant not found' });
     }
 })
+
 const viewStaff = asyncHandler(async (req, res) => {
-    const { restaurantId } = req.query;
-    const restaurant = await Restaurant.findById(restaurantId);
-    if (restaurant) {
-        const staffDetails = [];
-        for (const member of restaurant.staff) {
-            const staff = await User.findById(member);
-            if (staff) {
-                staffDetails.push({
-                    _id: staff._id,
-                    name: staff.name,
-                    email: staff.email
-                })
-            }
-            else {
-                res.status(404).json({message: "User Id is not correct"});
-            }
+    try {
+      const { restaurantId } = req.query;
+      const restaurant = await Restaurant.findById(restaurantId);
+      
+      if (!restaurant) {
+        return res.status(404).json({ message: 'Restaurant not found' });
+      }
+  
+      const staffDetails = [];
+      for (const member of restaurant.staff) {
+        const staff = await User.findById(member);
+        if (staff) {
+          staffDetails.push({
+            _id: staff._id,
+            name: staff.name,
+            email: staff.email
+          });
+        } else {
+          return res.status(404).json({ message: 'User Id is not correct' });
         }
-        if (staffDetails.length > 0) {
-            res.status(200).json(staffDetails);
-        }
-        else {
-            res.status(200).json([]);
-        }
+      }
+  
+      if (staffDetails.length > 0) {
+        res.status(200).json(staffDetails);
+      } else {
+        res.status(200).json([]);
+      }
+    } catch (error) {
+      // Handle other errors
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
     }
-    else {
-        res.status(404).json({ message: 'Restaurant not found' });
-    }
-})
+  });
+  
 const editStaff = asyncHandler(async(req, res) => {
     const { restaurantId, staffId } = req.query;
     const { name, email } = req.body;
