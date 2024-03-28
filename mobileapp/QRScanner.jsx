@@ -1,26 +1,53 @@
-// QRScanner.js
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 import QRScanContext from './QRScanContext';
 import { useNavigation } from '@react-navigation/native';
 
 const QRScanner = () => {
     const { handleScan } = useContext(QRScanContext);
     const navigation = useNavigation();
-
+    const [hasPermission, setHasPermission] = useState(null);
+    const [scanned, setScanned] = useState(false);
     const restaurantId = '65f6b800ebfe51ea62ba5e45';
     const tableId = '65fbab5aa1734426bf68554c';
 
+    useEffect(() => {
+        (async () => {
+            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            setHasPermission(status === 'granted');
+        })();
+    }, []);
+
     const handleScanPress = () => {
-        handleScan(restaurantId, tableId);
         navigation.navigate('Welcome');
     };
 
+    const handleBarCodeScanned = ({ type, data }) => {
+        setScanned(true);
+        handleScan(restaurantId, tableId);
+        navigation.navigate('Welcome');
+        // You can handle the scanned data here, such as navigating to another screen or performing some action.
+    };
+
+    if (hasPermission === null) {
+        return <Text>Requesting camera permission</Text>;
+    }
+    if (hasPermission === false) {
+        return <Text>No access to camera</Text>;
+    }
+
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.scanButton} onPress={handleScanPress}>
-                <Text style={styles.scanButtonText}>Scan QR Code</Text>
-            </TouchableOpacity>
+            <BarCodeScanner
+                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                style={StyleSheet.absoluteFillObject}
+            />
+            {!scanned && (
+                <TouchableOpacity style={styles.scanButton} onPress={handleScanPress}>
+                    <Text style={styles.scanButtonText}>Tap to Scan Again</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 };
@@ -32,6 +59,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     scanButton: {
+        position: 'absolute',
+        bottom: 20,
         backgroundColor: '#eb5b53',
         paddingHorizontal: 20,
         paddingVertical: 12,
@@ -45,3 +74,4 @@ const styles = StyleSheet.create({
 });
 
 export default QRScanner;
+

@@ -55,6 +55,7 @@ const TableMade = ({ }) => {
     return (
         <View style={styles.container}>
             <Header navigation={navigation} />
+
             <ScrollView>
                 {members.map((member, index) => (
                     <TouchableOpacity

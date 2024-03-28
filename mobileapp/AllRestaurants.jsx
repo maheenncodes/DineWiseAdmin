@@ -24,6 +24,7 @@ const AllRestaurants = ({ navigation }) => {
     try {
       const data = await fetchAllRestaurants(user.token); // Call fetchAllRestaurants function
       setRestaurants(data);
+      console.log(data);
     } catch (error) {
       console.error('Error fetching restaurants:', error.message);
 
@@ -39,16 +40,21 @@ const AllRestaurants = ({ navigation }) => {
 
 
   const renderRestaurantItem = ({ item }) => {
-    const imageUrl = item.logo
+    const imageUrl = item.logo;
+    const openingTime = new Date(item.openingTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const closingTime = new Date(item.closingTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     return (
       <TouchableOpacity style={styles.restaurantCard} onPress={() => navigateToMenu(item)}>
         <Image source={{ uri: imageUrl }} style={styles.restaurantImage} resizeMode="cover" />
         <Text style={styles.restaurantName}>{item.name}</Text>
-        <Text style={styles.restaurantDescription}>Timings: {item.openingHours} - {item.closingHours}</Text>
+        <Text style={styles.restaurantDescription}>Open: {openingTime} - {closingTime}</Text>
+
+        {/* Add more details as needed */}
       </TouchableOpacity>
     );
   };
+
 
   return (
     <View style={styles.container}>
