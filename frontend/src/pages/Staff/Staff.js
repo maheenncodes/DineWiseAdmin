@@ -29,7 +29,6 @@ const Staff = ( {restaurantResponse} ) => {
         const fetchStaffMembers = async () => {
             setIsLoading(true);
             try {
-                console.log(restaurantResponse._id);
                 const response = await fetch(`${BACKEND_URL}/api/restaurants/view_staff?restaurantId=${restaurantResponse._id}`, {
                     credentials: 'include', // Important if your backend expects cookies for authentication
                   });
@@ -38,7 +37,6 @@ const Staff = ( {restaurantResponse} ) => {
                 }
                 const data = await response.json();
                 setStaffMembers(data); // Assuming your backend returns an array of staff members
-                console.log(data);
                 setIsLoading(false);
             } catch (error) {
                 setIsLoading(false);
@@ -73,7 +71,8 @@ const Staff = ( {restaurantResponse} ) => {
 
         setIsLoading(true);
         try {
-            await registerUser(formData);
+
+            await registerUser(formData , restaurantResponse._id);
             toast.success("Staff added successfully");
             setStaffMembers([...staffMembers, formData]); // Optionally update the list
             closeModal();

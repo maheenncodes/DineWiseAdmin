@@ -428,9 +428,7 @@ const getQRCode = asyncHandler(async (req, res) => {
 });
 const addRestaurantStaff = asyncHandler(async (req, res) => {
     const { restaurantId, userId } = req.query;
-    console.log(restaurantId, userId);
     const restaurant = await Restaurant.findById(restaurantId);
-    console.log(restaurant);
  
     if (restaurant) {
         if (!restaurant.staff) {

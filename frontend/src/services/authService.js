@@ -38,25 +38,28 @@ const findUserRestaurantId = async () => {
 };
 
 // Register User
-export const registerUser = async (userData , restaurantId) => {
+export const registerUser = async (userData, restaurantId) => {
   try {
     const response = await axios.post(
       `${BACKEND_URL}/api/users/register`,
       userData,
       { withCredentials: true }
     );
-    if (response.statusText === "OK") {
-      toast.success("User Registered successfully");
-    }
     const user = response.data;
-    console.log(user._id);
     const userId = user._id;
+
     const response2 = await axios.post(
       `${BACKEND_URL}/api/restaurants/add_staff?restaurantId=${restaurantId}&userId=${userId}`,
+      null, // No data payload needed here, as parameters are in the URL
       { withCredentials: true }
     );
-    console.log(response2.data);
-    return response2;
+
+
+    if (response2.status === 200) {
+      toast.success("User Registered successfully");
+    } else {
+      toast.error("Failed to add staff to restaurant");
+    }
   } catch (error) {
     const message =
       (error.response && error.response.data && error.response.data.message) ||
@@ -65,6 +68,7 @@ export const registerUser = async (userData , restaurantId) => {
     toast.error(message);
   }
 };
+
 
 export const registerRestaurant = async (restaurantData) => {
   try {
