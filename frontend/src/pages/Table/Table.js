@@ -42,7 +42,7 @@ const Table = ({restaurantResponse}) => {
     const fetchTables = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/restaurants/view_tables?restaurantId=${restaurantResponse}`,
+          `http://localhost:5000/api/restaurants/view_tables?restaurantId=${restaurantResponse._id}`,
           { withCredentials: true }
         );
         setTables(response.data);

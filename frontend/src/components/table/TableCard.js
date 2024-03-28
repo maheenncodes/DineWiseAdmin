@@ -21,6 +21,7 @@ const TableCard = ({ table , restaurantResponse }) => {
     fetchQRCode();
   }, [table._id]);
 
+
   return (
     <div className="staff-card" style={{ width: "70%" }}>
       {/* Set the src attribute to the base64 encoded image data */}
@@ -32,7 +33,7 @@ const TableCard = ({ table , restaurantResponse }) => {
         </div>
         <div>
           <span className="delete --mr">
-            <FaDownload size={20} color={"black"} />
+            <a  href={`http://localhost:5000/api/restaurants/get_qr_code?restaurantId=${restaurantResponse._id}&tableId=${table._id}`} download alt={`QR Code for ${table.name}`}><FaDownload size={20} color={"black"} /></a>
           </span>
           <span className="delete --mr">
             <FaEdit size={20} color={"red"} />
