@@ -14,7 +14,7 @@ const initialState = {
     role: "staff", // Default role
 };
 
-const Order = ({resturantId}) => {
+const Order = ({restaurantResponse}) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +25,8 @@ const Order = ({resturantId}) => {
         const fetchOrders = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch(`http://localhost:5000/api/orders/view_current_orders_restaurant?resturantId=${resturantId}`, {
+                console.log(restaurantResponse._id);
+                const response = await fetch(`http://localhost:5000/api/orders/view_current_orders_restaurant?restaurantId=${restaurantResponse._id}`, {
                     //get token from local storage using getItem
                     method: 'GET',
                     credentials: "include"

@@ -54,25 +54,27 @@ const Table = ({ restaurantResponse }) => {
     if (!tableNumber || !capacity) {
       return toast.error("All fields are required");
     }
-
+  
     setIsLoading(true);
-
+  
     try {
       const response = await axios.post(
         `http://localhost:5000/api/restaurants/add_table?restaurantId=${restaurantResponse._id}`,
-        formData, // Send form data directly
+        formData,
         { withCredentials: true }
       );
-      setTables([...tables, response.data]); // Update tables state with the new table
       toast.success("Table added successfully");
       setIsLoading(false);
-      closeModal(); // Close the modal after successful registration
+      closeModal();
+  
+      // Fetch updated tables after adding a new table
+      fetchTables(); // This will update the tables state with the latest data
     } catch (error) {
       setIsLoading(false);
       toast.error("Error adding table");
     }
   };
-
+  
   return (
     <div>
       <div className="--flex-center --mt">
