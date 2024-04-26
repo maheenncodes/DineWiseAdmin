@@ -27,7 +27,7 @@ const TableMade = ({ }) => {
             // Hardcoded restaurantId and tableId for now
             const restaurantId = '65f6b800ebfe51ea62ba5e45';
             const tableId = '65fbab5aa1734426bf68554c';
-            const response = await axios.get(`http://10.104.130.5/api/orders/view_all?restaurantId=${restaurantId}&tableId=${tableId}`, config);
+            const response = await axios.get(`http://192.168.0.107/api/orders/view_all?restaurantId=${restaurantId}&tableId=${tableId}`, config);
             const membersData = response.data;
 
             // Calculate total bill and update state

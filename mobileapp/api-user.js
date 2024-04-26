@@ -7,7 +7,7 @@ export const useAuth = () => useContext(AuthContext);
 // Register user function
 export const registerUser = async ({ name, email, password }) => {
     try {
-        const response = await axios.post('http://10.104.130.5/api/users/register', {
+        const response = await axios.post('http://192.168.0.107/api / users / register', {
             name,
             email,
             password,
@@ -22,7 +22,7 @@ export const registerUser = async ({ name, email, password }) => {
 // Login user function
 export const loginUser = async ({ email, password }) => {
     try {
-        const response = await axios.post('http://10.104.130.5/api/users/login', {
+        const response = await axios.post('http://192.168.0.107/api/users/login', {
             email,
             password
         });
@@ -39,7 +39,7 @@ export const loginUser = async ({ email, password }) => {
 // Logout user function
 export const logoutUser = async () => {
     try {
-        const response = await axios.post('http://10.104.130.5/api/users/logout');
+        const response = await axios.post('http://192.168.0.107/api/users/logout');
 
         // Access the context to update user authentication
         const { setUser } = useAuth();
@@ -54,7 +54,7 @@ export const logoutUser = async () => {
 // Update user function
 export const updateUser = async ({ name, email, phone, bio, photo }) => {
     try {
-        const response = await axios.put('http://10.104.130.5/api/users/updateuser', {
+        const response = await axios.put('http://192.168.0.107/api/users/updateuser', {
             name,
             email,
             phone,

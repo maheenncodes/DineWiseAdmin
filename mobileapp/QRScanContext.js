@@ -3,7 +3,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 const QRScanContext = createContext();
-const API_BASE_URL = 'http://10.104.130.5';
+const API_BASE_URL = 'http://192.168.0.107';
 
 export const QRScanProvider = ({ children }) => {
     const [isScanned, setIsScanned] = useState(false);
