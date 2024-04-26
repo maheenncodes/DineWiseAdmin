@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.18.68:5000';
+const API_BASE_URL = 'http://10.104.130.5';
 
 // Function to fetch all restaurants
 export const fetchAllRestaurants = async (token) => {
