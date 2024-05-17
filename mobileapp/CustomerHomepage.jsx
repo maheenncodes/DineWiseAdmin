@@ -24,6 +24,7 @@ const CustomerHomepage = ({ navigation }) => {
     try {
       const data = await fetchAllRestaurants(user.token); // Call fetchAllRestaurants function
       setRestaurants(data);
+      console
     } catch (error) {
       console.error('Error fetching restaurants:', error.message);
 

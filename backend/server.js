@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:19000", "http://localhost:3000"], // Update with your React Native app's origin
+  origin: ["http://localhost:19000", "http://localhost:8081"], // Update with your React Native app's origin
   credentials: true,
   methods: 'GET, POST',
   allowedHeaders: 'Content-Type, Authorization',

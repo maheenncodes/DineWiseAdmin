@@ -1,9 +1,8 @@
 // QRScanContext.js
-import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { createContext, useState } from 'react';
+import { fetchRestaurantDetails } from './api-scan';
 
 const QRScanContext = createContext();
-const API_BASE_URL = 'http://192.168.0.107';
 
 export const QRScanProvider = ({ children }) => {
     const [isScanned, setIsScanned] = useState(false);
@@ -21,34 +20,21 @@ export const QRScanProvider = ({ children }) => {
         staff: [],
         tables: []
     });
-    const [scannedTableId, setTableId] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
-
-
 
     const handleScan = async (restaurantId, tableId) => {
         try {
-            const restaurantResponse = await axios.post(`${API_BASE_URL}/api/restaurants/view_details`, { restaurantId });
-            const restaurantData = restaurantResponse.data.restaurant;
+            const restaurantData = await fetchRestaurantDetails(restaurantId);
 
             if (restaurantData) {
-
                 setScannedRestaurant(restaurantData);
-
                 setIsScanned(true);
-
-
-
-
-
             } else {
                 throw new Error("Error fetching restaurant details");
             }
         } catch (error) {
             setErrorMessage(error.message);
         }
-
-        console.log("sr", scannedRestaurant)
     };
 
     return (

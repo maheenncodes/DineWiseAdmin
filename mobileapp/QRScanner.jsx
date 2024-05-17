@@ -9,7 +9,7 @@ const QRScanner = () => {
     const navigation = useNavigation();
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
-    const restaurantId = '65f6b800ebfe51ea62ba5e45';
+    const restaurantId = '65fedf23aeb13eca509bcdaf';
     const tableId = '65fbab5aa1734426bf68554c';
 
     useEffect(() => {
@@ -44,7 +44,7 @@ const QRScanner = () => {
                 style={StyleSheet.absoluteFillObject}
             />
             {!scanned && (
-                <TouchableOpacity style={styles.scanButton} onPress={handleScanPress}>
+                <TouchableOpacity style={styles.scanButton} onPress={handleBarCodeScanned}>
                     <Text style={styles.scanButtonText}>Tap to Scan Again</Text>
                 </TouchableOpacity>
             )}
