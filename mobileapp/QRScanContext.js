@@ -29,6 +29,7 @@ export const QRScanProvider = ({ children }) => {
             if (restaurantData) {
                 setScannedRestaurant(restaurantData);
                 setIsScanned(true);
+                console.log('Scanned restaurant:', restaurantData);
             } else {
                 throw new Error("Error fetching restaurant details");
             }
