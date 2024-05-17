@@ -1,0 +1,29 @@
+.profile .card {
+  max-width: 500px;
+  flex-direction: row;
+  color: white;
+  padding: 1rem 0;
+}
+.profile .card span.profile-photo {
+  text-align: center;
+}
+.profile .card img {
+  width: 100%;
+  max-width: 150px;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  border-radius: 2rem;
+}
+.profile .card span.profile-data {
+  margin: 10px;
+}
+.profile .card span.profile-data > * {
+  margin: 10px;
+  padding: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  span.profile-photo {
+    margin: auto;
+  }
+}/*# sourceMappingURL=Profile.css.map */

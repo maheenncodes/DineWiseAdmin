@@ -1,0 +1,40 @@
+.staff .addStaff {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.staff .card {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+.staff .card form input[type=text],
+.staff .card form input[type=email],
+.staff .card form input[type=password] {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 300;
+  padding: 1rem;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 2rem;
+  width: 90%;
+  border: 1px solid #ccc;
+  border-bottom: 3px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+}
+.staff .card form input[type=text]:focus,
+.staff .card form input[type=email]:focus,
+.staff .card form input[type=password]:focus {
+  outline: none;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+  border-bottom: 3px solid #55c57a;
+}
+.staff .card form input[type=text]:focus:invalid,
+.staff .card form input[type=email]:focus:invalid,
+.staff .card form input[type=password]:focus:invalid {
+  border-bottom: 3px solid #ff7730;
+}/*# sourceMappingURL=Staff.css.map */

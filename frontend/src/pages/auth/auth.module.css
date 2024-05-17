@@ -1,0 +1,133 @@
+.auth {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.auth .home-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.auth .home-links li a {
+  color: #f88379;
+}
+.auth .home-links > * {
+  margin-left: 0rem;
+  color: #f88379;
+}
+.auth .centered {
+  height: 80vh;
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  background-color: #f88379;
+  align-items: center;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 80px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.auth .centered .blueSection {
+  flex: 1;
+  text-align: center;
+  background-color: #f88379;
+}
+.auth .centered .blueSection img {
+  width: 50%;
+  max-width: 400px;
+}
+.auth .centered .blueSection p {
+  margin-top: 1rem;
+  color: #ccc;
+  font-size: 2rem;
+}
+.auth .centered .whiteSection {
+  flex: 1;
+  display: flex;
+  background-color: white;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.auth .centered .whiteSection .form {
+  width: 50vh;
+  padding-bottom: 1rem;
+}
+@keyframes slide-up {
+  0% {
+    transform: translateY(-5rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes slide-down {
+  0% {
+    transform: translateY(5rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.auth .centered .whiteSection .form > * {
+  margin-right: auto;
+  margin-left: auto;
+}
+.auth .centered .whiteSection .form h2 {
+  color: #f88379;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+}
+.auth .centered .whiteSection .form form input[type=text],
+.auth .centered .whiteSection .form form input[type=email],
+.auth .centered .whiteSection .form form input[type=password] {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 300;
+  padding: 1rem;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 2rem;
+  width: 90%;
+  border: 1px solid #ccc;
+  border-bottom: 3px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+}
+.auth .centered .whiteSection .form form input[type=text]:focus,
+.auth .centered .whiteSection .form form input[type=email]:focus,
+.auth .centered .whiteSection .form form input[type=password]:focus {
+  outline: none;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+  border-bottom: 3px solid #55c57a;
+}
+.auth .centered .whiteSection .form form input[type=text]:focus:invalid,
+.auth .centered .whiteSection .form form input[type=email]:focus:invalid,
+.auth .centered .whiteSection .form form input[type=password]:focus:invalid {
+  border-bottom: 3px solid #ff7730;
+}
+.auth .centered .whiteSection .form form .links {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  color: #000;
+}
+.auth .centered .whiteSection .form form p {
+  text-align: center;
+  margin: 1rem;
+}
+.auth .centered .whiteSection .form .register {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  color: #000;
+}
+@media screen and (max-width: 700px) {
+  .auth .centered .whiteSection .img {
+    display: none;
+  }
+}/*# sourceMappingURL=auth.module.css.map */
