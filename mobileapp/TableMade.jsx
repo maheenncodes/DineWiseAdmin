@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
 import Header from './Header';
 import Footer from './Footer';
-import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from './authcontext';
+import { fetchMembersData } from './api-table';
 
 const TableMade = ({ }) => {
     const navigation = useNavigation();
@@ -13,38 +13,16 @@ const TableMade = ({ }) => {
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
-        fetchMembersData();
+        const loadData = async () => {
+            const restaurantId = '65fedf23aeb13eca509bcdaf';
+            const tableId = '66060df6ffa707556eaf02e1';
+            const { members, totalBill } = await fetchMembersData(user.token, restaurantId, tableId);
+            setMembers(members);
+            setTotalBill(totalBill);
+        };
+
+        loadData();
     }, []); // Run once on component mount
-
-    const fetchMembersData = async () => {
-        try {
-            const token = user.token;
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            // Hardcoded restaurantId and tableId for now
-            const restaurantId = '65f6b800ebfe51ea62ba5e45';
-            const tableId = '65fbab5aa1734426bf68554c';
-            const response = await axios.get(`http://192.168.0.107/api/orders/view_all?restaurantId=${restaurantId}&tableId=${tableId}`, config);
-            const membersData = response.data;
-
-            // Calculate total bill and update state
-            let total = 0;
-            membersData.forEach(member => {
-                total += member.totalPrice;
-            });
-            setTotalBill(total);
-
-            // Update state with members' data
-            setMembers(membersData);
-            console.log('Members data:', membersData);
-        } catch (error) {
-            console.error('Error fetching members data:', error);
-            // Handle error, show error message, etc.
-        }
-    };
 
     const handlePayBill = () => {
         // Logic to navigate to the payment screen or process the payment

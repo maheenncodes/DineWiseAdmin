@@ -107,6 +107,7 @@ const placeOrder = asyncHandler(async (req, res) => {
 const viewAllMembers = asyncHandler(async (req, res) => {
     const { restaurantId, tableId } = req.query;
     const order = await Order.findOne({ restaurantId: restaurantId, tableId: tableId, status: { $ne: 'completed' } });
+
     if (order) {
         const membersList = [];
         for (const cart of order.cartList) {
@@ -121,7 +122,7 @@ const viewAllMembers = asyncHandler(async (req, res) => {
                         price: itemObj.price,
                         quantity: item.quantity,
                         image: itemObj.image
-                    })
+                    });
                 }
                 membersList.push({
                     user: user.name,
@@ -129,17 +130,24 @@ const viewAllMembers = asyncHandler(async (req, res) => {
                     totalPrice: cartObj.totalPrice,
                     status: cartObj.status,
                     photo: user.photo
-                })
+                });
             }
         }
-        res.status(200).json(membersList);
-    }
-    else {
-        res.status(400).json({
+
+        if (membersList.length > 0) {
+            res.status(200).json(membersList);
+        } else {
+            res.status(200).json({
+                message: "No members found for the current order."
+            });
+        }
+    } else {
+        res.status(200).json({
             message: "No order is currently in progress at that table."
-        })
+        });
     }
-})
+});
+
 const changeStatus = asyncHandler(async (req, res) => {
     const { orderId, status } = req.body;
     const order = await Order.findById(orderId);
