@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, FlatList } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import Footer from './Footer';
 import Header from './Header';
 import { useCart } from './CartContext';
+import { Alert } from 'react-native';
 import NotificationModal from './NotificationModal';
-import { AuthContext } from './authcontext';
 import { OrderContext } from './OrderContext';
-import { placeOrderAPI } from './api-order';
+import OrderStatus from './OrderStatus';
+import QRScanContext from './QRScanContext';
 
 const Cart = ({ navigation }) => {
     const { cartItems, setCartItems } = useCart();
-    const { user } = useContext(AuthContext);
-    const { ongoingOrder } = useContext(OrderContext);
+    const { ongoingOrder, placeOrder } = useContext(OrderContext);
     const [orderPlaced, setOrderPlaced] = useState(false);
 
     const removeFromCart = (id) => {
-        setCartItems(cartItems.filter(item => item._id !== id));
+        setCartItems(cartItems.filter(item => item._id !== id)); // Adjust filtering based on the ID property of cart items
     };
 
     const increaseQuantity = (id) => {
@@ -38,7 +38,10 @@ const Cart = ({ navigation }) => {
                     'Remove Item',
                     'Are you sure you want to remove this item from your cart?',
                     [
-                        { text: 'Cancel', style: 'cancel' },
+                        {
+                            text: 'Cancel',
+                            style: 'cancel',
+                        },
                         {
                             text: 'Remove',
                             onPress: () => {
@@ -57,30 +60,17 @@ const Cart = ({ navigation }) => {
         return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
     };
 
-    const handlePlaceOrder = async () => {
-        const restaurantId = ongoingOrder.restaurantId;
-        const tableId = ongoingOrder.tableId;
-        const userId = user.id; // Assuming `user.id` is the user's ID
-        const itemList = cartItems.map(item => ({
-            item: item._id,
-            quantity: item.quantity,
-        }));
-
-        try {
-            const result = await placeOrderAPI(user.token, restaurantId, tableId, userId, itemList);
-            console.log('Order placed successfully:', result);
-            setOrderPlaced(true);
-            setTimeout(() => {
-                setOrderPlaced(false);
-                navigation.navigate('OrderStatus');
-            }, 3000);
-        } catch (error) {
-            console.error('Error placing order:', error);
-            Alert.alert('Error', 'Failed to place order. Please try again.');
-        }
+    const handlePlaceOrder = () => {
+        placeOrder();
+        setOrderPlaced(true);
+        setTimeout(() => {
+            setOrderPlaced(false);
+        }, 3000);
+        navigation.navigate('OrderStatus');
     };
 
     const renderCartItem = ({ item }) => (
+        console.log(item),
         <View style={styles.cartItem}>
             <Image source={{ uri: item.image }} style={styles.itemImage} />
             <View style={styles.itemDetails}>
@@ -111,7 +101,7 @@ const Cart = ({ navigation }) => {
                     <FlatList
                         data={cartItems}
                         renderItem={renderCartItem}
-                        keyExtractor={(item) => item._id}
+                        keyExtractor={(item) => item._id} // Use a combination of item ID and index for uniqueness
                         contentContainerStyle={styles.cartList}
                     />
                     <View style={styles.totalContainer}>
@@ -143,10 +133,15 @@ const Cart = ({ navigation }) => {
     );
 };
 
+
+
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fbf7f5',
         flex: 1,
+        borderRadius: 0, // Adjust the borderRadius as necessary
+        overflow: 'hidden', // This will ensure the ImageBackground respects the borderRadius
+
     },
     cartList: {
         paddingVertical: 10,
@@ -221,14 +216,14 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 16,
-    },
-    emptyCart: {
+    }, emptyCart: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
     emptyCartText: {
         fontSize: 20,
+
     },
 });
 
