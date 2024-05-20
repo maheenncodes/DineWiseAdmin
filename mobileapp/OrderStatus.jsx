@@ -27,14 +27,15 @@ const OrderStatus = ({ navigation }) => {
                 <FlatList
                     data={cartItems}
                     renderItem={({ item }) => (
-                        <View style={styles.cartItem}>
+                        <View style={styles.cartItem} key={item.id}>
                             <Text>{item.name}</Text>
                             <Text>{item.price}</Text>
                             <Text>Quantity: {item.quantity}</Text>
                         </View>
                     )}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item._id.toString()}
                 />
+
             </View>
             <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>
