@@ -30,7 +30,6 @@ export const fetchMenuDetails = async (restaurantId, token) => {
             }
         };
         const response = await axios.get(`${API_BASE_URL}/api/restaurants/view_menu_details?restaurantId=${restaurantId}`, config);
-        console.log('Menu details:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching menu details:', error.message);

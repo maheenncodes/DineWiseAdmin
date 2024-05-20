@@ -82,7 +82,7 @@ export const forgotPassword = async (userData) => {
 
 // Reset Password
 export const resetPassword = async (userData, resetToken) => {
-  console.log(userData, resetToken);
+  //console.log(userData, resetToken);
   try {
     const response = await axios.put(
       `${BACKEND_URL}/api/users/resetpassword/${resetToken}`,

@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import QRScanContext from './QRScanContext';
 import { useNavigation } from '@react-navigation/native';
+import { addToTable } from './api-scan'; // Import the API function
+import { AuthContext } from './authcontext'; // Import AuthContext
 
 const QRScanner = () => {
     const { handleScan } = useContext(QRScanContext);
@@ -10,7 +12,8 @@ const QRScanner = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const restaurantId = '65fedf23aeb13eca509bcdaf';
-    const tableId = '65fbab5aa1734426bf68554c';
+    const tableId = '662d2586480e30a0d5ee7aaa';
+    const { user } = useContext(AuthContext); // Access user authentication state from context
 
     useEffect(() => {
         (async () => {
@@ -23,11 +26,19 @@ const QRScanner = () => {
         navigation.navigate('Welcome');
     };
 
-    const handleBarCodeScanned = ({ type, data }) => {
+    const handleBarCodeScanned = async ({ type, data }) => {
         setScanned(true);
-        handleScan(restaurantId, tableId);
-        navigation.navigate('Welcome');
-        // You can handle the scanned data here, such as navigating to another screen or performing some action.
+        try {
+            console.log('token:', user.token);
+            console.log('data:', data);
+            await addToTable({ restaurantId, tableId, userId: data, token: user.token });
+
+            handleScan(restaurantId, tableId);
+            navigation.navigate('Welcome');
+        } catch (error) {
+            console.error('Error adding user to table:', error.message);
+            // Handle error, show error message, etc.
+        }
     };
 
     if (hasPermission === null) {
@@ -74,4 +85,3 @@ const styles = StyleSheet.create({
 });
 
 export default QRScanner;
-
