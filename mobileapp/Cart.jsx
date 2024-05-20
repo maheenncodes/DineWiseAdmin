@@ -8,14 +8,14 @@ import NotificationModal from './NotificationModal';
 import { AuthContext } from './authcontext';
 import { OrderContext } from './OrderContext';
 import { placeOrderAPI } from './api-order';
-import { QRScanContext } from './QRScanContext';
+import QRScanContext from './QRScanContext';
 
 const Cart = ({ navigation }) => {
     const { cartItems, setCartItems } = useCart();
     const { user } = useContext(AuthContext);
     const { ongoingOrder } = useContext(OrderContext);
     const [orderPlaced, setOrderPlaced] = useState(false);
-    const { scannedRestaurant } = useContext(QRScanContext);
+    const { scannedRestaurant, scannedTableId } = useContext(QRScanContext);
 
     const removeFromCart = (id) => {
         setCartItems(cartItems.filter(item => item._id !== id));
@@ -61,7 +61,7 @@ const Cart = ({ navigation }) => {
 
     const handlePlaceOrder = async () => {
         const restaurantId = scannedRestaurant._id;
-        const tableId = table._id;
+        const tableId = scannedTableId; // Get the scanned table ID
         console.log('Table ID:', tableId);
         const userId = user.id; // Assuming `user.id` is the user's ID
         const itemList = cartItems.map(item => ({

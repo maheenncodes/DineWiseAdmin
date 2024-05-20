@@ -20,6 +20,7 @@ export const QRScanProvider = ({ children }) => {
         staff: [],
         tables: []
     });
+    const [scannedTableId, setScannedTableId] = useState(null); // Add table ID state
     const [errorMessage, setErrorMessage] = useState(null);
 
     const handleScan = async (restaurantId, tableId) => {
@@ -28,6 +29,7 @@ export const QRScanProvider = ({ children }) => {
 
             if (restaurantData) {
                 setScannedRestaurant(restaurantData);
+                setScannedTableId(tableId); // Set table ID
                 setIsScanned(true);
                 console.log('Scanned restaurant:', restaurantData);
             } else {
@@ -39,7 +41,7 @@ export const QRScanProvider = ({ children }) => {
     };
 
     return (
-        <QRScanContext.Provider value={{ isScanned, setIsScanned, scannedRestaurant, handleScan, errorMessage }}>
+        <QRScanContext.Provider value={{ isScanned, setIsScanned, scannedRestaurant, scannedTableId, handleScan, errorMessage }}>
             {children}
         </QRScanContext.Provider>
     );

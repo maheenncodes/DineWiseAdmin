@@ -19,6 +19,7 @@ export const fetchRestaurantDetails = async (restaurantId) => {
         });
         const { cartId, orderId, message } = response.data;
         console.log(`User added to table successfully. Cart ID: ${cartId}, Order ID: ${orderId}`);
+        console.log("tableid:", tableId);
         return { cartId, orderId, message };
     } catch (error) {
         console.error('Error adding user to table:', error);

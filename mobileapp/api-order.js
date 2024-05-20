@@ -9,10 +9,11 @@ export const placeOrderAPI = async (token, restaurantId, tableId, userId, itemLi
                 'Content-Type': 'application/json',
             },
         };
-        console.log("tableid:", tableId)
-        const response = await axios.post('http://192.168.1.14:5000/api/orders/place_order', {
-            restaurantId,
-            tableId,
+
+        console.log("restaurantId:", restaurantId);
+        console.log("tableId:", tableId);
+
+        const response = await axios.post(`http://192.168.1.14:5000/api/orders/place_order?restaurantId=${restaurantId}&tableId=${tableId}`, {
             userId,
             itemList,
         }, config);
