@@ -12,7 +12,7 @@ const QRScanner = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const restaurantId = '65fedf23aeb13eca509bcdaf';
-    const tableId = '66060df6ffa707556eaf02e1';
+    const tableId = '660612e5ffa707556eaf079a';
     const { user } = useContext(AuthContext); // Access user authentication state from context
 
     useEffect(() => {

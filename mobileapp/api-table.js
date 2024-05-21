@@ -7,7 +7,7 @@ export const fetchMembersData = async (token, restaurantId, tableId) => {
                 Authorization: `Bearer ${token}`,
             },
         };
-
+        console.log(tableId, restaurantId)
         const response = await axios.get(`http://192.168.1.14:5000/api/orders/view_all?restaurantId=${restaurantId}&tableId=${tableId}`, config);
         console.log('Response:', response.data);
         const membersData = response.data;

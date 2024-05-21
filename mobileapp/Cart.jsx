@@ -63,7 +63,7 @@ const Cart = ({ navigation }) => {
         const restaurantId = scannedRestaurant._id;
         const tableId = scannedTableId; // Get the scanned table ID
         console.log('Table ID:', tableId);
-        const userId = user.id; // Assuming `user.id` is the user's ID
+        const userId = user._id; // Assuming `user.id` is the user's ID
         const itemList = cartItems.map(item => ({
             item: item._id,
             quantity: item.quantity,

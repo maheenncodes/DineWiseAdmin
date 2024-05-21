@@ -2,6 +2,8 @@
 import axios from 'axios';
 
 export const placeOrderAPI = async (token, restaurantId, tableId, userId, itemList) => {
+    console.log("itemList:", itemList);
+    console.log("userId:", userId);
     try {
         const config = {
             headers: {
