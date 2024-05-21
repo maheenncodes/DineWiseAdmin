@@ -5,18 +5,21 @@ import Footer from './Footer';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from './authcontext';
 import { fetchMembersData } from './api-table';
+import QRScanContext from './QRScanContext';
 
 const TableMade = ({ }) => {
     const navigation = useNavigation();
     const [members, setMembers] = useState([]);
     const [totalBill, setTotalBill] = useState(0);
     const { user } = useContext(AuthContext);
+    const { scannedRestaurant, scannedTableId } = useContext(QRScanContext);
 
     useEffect(() => {
         const loadData = async () => {
-            const restaurantId = '65fedf23aeb13eca509bcdaf';
-            const tableId = '66060df6ffa707556eaf02e1';
+            const restaurantId = scannedRestaurant._id;
+            const tableId = scannedTableId; // Get the scanned table ID
             const { members, totalBill } = await fetchMembersData(user.token, restaurantId, tableId);
+            console.log('members:', members);
             setMembers(members);
             setTotalBill(totalBill);
         };

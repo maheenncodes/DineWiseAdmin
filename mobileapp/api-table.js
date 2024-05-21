@@ -13,41 +13,41 @@ export const fetchMembersData = async (token, restaurantId, tableId) => {
 
         if (membersData.message) {
             console.log(membersData.message); // Handle message appropriately
-            // If the message is about no orders, return an empty array and 0 total
+
+            // If the message indicates no current orders, return an empty array and 0 total
             if (membersData.message === "No order is currently in progress at that table.") {
                 return { members: [], totalBill: 0 };
+            } else {
+                // Handle other messages if necessary
+                return { members: [], totalBill: 0, message: membersData.message };
             }
         } else {
             console.log(membersData); // Handle members data
 
             // Calculate total bill
-            let total = 0;
-            membersData.forEach(member => {
-                total += member.totalPrice;
-            });
+            const totalBill = membersData.reduce((total, member) => total + member.totalPrice, 0);
 
-            return { members: membersData, totalBill: total };
+            return { members: membersData, totalBill };
         }
     } catch (error) {
-        if (error.response && error.response.data && error.response.data.message === "No order is currently in progress at that table.") {
-            console.log(error.response.data.message);
-            // Handle the specific case where no order is in progress
-            return { members: [], totalBill: 0 };
-        } else {
-            console.error('Error fetching members data:', error);
+        if (error.response) {
+            console.error('Error response:', error.response.data);
 
-            if (error.response) {
-                console.error('Response data:', error.response.data);
-                console.error('Response status:', error.response.status);
-                console.error('Response headers:', error.response.headers);
-            } else if (error.request) {
-                console.error('Request data:', error.request);
-            } else {
-                console.error('Error message:', error.message);
+            // Handle the specific case where no order is in progress
+            if (error.response.data.message === "No order is currently in progress at that table.") {
+                return { members: [], totalBill: 0 };
             }
-            console.error('Error config:', error.config);
-            // Rethrow the error to be handled by the calling function
-            throw error;
+
+            // Other error responses can be handled here
+            return { members: [], totalBill: 0, error: error.response.data.message };
+        } else if (error.request) {
+            console.error('Error request:', error.request);
+        } else {
+            console.error('Error message:', error.message);
         }
+
+        console.error('Error config:', error.config);
+        // Rethrow the error to be handled by the calling function
+        throw error;
     }
 };
