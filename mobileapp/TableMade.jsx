@@ -7,7 +7,7 @@ import { AuthContext } from './authcontext';
 import { fetchMembersData } from './api-table';
 import QRScanContext from './QRScanContext';
 
-const TableMade = ({ }) => {
+const TableMade = () => {
     const navigation = useNavigation();
     const [members, setMembers] = useState([]);
     const [totalBill, setTotalBill] = useState(0);
@@ -16,31 +16,33 @@ const TableMade = ({ }) => {
 
     useEffect(() => {
         const loadData = async () => {
-            const restaurantId = scannedRestaurant._id;
-            const tableId = scannedTableId; // Get the scanned table ID
-            const { members, totalBill } = await fetchMembersData(user.token, restaurantId, tableId);
-            console.log('members:', members);
-            setMembers(members);
-            setTotalBill(totalBill);
+            if (scannedRestaurant && scannedTableId) { // Check if both are defined
+                const restaurantId = scannedRestaurant._id;
+                const tableId = scannedTableId;
+                const { members, totalBill } = await fetchMembersData(user.token, restaurantId, tableId);
+                console.log('members:', members);
+                setMembers(members);
+                setTotalBill(totalBill);
+            } else {
+                console.log('scannedRestaurant or scannedTableId is null');
+            }
         };
 
         loadData();
-    }, []); // Run once on component mount
+    }, [scannedRestaurant, scannedTableId]); // Add dependencies to useEffect
 
     const handlePayBill = () => {
         // Logic to navigate to the payment screen or process the payment
-        // For example:
         navigation.navigate('Payment');
     };
 
     return (
         <View style={styles.container}>
             <Header navigation={navigation} />
-
             <ScrollView>
                 {members.map((member, index) => (
                     <TouchableOpacity
-                        key={index} // Use index as key temporarily, replace with a unique ID when available
+                        key={member.userId} // Use a unique key instead of index
                         style={styles.memberContainer}
                         onPress={() => navigation.navigate('MemberDetails', { member })}
                     >
@@ -52,7 +54,6 @@ const TableMade = ({ }) => {
                                     Status: {member.status === 'payment_pending' ? 'Payment Pending' : member.status}
                                 </Text>
                                 <Text style={styles.memberTotalPrice}>Total Price: ${member.totalPrice}</Text>
-
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -104,22 +105,6 @@ const styles = StyleSheet.create({
     memberTotalPrice: {
         fontWeight: 'bold',
         marginBottom: 5,
-    },
-    memberOrderedItemsTitle: {
-        fontWeight: 'bold',
-        marginTop: 10,
-    },
-    itemContainer: {
-        marginVertical: 5,
-    },
-    itemName: {
-        fontSize: 16,
-    },
-    itemPrice: {
-        color: '#555',
-    },
-    itemQuantity: {
-        color: '#555',
     },
     totalContainer: {
         borderTopWidth: 1,

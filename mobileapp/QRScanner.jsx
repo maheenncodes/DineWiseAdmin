@@ -12,7 +12,7 @@ const QRScanner = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const restaurantId = '65fedf23aeb13eca509bcdaf';
-    const tableId = '662d2586480e30a0d5ee7aaa';
+    const tableId = '66060df6ffa707556eaf02e1';
     const { user } = useContext(AuthContext); // Access user authentication state from context
 
     useEffect(() => {
@@ -31,7 +31,8 @@ const QRScanner = () => {
         try {
             console.log('token:', user.token);
             console.log('data:', data);
-            await addToTable({ restaurantId, tableId, userId: data, token: user.token });
+            console.log("userid", user._id);
+            await addToTable({ restaurantId, tableId, userId: user._id, token: user.token });
 
             handleScan(restaurantId, tableId);
             navigation.navigate('Welcome');

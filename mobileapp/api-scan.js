@@ -12,13 +12,14 @@ export const fetchRestaurantDetails = async (restaurantId) => {
     }
 }; export const addToTable = async ({ restaurantId, tableId, userId, token }) => {
     try {
+        console.log('Adding user to table:', restaurantId, tableId, userId);
         const response = await axios.post(`${API_BASE_URL}/api/orders/add_to_table?restaurantId=${restaurantId}&tableId=${tableId}`, { userId }, {
             headers: {
                 Authorization: `Bearer ${token}` // Make sure the token is included in the headers
             }
         });
         const { cartId, orderId, message } = response.data;
-        console.log(`User added to table successfully. Cart ID: ${cartId}, Order ID: ${orderId}`);
+        console.log(`${message} Cart ID: ${cartId}, Order ID: ${orderId}`);
         console.log("tableid:", tableId);
         return { cartId, orderId, message };
     } catch (error) {
