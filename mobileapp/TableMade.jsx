@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from './authcontext';
 import { fetchMembersData } from './api-table';
 import QRScanContext from './QRScanContext';
+import { useTableData } from './TableDataContext';
 
 const TableMade = () => {
     const navigation = useNavigation();
@@ -13,7 +14,8 @@ const TableMade = () => {
     const [totalBill, setTotalBill] = useState(0);
     const { user } = useContext(AuthContext);
     const { scannedRestaurant, scannedTableId } = useContext(QRScanContext);
-    const [dataLoaded, setDataLoaded] = useState(false);
+    const { dataLoaded, setTableDataLoaded } = useTableData();
+
 
     useEffect(() => {
         const loadData = async () => {
@@ -26,7 +28,7 @@ const TableMade = () => {
                     console.log('members:', members);
                     setMembers(members);
                     setTotalBill(totalBill);
-                    setDataLoaded(true);
+                    setTableDataLoaded(true);
                 } else {
                     console.log('scannedRestaurant or scannedTableId is nullllll');
                 }
@@ -47,7 +49,7 @@ const TableMade = () => {
             const message = JSON.parse(event.data);
             // Reload data only if a change is detected in the database
             if (message.operationType === 'insert' || message.operationType === 'update') {
-                setDataLoaded(false);
+                setTableDataLoaded(false);
             }
         };
 
