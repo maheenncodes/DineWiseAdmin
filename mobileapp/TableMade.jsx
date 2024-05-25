@@ -13,23 +13,48 @@ const TableMade = () => {
     const [totalBill, setTotalBill] = useState(0);
     const { user } = useContext(AuthContext);
     const { scannedRestaurant, scannedTableId } = useContext(QRScanContext);
+    const [dataLoaded, setDataLoaded] = useState(false);
 
     useEffect(() => {
         const loadData = async () => {
-            if (scannedRestaurant && scannedTableId) { // Check if both are defined
-                const restaurantId = scannedRestaurant._id;
-                const tableId = scannedTableId;
-                const { members, totalBill } = await fetchMembersData(user.token, restaurantId, tableId);
-                console.log('members:', members);
-                setMembers(members);
-                setTotalBill(totalBill);
-            } else {
-                console.log('scannedRestaurant or scannedTableId is null');
+            if (!dataLoaded) {
+                if (scannedRestaurant && scannedTableId) { // Check if both are defined
+                    const restaurantId = scannedRestaurant._id;
+                    const tableId = scannedTableId;
+                    console.log("fetching members data..");
+                    const { members, totalBill } = await fetchMembersData(user.token, restaurantId, tableId);
+                    console.log('members:', members);
+                    setMembers(members);
+                    setTotalBill(totalBill);
+                    setDataLoaded(true);
+                } else {
+                    console.log('scannedRestaurant or scannedTableId is nullllll');
+                }
+            }
+            else {
+                console.log('data already loaded');
             }
         };
 
         loadData();
-    }, [scannedRestaurant, scannedTableId]); // Add dependencies to useEffect
+    }, [scannedRestaurant, scannedTableId, dataLoaded]); // Add dependencies to useEffect
+
+    useEffect(() => {
+        // WebSocket implementation to listen for changes in database and reload data
+        const ws = new WebSocket('ws://192.168.1.9:5000');
+
+        ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            // Reload data only if a change is detected in the database
+            if (message.operationType === 'insert' || message.operationType === 'update') {
+                setDataLoaded(false);
+            }
+        };
+
+        return () => {
+            ws.close();
+        };
+    }, []);
 
     const handlePayBill = () => {
         // Logic to navigate to the payment screen or process the payment

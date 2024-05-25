@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import QRScanContext from './QRScanContext';
 import { useNavigation } from '@react-navigation/native';
@@ -12,7 +12,7 @@ const QRScanner = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const restaurantId = '65fedf23aeb13eca509bcdaf';
-    const tableId = '660612e5ffa707556eaf079a';
+    const tableId = '662d2586480e30a0d5ee7aaa';
     const { user } = useContext(AuthContext); // Access user authentication state from context
 
     useEffect(() => {
@@ -20,6 +20,23 @@ const QRScanner = () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             setHasPermission(status === 'granted');
         })();
+
+        const ws = new WebSocket('ws://192.168.1.9:5000');
+
+        ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            if (message.userId === user._id) {
+                // User themselves have scanned
+                Alert.alert('Success', 'You have been successfully added to the table');
+            } else {
+                // Someone else has been added
+                Alert.alert('Success', 'A new user has been added');
+            }
+        };
+
+        return () => {
+            ws.close();
+        };
     }, []);
 
     const handleScanPress = () => {

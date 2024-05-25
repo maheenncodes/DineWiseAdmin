@@ -2,16 +2,19 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const path = require("path");
+const { WebSocketServer } = require('ws');
+
 const userRoute = require("./routes/userRoute");
 const productRoute = require("./routes/productRoute");
 const restaurantRoute = require("./routes/restaurantRoute");
 const orderRoute = require("./routes/orderRoute");
 const errorHandler = require("./middleWare/errorMiddleWare");
-const cookieParser = require("cookie-parser");
-const path = require("path");
+
+
 
 const app = express();
-
 const PORT = process.env.PORT || 5000;
 
 app.use(cookieParser());
@@ -24,28 +27,63 @@ app.use(cors({
 }));
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 app.use("/api/users", userRoute);
 app.use("/api/products", productRoute);
 app.use("/api/restaurants", restaurantRoute);
 app.use("/api/orders", orderRoute);
 
-//routes
 app.get("/", (req, res) => {
   res.send("Home Page");
-})
+});
 
-//Error Middleware
-app.use(errorHandler); //refrencing errorhandler
-
-//connecting my db
+app.use(errorHandler); // referencing errorhandler
 
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Connected to MongoDB");
-    app.listen(PORT, () => {
+
+    const server = app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
+    });
+
+    const wss = new WebSocketServer({ server });
+
+    wss.on('connection', ws => {
+      console.log('Client connected');
+
+      ws.on('close', () => {
+        console.log('Client disconnected');
+      });
+    });
+
+    const db = mongoose.connection;
+    const orderCollection = db.collection('orders'); // Change to your collection name
+
+    const changeStream = orderCollection.watch();
+
+    changeStream.on('change', change => {
+      console.log('Change detected:', change);
+
+      const { fullDocument } = change;
+
+      if (!fullDocument) return;
+
+      const { _id, userId } = fullDocument;
+
+      if (!userId) return;
+
+      const message = {
+        operationType: change.operationType,
+        userId,
+        _id
+      };
+
+      wss.clients.forEach(client => {
+        if (client.readyState === client.OPEN) {
+          client.send(JSON.stringify(message));
+        }
+      });
     });
   })
   .catch((err) => console.error("MongoDB connection error:", err));

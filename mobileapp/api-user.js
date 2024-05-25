@@ -4,7 +4,7 @@ import { AuthContext } from './authcontext'; // Import the AuthContext
 
 export const useAuth = () => useContext(AuthContext);
 
-const BASE_URL = 'http://192.168.1.14:5000/api/users'; // Define a constant for the base URL
+const BASE_URL = 'http://192.168.1.9:5000/api/users'; // Define a constant for the base URL
 
 // Register user function
 export const registerUser = async ({ name, email, password }) => {
@@ -15,6 +15,8 @@ export const registerUser = async ({ name, email, password }) => {
             password,
             role: 'customer'
         });
+        console.log('name:', name, 'email:', email, 'password:', password)
+        console.log('User registered api:', response.data)
         return response.data; // Return the data upon successful registration
     } catch (error) {
         throw error; // Throw error for handling in the component
