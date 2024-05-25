@@ -16,4 +16,4 @@ export const TableDataProvider = ({ children }) => {
     );
 };
 
-export const useTableData = () => useContext(TableDataContext);
+export default TableDataContext;

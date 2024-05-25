@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from './authcontext';
 import { fetchMembersData } from './api-table';
 import QRScanContext from './QRScanContext';
-import { useTableData } from './TableDataContext';
+import TableDataContext from './TableDataContext'; // Correct import
 
 const TableMade = () => {
     const navigation = useNavigation();
@@ -14,7 +14,7 @@ const TableMade = () => {
     const [totalBill, setTotalBill] = useState(0);
     const { user } = useContext(AuthContext);
     const { scannedRestaurant, scannedTableId } = useContext(QRScanContext);
-    const { dataLoaded, setTableDataLoaded } = useTableData();
+    const { dataLoaded, setTableDataLoaded } = useContext(TableDataContext);
 
 
     useEffect(() => {
@@ -41,22 +41,6 @@ const TableMade = () => {
         loadData();
     }, [scannedRestaurant, scannedTableId, dataLoaded]); // Add dependencies to useEffect
 
-    useEffect(() => {
-        // WebSocket implementation to listen for changes in database and reload data
-        const ws = new WebSocket('ws://192.168.1.9:5000');
-
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            // Reload data only if a change is detected in the database
-            if (message.operationType === 'insert' || message.operationType === 'update') {
-                setTableDataLoaded(false);
-            }
-        };
-
-        return () => {
-            ws.close();
-        };
-    }, []);
 
     const handlePayBill = () => {
         // Logic to navigate to the payment screen or process the payment
