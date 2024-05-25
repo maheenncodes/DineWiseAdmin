@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
 import Header from './Header';
 import Footer from './Footer';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { AuthContext } from './authcontext';
 import { fetchMembersData } from './api-table';
 import QRScanContext from './QRScanContext';
@@ -10,36 +10,29 @@ import TableDataContext from './TableDataContext'; // Correct import
 
 const TableMade = () => {
     const navigation = useNavigation();
-    const [members, setMembers] = useState([]);
-    const [totalBill, setTotalBill] = useState(0);
+    const isFocused = useIsFocused();
     const { user } = useContext(AuthContext);
     const { scannedRestaurant, scannedTableId } = useContext(QRScanContext);
-    const { dataLoaded, setTableDataLoaded } = useContext(TableDataContext);
+    const { dataLoaded, members, totalBill, setTableDataLoaded, updateTableData } = useContext(TableDataContext);
+
 
 
     useEffect(() => {
         const loadData = async () => {
-            if (!dataLoaded) {
-                if (scannedRestaurant && scannedTableId) { // Check if both are defined
-                    const restaurantId = scannedRestaurant._id;
-                    const tableId = scannedTableId;
-                    console.log("fetching members data..");
-                    const { members, totalBill } = await fetchMembersData(user.token, restaurantId, tableId);
-                    console.log('members:', members);
-                    setMembers(members);
-                    setTotalBill(totalBill);
-                    setTableDataLoaded(true);
-                } else {
-                    console.log('scannedRestaurant or scannedTableId is nullllll');
-                }
-            }
-            else {
-                console.log('data already loaded');
+            if (!dataLoaded && scannedRestaurant && scannedTableId) {
+                await updateTableData(user.token, scannedRestaurant._id, scannedTableId);
             }
         };
 
         loadData();
-    }, [scannedRestaurant, scannedTableId, dataLoaded]); // Add dependencies to useEffect
+    }, [scannedRestaurant, scannedTableId, dataLoaded, user.token, updateTableData]);
+
+    useEffect(() => {
+        if (isFocused) {
+            // Call the updateTableData function when the screen is focused
+            updateTableData(user.token, scannedRestaurant._id, scannedTableId);
+        }
+    }, [isFocused, scannedRestaurant, scannedTableId, updateTableData, user.token]);
 
 
     const handlePayBill = () => {
