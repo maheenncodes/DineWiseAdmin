@@ -11,8 +11,6 @@ const QRScanner = () => {
     const navigation = useNavigation();
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
-    const restaurantId = '65fedf23aeb13eca509bcdaf';
-    const tableId = '662d2586480e30a0d5ee7aaa';
     const { user } = useContext(AuthContext); // Access user authentication state from context
 
     useEffect(() => {
@@ -46,16 +44,26 @@ const QRScanner = () => {
     const handleBarCodeScanned = async ({ type, data }) => {
         setScanned(true);
         try {
-            console.log('token:', user.token);
-            console.log('data:', data);
-            console.log("userid", user._id);
-            await addToTable({ restaurantId, tableId, userId: user._id, token: user.token });
+            const urlParams = new URLSearchParams(data.split('?')[1]);
+            const restaurantId = urlParams.get('restaurant_id');
+            const tableId = urlParams.get('table_id');
 
-            handleScan(restaurantId, tableId);
-            navigation.navigate('Welcome');
+            if (restaurantId && tableId) {
+                console.log('token:', user.token);
+                console.log('data:', data);
+                console.log("userid", user._id);
+                console.log("restaurantid", restaurantId);
+                console.log("tableid", tableId);
+                await addToTable({ restaurantId, tableId, userId: user._id, token: user.token });
+
+                handleScan(restaurantId, tableId);
+                navigation.navigate('Welcome');
+            } else {
+                Alert.alert('Invalid QR Code', 'The scanned QR code is not valid.');
+            }
         } catch (error) {
             console.error('Error adding user to table:', error.message);
-            // Handle error, show error message, etc.
+            Alert.alert('Error', 'There was an error processing the QR code.');
         }
     };
 
@@ -73,7 +81,7 @@ const QRScanner = () => {
                 style={StyleSheet.absoluteFillObject}
             />
             {!scanned && (
-                <TouchableOpacity style={styles.scanButton} onPress={handleBarCodeScanned}>
+                <TouchableOpacity style={styles.scanButton} onPress={() => setScanned(false)}>
                     <Text style={styles.scanButtonText}>Tap to Scan Again</Text>
                 </TouchableOpacity>
             )}
