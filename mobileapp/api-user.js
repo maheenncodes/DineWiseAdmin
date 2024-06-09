@@ -4,7 +4,7 @@ import { AuthContext } from './authcontext'; // Import the AuthContext
 
 export const useAuth = () => useContext(AuthContext);
 
-const BASE_URL = 'http://192.168.1.9:5000/api/users'; // Define a constant for the base URL
+const BASE_URL = 'http://192.168.1.13:5000/api/users'; // Define a constant for the base URL
 
 // Register user function
 export const registerUser = async ({ name, email, password }) => {

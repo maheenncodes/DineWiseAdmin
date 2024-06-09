@@ -27,12 +27,6 @@ const TableMade = () => {
         loadData();
     }, [scannedRestaurant, scannedTableId, dataLoaded, user.token, updateTableData]);
 
-    useEffect(() => {
-        if (isFocused) {
-            // Call the updateTableData function when the screen is focused
-            updateTableData(user.token, scannedRestaurant._id, scannedTableId);
-        }
-    }, [isFocused, scannedRestaurant, scannedTableId, updateTableData, user.token]);
 
 
     const handlePayBill = () => {

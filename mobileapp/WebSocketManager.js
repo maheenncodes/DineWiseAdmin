@@ -8,7 +8,7 @@ const WebSocketManager = () => {
     const { dataLoaded, setTableDataLoaded } = useContext(TableDataContext);
 
     useEffect(() => {
-        const ws = new WebSocket('ws://192.168.1.9:5000');
+        const ws = new WebSocket('ws://192.168.1.13:5000');
 
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert, ScrollView } from 'react-native';
 import Header from './Header';
 import Footer from './Footer';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -94,10 +94,8 @@ const RestaurantMenu = ({ navigation, route }) => {
                 setSelectedItem(item);
                 addToCart(item);
                 setAddedToCart(true);
-
             }
         };
-
 
         return (
             <TouchableOpacity style={styles.menuItemCard} onPress={() => handleMenuItemPress(item)}>
@@ -128,8 +126,6 @@ const RestaurantMenu = ({ navigation, route }) => {
     };
 
     // Group menu items by category
-    // Group menu items by category
-    // Group menu items by category
     const groupedMenuItems = menuItems.reduce((acc, item) => {
         const categoryTitle = item.categoryTitle || 'Uncategorized'; // Default category title if not provided
         if (!acc[categoryTitle]) {
@@ -139,24 +135,22 @@ const RestaurantMenu = ({ navigation, route }) => {
         return acc;
     }, {});
 
-
-
     return (
         <View style={styles.container}>
             <Header navigation={navigation} />
-            <View style={styles.content}>
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>
                 {Object.entries(groupedMenuItems).map(([category, items]) => (
-                    <View key={category}>
+                    <View key={category} style={styles.categoryContainer}>
                         <Text style={styles.categoryHeading}>{category}</Text>
                         <FlatList
                             data={items}
                             renderItem={renderMenuItem}
                             keyExtractor={(item) => item._id}
-
+                            scrollEnabled={false} // Disable scrolling for FlatList
                         />
                     </View>
                 ))}
-            </View>
+            </ScrollView>
             <Footer navigation={navigation} activeIcon="home" />
 
             {addedToCart && (
@@ -174,10 +168,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#fbf7f5',
         flex: 1,
     },
-    content: {
-        flex: 1,
+    scrollViewContent: {
         paddingHorizontal: 20,
         paddingTop: 20,
+    },
+    categoryContainer: {
+        marginBottom: 10,
     },
     menuItemCard: {
         flexDirection: 'row',
@@ -226,10 +222,6 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 10,
     },
-    horizontalMenuList: {
-        paddingBottom: 10,
-    },
 });
 
 export default RestaurantMenu;
-

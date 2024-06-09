@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fbf7f5',
     borderTopWidth: 1,
     borderTopColor: '#ddd',
+
   },
 
   iconContainer: {
@@ -83,6 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
     marginTop: 10,
+    marginBottom: 10,
   },
   activeIcon: {
     justifyContent: 'center',
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 0,
     left: 0,
     right: 0,
   },

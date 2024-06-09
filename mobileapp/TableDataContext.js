@@ -20,6 +20,7 @@ export const TableDataProvider = ({ children }) => {
             setMembers(members);
             setTotalBill(totalBill);
             setDataLoaded(true);
+            console.log("dataupaded");
         } catch (error) {
             console.error('Error updating table data:', error);
         }
