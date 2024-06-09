@@ -1,69 +1,39 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import QRScanContext from './QRScanContext';
-import { useNavigation } from '@react-navigation/native';
 import { addToTable } from './api-scan'; // Import the API function
 import { AuthContext } from './authcontext'; // Import AuthContext
 
 const QRScanner = () => {
-    const { handleScan } = useContext(QRScanContext);
-    const navigation = useNavigation();
+    const { user } = useContext(AuthContext); // Access user authentication state from context
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
-    const { user } = useContext(AuthContext); // Access user authentication state from context
 
     useEffect(() => {
         (async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             setHasPermission(status === 'granted');
         })();
-
-        const ws = new WebSocket('ws://192.168.1.13:5000');
-
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            if (message.userId === user._id) {
-                // User themselves have scanned
-                Alert.alert('Success', 'You have been successfully added to the table');
-            } else {
-                // Someone else has been added
-                Alert.alert('Success', 'A new user has been added');
-            }
-        };
-
-        return () => {
-            ws.close();
-        };
     }, []);
 
-    const handleScanPress = () => {
-        navigation.navigate('Welcome');
-    };
-
-    const handleBarCodeScanned = async ({ type, data }) => {
+    const handleBarCodeScanned = async ({ data }) => {
         setScanned(true);
         try {
-            const urlParams = new URLSearchParams(data.split('?')[1]);
-            const restaurantId = urlParams.get('restaurant_id');
-            const tableId = urlParams.get('table_id');
+            console.log('Scanned data:', data);
+            const { restaurantId, tableId } = JSON.parse(data);
+            console.log('Scanned Restaurant ID:', restaurantId);
+            console.log('Scanned Table ID:', tableId);
+            console.log('User ID:', user._id);
 
-            if (restaurantId && tableId) {
-                console.log('token:', user.token);
-                console.log('data:', data);
-                console.log("userid", user._id);
-                console.log("restaurantid", restaurantId);
-                console.log("tableid", tableId);
-                await addToTable({ restaurantId, tableId, userId: user._id, token: user.token });
+            // Make API call with decoded parameters
+            await addToTable({ restaurantId, tableId, userId: user._id, token: user.token });
 
-                handleScan(restaurantId, tableId);
-                navigation.navigate('Welcome');
-            } else {
-                Alert.alert('Invalid QR Code', 'The scanned QR code is not valid.');
-            }
+            Alert.alert('Success', 'You have been successfully added to the table');
+
+            // Handle navigation or any other action after successful scan
         } catch (error) {
-            console.error('Error adding user to table:', error.message);
-            Alert.alert('Error', 'There was an error processing the QR code.');
+            console.error('Error scanning QR code:', error.message);
+            // Handle error, show error message, etc.
         }
     };
 
