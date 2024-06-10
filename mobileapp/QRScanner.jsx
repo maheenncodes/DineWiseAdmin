@@ -44,12 +44,11 @@ const QRScanner = () => {
                 const cartListKey = Object.keys(message.updatedFields).find(key => key.startsWith('cartList.'));
 
                 if (cartListKey) {
-                    console.log('Cart item added:', message.updatedFields['cartList']);
                     Alert.alert('Success', 'A new user has been added');
                     setTableDataLoaded(false);
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                 }
-                if ('totalPrice' in message.updatedFields) {
+                else if ('totalPrice' in message.updatedFields) {
                     console.log('Total price updated:', message.updatedFields.totalPrice);
                     alert('Total price updated:', message.updatedFields.totalPrice);
                     setTableDataLoaded(false);
