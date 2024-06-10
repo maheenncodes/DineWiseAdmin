@@ -30,7 +30,7 @@ export const loginUser = async ({ email, password }) => {
             email,
             password
         });
-        console.log('User logged in api:', response.data);
+        //console.log('User logged in api:', response.data);
 
         return response.data; // Return the data upon successful login
 

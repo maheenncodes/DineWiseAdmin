@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
         const checkLoggedIn = async () => {
             const token = await AsyncStorage.getItem('token');
             if (token) {
-                console.log('User logged in:', token); // Corrected: Log the token instead of userData
+                //  console.log('User logged in:', token); // Corrected: Log the token instead of userData
                 // If token exists, set the user
                 setUser({ token });
             }
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const userData = await loginUser({ email, password });
             setUser(userData); // Update the user in the context
-            console.log('User logged in:', userData);
+            //   console.log('User logged in:', userData);
             // Store the token in AsyncStorage
             await AsyncStorage.setItem('token', userData.token);
         } catch (error) {

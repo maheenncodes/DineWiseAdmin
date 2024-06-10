@@ -4,13 +4,16 @@ import Header from './Header';
 import Footer from './Footer';
 import { useNavigation } from '@react-navigation/native';
 import TableDataContext from './TableDataContext'; // Correct import
-
+import QRScanContext from './QRScanContext';
+import axios from 'axios';
+import { AuthContext } from './authcontext';
 
 const Payment = ({ navigation }) => {
-
+    const { user } = useContext(AuthContext);
     const [payFullBill, setPayFullBill] = useState(false);
     const [selectedGateway, setSelectedGateway] = useState('');
     const [selectedPaymentOption, setSelectedPaymentOption] = useState('');
+    const { scannedRestaurant, scannedTableId, order, cartId } = useContext(QRScanContext);
 
 
     const { totalBill, setTotalBill, myShare, setMyShare } = useContext(TableDataContext); // Correct usage of context
@@ -23,10 +26,43 @@ const Payment = ({ navigation }) => {
         // Implement payment gateway integration for full bill payment
     };
 
-    const handlePayYourShare = () => {
-        Alert.alert('Payment Confirmation', 'Paid your share successfully!');
-        // Implement payment gateway integration for individual payment
+    const handlePayYourShare = async () => {
+        console.log("token", user.token);
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+                params: {
+                    orderId: order,
+                    cartId: cartId,
+                }
+            };
+
+            const response = await axios.post('http://192.168.1.13:5000/api/orders/pay_individual_bill', { paymentMethod: selectedGateway }, config);
+
+            if (response.status === 200) {
+                Alert.alert('Payment Confirmation', response.data.message);
+            } else {
+                Alert.alert('Error', 'Failed to pay your share. Please try again later.');
+            }
+        } catch (error) {
+            if (error.response) {
+                console.log('Server Error:', error.response.data);
+                console.log('Status:', error.response.status);
+                console.log('Headers:', error.response.headers);
+                Alert.alert('Error', 'Failed to pay your share. Please try again later.');
+            } else if (error.request) {
+                console.log('Request Error:', error.request);
+                Alert.alert('Error', 'No response from server. Please check your network connection and try again.');
+            } else {
+                console.log('Error:', error.message);
+                Alert.alert('Error', 'An unexpected error occurred. Please try again later.');
+            }
+        }
     };
+
+
 
     const handleGatewayPress = (gateway) => {
         setSelectedGateway(gateway);

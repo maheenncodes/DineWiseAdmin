@@ -23,11 +23,12 @@ const orderSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
-    paymentMethod: {
-        type: String,
-        enum: ["combined", "individual", "NA"],
-        default: "NA"
-    }
+
+    totalPaid: {
+        type: Number,
+        default: 0,
+    },
+
 }, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema);

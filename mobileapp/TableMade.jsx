@@ -32,9 +32,9 @@ const TableMade = () => {
 
         const loadStatus = async () => {
             if (order && !isStatusLoaded(order)) {
-                console.log('Loading order status:', order);
+                //    console.log('Loading order status:', order);
                 await loadOrderStatus(user.token, order);
-                console.log('Order status loaded:', orderStatus);
+                // console.log('Order status loaded:', orderStatus);
             }
         };
 

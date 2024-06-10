@@ -20,9 +20,11 @@ export const TableDataProvider = ({ children }) => {
         try {
             const { members, totalBill } = await fetchMembersData(token, restaurantId, tableId);
             setMembers(members);
+
             setTotalBill(totalBill);
             const myDetails = members.find((member) => member.userId === user.userId);
             if (myDetails) {
+                console.log("my details", myDetails);
                 setMyShare(myDetails.totalPrice);
             }
             setOrderStatus(null); // Reset order status when updating table data
@@ -35,7 +37,7 @@ export const TableDataProvider = ({ children }) => {
         try {
             const status = await getOrderStatus(token, orderId);
             setOrderStatus(status);
-            console.log('Order status:', status);
+            //   console.log('Order status:', status);
         } catch (error) {
             console.error('Error loading order status:', error);
         }

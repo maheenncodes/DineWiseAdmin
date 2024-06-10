@@ -215,6 +215,40 @@ const getOrderStatus = asyncHandler(async (req, res) => {
     }
 })
 
+const PayIndividualBill = asyncHandler(async (req, res) => {
+    const { orderId, cartId } = req.query;
+    console.log("orderid:", orderId);
+    console.log("cartId:", cartId);
+
+    const { paymentMethod } = req.body;
+    const order = await Order.findById(orderId);
+    console.log("order:", order);
+    const cart = await Cart.findById(cartId);
+    console.log("cart:", cart);
+    if (order && cart) {
+        if (cart.paymentDone) {
+            res.status(400).json({
+                message: "Payment already done."
+            })
+        }
+        else {
+            cart.paymentDone = true;
+            cart.paymentStatus = "being verified";
+            cart.paymentMethod = paymentMethod;
+            order.totalPaid = order.totalPaid + cart.totalPrice;
+            await cart.save();
+            await order.save();
+            res.status(200).json({
+                message: "Payment done successfully."
+            })
+        }
+    }
+    else {
+        res.status(404).json({
+            message: "Order or cart not found."
+        })
+    }
+})
 module.exports = {
     addToTable,
     placeOrder,
@@ -222,4 +256,5 @@ module.exports = {
     changeStatus,
     viewCurrentOrdersRestaurant,
     getOrderStatus,
+    PayIndividualBill
 }

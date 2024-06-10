@@ -23,8 +23,9 @@ export const QRScanProvider = ({ children }) => {
     const [scannedTableId, setScannedTableId] = useState(null); // Add table ID state
     const [errorMessage, setErrorMessage] = useState(null);
     const [order, setOrder] = useState(null);
+    const [cartId, setCartId] = useState(null);
 
-    const handleScan = async (restaurantId, tableId, orderId) => {
+    const handleScan = async (restaurantId, tableId, orderId, cartId) => {
         try {
             const restaurantData = await fetchRestaurantDetails(restaurantId);
 
@@ -32,9 +33,10 @@ export const QRScanProvider = ({ children }) => {
                 setScannedRestaurant(restaurantData);
                 setScannedTableId(tableId); // Set table ID
                 setOrder(orderId);
+                setCartId(cartId);
                 setIsScanned(true);
-                console.log('Scanned restaurant:', restaurantData);
-                console.log('Set Order Id', order);
+                //   console.log('Scanned restaurant:', restaurantData);
+                //   console.log('Set Order Id', order);
             } else {
                 throw new Error("Error fetching restaurant details");
             }
@@ -44,7 +46,7 @@ export const QRScanProvider = ({ children }) => {
     };
 
     return (
-        <QRScanContext.Provider value={{ isScanned, setIsScanned, scannedRestaurant, scannedTableId, handleScan, errorMessage, order }}>
+        <QRScanContext.Provider value={{ isScanned, setIsScanned, scannedRestaurant, scannedTableId, handleScan, errorMessage, order, cartId }}>
             {children}
         </QRScanContext.Provider>
     );

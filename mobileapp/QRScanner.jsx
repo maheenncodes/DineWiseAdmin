@@ -30,9 +30,9 @@ const QRScanner = () => {
         };
 
         ws.onmessage = (event) => {
-            console.log('Message received:', event.data);
+            // console.log('Message received:', event.data);
             const message = JSON.parse(event.data);
-            console.log('Parsed message:', message);  // Debugging log
+            // console.log('Parsed message:', message);  // Debugging log
             if (message.operationType === 'insert') {
                 console.log('New order inserted:', message.updatedFields);
                 Alert.alert('Success', 'A new user has been added to a NEW ORDER');
@@ -49,17 +49,22 @@ const QRScanner = () => {
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                 }
                 else if ('totalPrice' in message.updatedFields) {
-                    console.log('Total price updated:', message.updatedFields.totalPrice);
+                    //  console.log('Total price updated:', message.updatedFields.totalPrice);
                     alert('Total Bill Updated');
                     setTableDataLoaded(false);
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                     // Handle total price update
 
                 }
+                else if ('totalPaid' in message.updatedFields) {
+                    //  console.log('Total paid updated:', message.updatedFields.totalPaid);
+                    setTableDataLoaded(false);
+                    updateTableData(user.token, scannedRestaurant._id, scannedTableId);
+                }
 
                 const statusKey = Object.keys(message.updatedFields).find(key => key === 'status');
                 if (statusKey) {
-                    console.log('Order status updated:', message.updatedFields.status);
+                    //   console.log('Order status updated:', message.updatedFields.status);
                     loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
                     alert('Order status Updated');
                 }
@@ -95,9 +100,10 @@ const QRScanner = () => {
             console.log("Added to table");
             console.log('Data:', data);
             const orderID = data.orderId;
+            const cartId = data.cartId;
             console.log('Order ID:', orderID);
 
-            handleScan(restaurantId, tableId, orderID);
+            handleScan(restaurantId, tableId, orderID, cartId);
             navigation.navigate('Welcome');
 
             // Handle navigation or any other action after successful scan

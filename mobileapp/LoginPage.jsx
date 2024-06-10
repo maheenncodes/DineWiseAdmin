@@ -11,7 +11,7 @@ const LoginScreen = ({ navigation }) => {
   const { login } = useContext(AuthContext); // Access the login function from the context
 
   const handleLogin = async () => {
-    console.log(`Email: ${email}, Password: ${password}`);
+    // console.log(`Email: ${email}, Password: ${password}`);
     if (!email || !password) {
       Alert.alert('Login Error', 'Email or password cannot be empty.');
       return;
@@ -27,7 +27,7 @@ const LoginScreen = ({ navigation }) => {
       await login(email, password); // Call the login function with email and password
       navigation.navigate('CustomerHomepage'); // Navigate to the next screen upon successful login
     } catch (error) {
-      console.error('Login error:', error);
+      //  console.error('Login error:', error);
       if (error.response && error.response.data && error.response.data.message) {
         // If the error has a response object with a data property containing a message
         Alert.alert('Login Error', error.response.data.message);
