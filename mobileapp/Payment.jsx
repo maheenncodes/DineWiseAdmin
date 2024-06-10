@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
 import Header from './Header';
 import Footer from './Footer';
+import { useNavigation } from '@react-navigation/native';
+import { TableDataContext } from './TableDataContext'; // Correct import
+
 
 const Payment = ({ navigation }) => {
+
     const [payFullBill, setPayFullBill] = useState(false);
     const [selectedGateway, setSelectedGateway] = useState('');
     const [selectedPaymentOption, setSelectedPaymentOption] = useState('');
-    const [fullBillAmount, setFullBillAmount] = useState(116); // Replace with your full bill amount
-    const [yourShareAmount, setYourShareAmount] = useState(28); // Replace with your share amount
+
+    const { totalBill, setTotalBill } = useContext(TableDataContext); // Correct usage of context
+    const [myShare, setMyShare] = useContext(TableDataContext); // Correct usage of context
+
 
     const handlePayFullBill = () => {
         Alert.alert('Payment Confirmation', 'Paid full bill successfully!');
@@ -55,7 +61,7 @@ const Payment = ({ navigation }) => {
                             styles.buttonText,
                             selectedPaymentOption === 'Pay Full Bill' ? styles.selectedPaymentText : null,
                         ]}>Pay Full Bill</Text>
-                        <Text style={styles.amountText}>Full Bill Amount: ${fullBillAmount}</Text>
+                        <Text style={styles.amountText}>Full Bill Amount: ${totalBill}</Text>
 
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -72,7 +78,7 @@ const Payment = ({ navigation }) => {
                             styles.buttonText,
                             selectedPaymentOption === 'Pay Only Yours' ? styles.selectedPaymentText : null,
                         ]}>Pay Only Yours</Text>
-                        <Text style={styles.amountText}>Your Share Amount: ${yourShareAmount}</Text>
+                        <Text style={styles.amountText}>Your Share Amount: ${myShare}</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.paymentGateways}>

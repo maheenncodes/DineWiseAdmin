@@ -38,8 +38,9 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <SafeAreaProvider>
-      <TableDataProvider>
-        <AuthProvider>
+
+      <AuthProvider>
+        <TableDataProvider>
           <OrderProvider>
             <QRScanProvider>
               <CartProvider>
@@ -106,8 +107,9 @@ function App() {
               </CartProvider>
             </QRScanProvider>
           </OrderProvider>
-        </AuthProvider>
-      </TableDataProvider>
+        </TableDataProvider>
+      </AuthProvider>
+
     </SafeAreaProvider>
   );
 }
