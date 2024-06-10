@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, Image } from 'react-na
 import Header from './Header';
 import Footer from './Footer';
 import { useNavigation } from '@react-navigation/native';
-//import { TableDataContext } from './TableDataContext'; // Correct import
+import TableDataContext from './TableDataContext'; // Correct import
 
 
 const Payment = ({ navigation }) => {
@@ -12,10 +12,11 @@ const Payment = ({ navigation }) => {
     const [selectedGateway, setSelectedGateway] = useState('');
     const [selectedPaymentOption, setSelectedPaymentOption] = useState('');
 
-    //   const { totalBill, setTotalBill } = useContext(TableDataContext); // Correct usage of context
-    // const [myShare, setMyShare] = useContext(TableDataContext); // Correct usage of context
-    const totalBill = 100; // Replace with the actual total bill amount
-    const myShare = 25; // Replace with the actual share amount
+
+    const { totalBill, setTotalBill, myShare, setMyShare } = useContext(TableDataContext); // Correct usage of context
+
+    // const totalBill = 100; // Replace with the actual total bill amount
+    //  const myShare = 25; // Replace with the actual share amount
 
     const handlePayFullBill = () => {
         Alert.alert('Payment Confirmation', 'Paid full bill successfully!');

@@ -9,7 +9,7 @@ export const TableDataProvider = ({ children }) => {
     const [members, setMembers] = useState([]);
     const [totalBill, setTotalBill] = useState(0);
     const [myShare, setMyShare] = useState(0);
-    // const { user } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const setTableDataLoaded = (value) => {
         setDataLoaded(value);
 
@@ -18,12 +18,17 @@ export const TableDataProvider = ({ children }) => {
 
     const updateTableData = async (token, restaurantId, tableId) => {
         try {
-            // console.log('user:', userData);
+            //console.log('user:', user);
             const { members, totalBill } = await fetchMembersData(token, restaurantId, tableId);
             setMembers(members);
             setTotalBill(totalBill);
+            const myDetails = members.find((member) => member.userId === user.userId);
+            if (myDetails) {
+                setMyShare(myDetails.totalPrice);
+                console.log('My share:', myDetails.totalPrice);
+            }
 
-            console.log("dataupaded");
+
         } catch (error) {
             console.error('Error updating table data:', error);
         }
