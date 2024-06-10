@@ -9,14 +9,13 @@ import TableDataContext from './TableDataContext'; // Correct import
 
 
 const QRScanner = () => {
-    const { user } = useContext(AuthContext); // Access user authentication state from context
+    const { user } = useContext(AuthContext);
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const navigation = useNavigation();
     const { handleScan } = useContext(QRScanContext);
-    const { dataLoaded, members, totalBill, setTableDataLoaded, updateTableData } = useContext(TableDataContext);
-    const { scannedRestaurant, scannedTableId } = useContext(QRScanContext);
-
+    const { setTableDataLoaded, updateTableData, loadOrderStatus, isStatusLoaded } = useContext(TableDataContext);
+    const { scannedRestaurant, scannedTableId, order } = useContext(QRScanContext);
     useEffect(() => {
         (async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -36,7 +35,7 @@ const QRScanner = () => {
             console.log('Parsed message:', message);  // Debugging log
             if (message.operationType === 'insert') {
                 console.log('New order inserted:', message.updatedFields);
-                Alert.alert('Success', 'A new user has been added to a new order');
+                Alert.alert('Success', 'A new user has been added to a NEW ORDER');
                 setTableDataLoaded(false);
                 updateTableData(user.token, scannedRestaurant._id, scannedTableId);
             }
@@ -51,12 +50,20 @@ const QRScanner = () => {
                 }
                 else if ('totalPrice' in message.updatedFields) {
                     console.log('Total price updated:', message.updatedFields.totalPrice);
-                    alert('Total price updated:', message.updatedFields.totalPrice);
+                    alert('Total Bill Updated');
                     setTableDataLoaded(false);
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                     // Handle total price update
 
                 }
+
+                const statusKey = Object.keys(message.updatedFields).find(key => key === 'status');
+                if (statusKey) {
+                    console.log('Order status updated:', message.updatedFields.status);
+                    loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
+                    alert('Order status Updated');
+                }
+
             }
         };
 

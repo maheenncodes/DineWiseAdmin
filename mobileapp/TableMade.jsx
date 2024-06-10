@@ -1,28 +1,29 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useContext, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import Header from './Header';
 import Footer from './Footer';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from './authcontext';
-import { fetchMembersData, getOrderStatus } from './api-table';
 import QRScanContext from './QRScanContext';
-import TableDataContext from './TableDataContext'; // Correct import
-import { user } from './authcontext';
+import TableDataContext from './TableDataContext';
 
 const TableMade = () => {
     const navigation = useNavigation();
-    const isFocused = useIsFocused();
     const { user } = useContext(AuthContext);
     const { scannedRestaurant, scannedTableId, order } = useContext(QRScanContext);
-    const { dataLoaded, members, totalBill, setTableDataLoaded, updateTableData } = useContext(TableDataContext);
-    const [orderStatus, setOrderStatus] = useState(null);
+    const {
+        dataLoaded,
+        members,
+        totalBill,
+        setTableDataLoaded,
+        updateTableData,
+        loadOrderStatus,
+        isStatusLoaded,
+        orderStatus,
+    } = useContext(TableDataContext);
 
     useEffect(() => {
-        //  updateTableData(user.token, scannedRestaurant._id, scannedTableId);
-        console.log('order', order)
-
         const loadData = async () => {
-            console.log('Data loaded:', dataLoaded);
             if (!dataLoaded && scannedRestaurant && scannedTableId) {
                 await updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                 setTableDataLoaded(true);
@@ -30,27 +31,25 @@ const TableMade = () => {
         };
 
         const loadStatus = async () => {
-            if (order) {
-                const status = await getOrderStatus(user.token, order);
-                console.log('Order status:', status);
-                setOrderStatus(status);
+            if (order && !isStatusLoaded(order)) {
+                console.log('Loading order status:', order);
+                await loadOrderStatus(user.token, order);
+                console.log('Order status loaded:', orderStatus);
             }
         };
 
         loadData();
         loadStatus();
-    }, [scannedRestaurant, scannedTableId, dataLoaded, user.token, updateTableData]);
+    }, [scannedRestaurant, scannedTableId, dataLoaded, user.token, updateTableData, order, isStatusLoaded, loadOrderStatus, setTableDataLoaded]);
 
     const handlePayBill = () => {
-        // Logic to navigate to the payment screen or process the payment
         navigation.navigate('Payment');
     };
 
     return (
         <View style={styles.container}>
             <Header navigation={navigation} />
-            {/* Show order status at the top */}
-            {orderStatus && (
+            {orderStatus !== null && (
                 <View style={styles.orderStatusContainer}>
                     <Text style={styles.orderStatusText}>Order Status: {orderStatus}</Text>
                 </View>
@@ -58,7 +57,7 @@ const TableMade = () => {
             <ScrollView>
                 {members.map((member) => (
                     <TouchableOpacity
-                        key={member.userId} // Use a unique key instead of index
+                        key={member.userId}
                         style={styles.memberContainer}
                         onPress={() => navigation.navigate('MemberDetails', { member })}
                     >

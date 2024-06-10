@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
-import { fetchMembersData } from './api-table';
+import { fetchMembersData, getOrderStatus } from './api-table';
 import { AuthContext } from './authcontext';
 
 const TableDataContext = createContext();
@@ -9,32 +9,46 @@ export const TableDataProvider = ({ children }) => {
     const [members, setMembers] = useState([]);
     const [totalBill, setTotalBill] = useState(0);
     const [myShare, setMyShare] = useState(0);
+    const [orderStatus, setOrderStatus] = useState(null); // New state for order status
     const { user } = useContext(AuthContext);
+
     const setTableDataLoaded = (value) => {
         setDataLoaded(value);
-
-
     };
 
     const updateTableData = async (token, restaurantId, tableId) => {
         try {
-            //console.log('user:', user);
             const { members, totalBill } = await fetchMembersData(token, restaurantId, tableId);
             setMembers(members);
             setTotalBill(totalBill);
             const myDetails = members.find((member) => member.userId === user.userId);
             if (myDetails) {
                 setMyShare(myDetails.totalPrice);
-                console.log('My share:', myDetails.totalPrice);
             }
-
-
+            setOrderStatus(null); // Reset order status when updating table data
         } catch (error) {
             console.error('Error updating table data:', error);
         }
     };
+
+    const loadOrderStatus = async (token, orderId) => {
+        try {
+            const status = await getOrderStatus(token, orderId);
+            setOrderStatus(status);
+            console.log('Order status:', status);
+        } catch (error) {
+            console.error('Error loading order status:', error);
+        }
+    };
+
+    const isStatusLoaded = () => {
+        return orderStatus !== null;
+    };
+
     return (
-        <TableDataContext.Provider value={{ dataLoaded, members, totalBill, setTableDataLoaded, updateTableData, myShare, setTotalBill, setMyShare }}>
+        <TableDataContext.Provider
+            value={{ dataLoaded, members, totalBill, setTableDataLoaded, updateTableData, myShare, setTotalBill, setMyShare, loadOrderStatus, isStatusLoaded, orderStatus }}
+        >
             {children}
         </TableDataContext.Provider>
     );
