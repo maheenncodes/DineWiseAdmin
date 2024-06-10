@@ -12,18 +12,23 @@ const orderSchema = mongoose.Schema({
     },
     cartList: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref:'Cart'
+        ref: 'Cart'
     }],
     status: {
         type: String,
         enum: ["new", "preparing", "served", "cancelled", "payment_pending", "completed"],
-        default:"new"
+        default: "new"
     },
     totalPrice: {
         type: Number,
         default: 0,
+    },
+    paymentMethod: {
+        type: String,
+        enum: ["combined", "individual", "NA"],
+        default: "NA"
     }
-},{timestamps: true});
+}, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema);
 module.exports = Order;

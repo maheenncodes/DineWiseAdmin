@@ -52,3 +52,20 @@ export const fetchMembersData = async (token, restaurantId, tableId) => {
         throw error;
     }
 };
+
+export const getOrderStatus = async (token, orderId) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        };
+        console.log('Getting order status for order:', orderId);
+        const response = await axios.get(`http://192.168.1.13:5000/api/orders/get_order_status?orderId=${orderId}`, config);
+        console.log('Order status response:', response.data);
+        return response.data.status;
+    } catch (error) {
+        console.error('Error getting order status:', error.response ? error.response.data : error.message);
+        throw error;
+    }
+}

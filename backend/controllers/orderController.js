@@ -200,10 +200,26 @@ const viewCurrentOrdersRestaurant = asyncHandler(async (req, res) => {
         res.status(400).json({ message: "No order is pending" });
     }
 })
+
+
+const getOrderStatus = asyncHandler(async (req, res) => {
+    const { orderId } = req.query;
+    const order = await Order.findById(orderId);
+    if (order) {
+        res.status(200).json({
+            status: order.status
+        })
+    }
+    else {
+        res.status(404).json({ message: "Order not found" });
+    }
+})
+
 module.exports = {
     addToTable,
     placeOrder,
     viewAllMembers,
     changeStatus,
-    viewCurrentOrdersRestaurant
+    viewCurrentOrdersRestaurant,
+    getOrderStatus,
 }

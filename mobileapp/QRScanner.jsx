@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import QRScanContext from './QRScanContext';
 import TableDataContext from './TableDataContext'; // Correct import
 
+
 const QRScanner = () => {
     const { user } = useContext(AuthContext); // Access user authentication state from context
     const [hasPermission, setHasPermission] = useState(null);
@@ -83,10 +84,13 @@ const QRScanner = () => {
 
 
             // Make API call with decoded parameters
-            await addToTable({ restaurantId, tableId, userId: user._id, token: user.token });
+            data = await addToTable({ restaurantId, tableId, userId: user._id, token: user.token });
+            console.log("Added to table");
+            console.log('Data:', data);
+            const orderID = data.orderId;
+            console.log('Order ID:', orderID);
 
-
-            handleScan(restaurantId, tableId);
+            handleScan(restaurantId, tableId, orderID);
             navigation.navigate('Welcome');
 
             // Handle navigation or any other action after successful scan

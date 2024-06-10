@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const cartSchema = mongoose.Schema({
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:'User'
+        ref: 'User'
     },
     itemList: [{
         item: {
@@ -16,7 +16,7 @@ const cartSchema = mongoose.Schema({
     }],
     totalPrice: {
         type: Number,
-        default:0
+        default: 0
     },
     rating: {
         type: Number,
@@ -25,14 +25,27 @@ const cartSchema = mongoose.Schema({
     },
     comment: {
         type: String,
-        default:""
+        default: ""
     },
     status: {
         type: String,
-        enum: ["payment_pending", "completed"],
-        default:"payment_pending"
+        enum: ["payment_pending", "being verified", "completed"],
+        default: "payment_pending"
+    },
+
+
+    paymentDone: {
+        type: Boolean,
+        default: false
+    },
+
+    paymentVerified: {
+        type: Boolean,
+        default: false
     }
-},{timestamps: true});
+
+
+}, { timestamps: true });
 
 const Cart = mongoose.model("Cart", cartSchema);
 module.exports = Cart;
