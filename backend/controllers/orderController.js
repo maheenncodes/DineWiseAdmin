@@ -233,7 +233,7 @@ const PayIndividualBill = asyncHandler(async (req, res) => {
         }
         else {
             cart.paymentDone = true;
-            cart.paymentStatus = "being verified";
+            cart.status = "being_verified";
             cart.paymentMethod = paymentMethod;
             order.totalPaid = order.totalPaid + cart.totalPrice;
             await cart.save();

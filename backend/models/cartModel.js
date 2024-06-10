@@ -29,7 +29,7 @@ const cartSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["payment_pending", "being verified", "completed"],
+        enum: ["payment_pending", "being_verified", "completed"],
         default: "payment_pending"
     },
 
