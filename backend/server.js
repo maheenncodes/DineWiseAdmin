@@ -12,15 +12,13 @@ const restaurantRoute = require("./routes/restaurantRoute");
 const orderRoute = require("./routes/orderRoute");
 const errorHandler = require("./middleWare/errorMiddleWare");
 
-
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:19000", "http://localhost:8081"], // Update with your React Native app's origin
+  origin: ["http://localhost:19000", "http://localhost:8081"],
   credentials: true,
   methods: 'GET, POST',
   allowedHeaders: 'Content-Type, Authorization',
@@ -36,7 +34,7 @@ app.get("/", (req, res) => {
   res.send("Home Page");
 });
 
-app.use(errorHandler); // referencing errorhandler
+app.use(errorHandler);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -58,30 +56,45 @@ mongoose
     });
 
     const db = mongoose.connection;
-    const orderCollection = db.collection('orders'); // Change to your collection name
+    const orderCollection = db.collection('orders');
 
     const changeStream = orderCollection.watch();
 
     changeStream.on('change', change => {
       console.log('Change detected:', change);
 
-      const { fullDocument } = change;
-
-      if (!fullDocument) return;
-
-      const { _id, userId } = fullDocument;
-
-      if (!userId) return;
-
-      const message = {
+      var message = {
         operationType: change.operationType,
-        userId,
-        _id
       };
+
+      if (change.operationType == 'update') {
+        console.log('UPDATE detected:', change);
+        console.log('Updated fields:', change.updateDescription.updatedFields);
+
+        message = {
+
+          operationType: change.operationType,
+          updatedFields: change.updateDescription.updatedFields,
+
+        };
+      }
+      else if (change.operationType == 'insert') {
+        console.log('INSERT detected:', change);
+        message = {
+          operationType: change.operationType,
+          updatedFields: change.fullDocument,
+        };
+      }
+
+
+      console.log('Sending message:', message);
 
       wss.clients.forEach(client => {
         if (client.readyState === client.OPEN) {
+          console.log('Client is open, sending message');
           client.send(JSON.stringify(message));
+        } else {
+          console.log('Client not open, message not sent');
         }
       });
     });

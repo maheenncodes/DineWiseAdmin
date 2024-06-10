@@ -5,6 +5,7 @@ import { addToTable } from './api-scan'; // Import the API function
 import { AuthContext } from './authcontext'; // Import AuthContext
 import { useNavigation } from '@react-navigation/native';
 import QRScanContext from './QRScanContext';
+import TableDataContext from './TableDataContext'; // Correct import
 
 const QRScanner = () => {
     const { user } = useContext(AuthContext); // Access user authentication state from context
@@ -12,6 +13,8 @@ const QRScanner = () => {
     const [scanned, setScanned] = useState(false);
     const navigation = useNavigation();
     const { handleScan } = useContext(QRScanContext);
+    const { dataLoaded, members, totalBill, setTableDataLoaded, updateTableData } = useContext(TableDataContext);
+    const { scannedRestaurant, scannedTableId } = useContext(QRScanContext);
 
     useEffect(() => {
         (async () => {
@@ -20,16 +23,49 @@ const QRScanner = () => {
         })();
 
         const ws = new WebSocket('ws://192.168.1.13:5000');
+        console.log('Connecting to WebSocket server');
+
+        ws.onopen = () => {
+            console.log('WebSocket connection opened');
+        };
 
         ws.onmessage = (event) => {
+            console.log('Message received:', event.data);
             const message = JSON.parse(event.data);
-            if (message.userId === user._id) {
-                // User themselves have scanned
-                Alert.alert('Success', 'You have been successfully added to the table');
-            } else {
-                // Someone else has been added
-                Alert.alert('Success', 'A new user has been added');
+            console.log('Parsed message:', message);  // Debugging log
+            if (message.operationType === 'insert') {
+                console.log('New order inserted:', message.updatedFields);
+                Alert.alert('Success', 'A new user has been added to a new order');
+                setTableDataLoaded(false);
+                updateTableData(user.token, scannedRestaurant._id, scannedTableId);
             }
+            else if (message.operationType === 'update' && message.updatedFields) {
+                console.log('Order updated:', message.updatedFields);
+                const cartListKey = Object.keys(message.updatedFields).find(key => key.startsWith('cartList.'));
+
+                if (cartListKey) {
+                    console.log('Cart item added:', message.updatedFields['cartList']);
+                    Alert.alert('Success', 'A new user has been added');
+                    setTableDataLoaded(false);
+                    updateTableData(user.token, scannedRestaurant._id, scannedTableId);
+                }
+                if ('totalPrice' in message.updatedFields) {
+                    console.log('Total price updated:', message.updatedFields.totalPrice);
+                    alert('Total price updated:', message.updatedFields.totalPrice);
+                    setTableDataLoaded(false);
+                    updateTableData(user.token, scannedRestaurant._id, scannedTableId);
+                    // Handle total price update
+
+                }
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        ws.onclose = () => {
+            console.log('WebSocket connection closed');
         };
 
         return () => {

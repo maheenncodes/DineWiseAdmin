@@ -18,9 +18,14 @@ const TableMade = () => {
 
 
     useEffect(() => {
+        //  updateTableData(user.token, scannedRestaurant._id, scannedTableId);
+
+
         const loadData = async () => {
+            console.log('Data loaded:', dataLoaded);
             if (!dataLoaded && scannedRestaurant && scannedTableId) {
                 await updateTableData(user.token, scannedRestaurant._id, scannedTableId);
+                setTableDataLoaded(true);
             }
         };
 
@@ -38,7 +43,7 @@ const TableMade = () => {
         <View style={styles.container}>
             <Header navigation={navigation} />
             <ScrollView>
-                {members.map((member, index) => (
+                {members.map((member) => (
                     <TouchableOpacity
                         key={member.userId} // Use a unique key instead of index
                         style={styles.memberContainer}
@@ -56,6 +61,7 @@ const TableMade = () => {
                         </View>
                     </TouchableOpacity>
                 ))}
+
             </ScrollView>
             <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>

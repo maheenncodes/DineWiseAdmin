@@ -19,7 +19,7 @@ export const TableDataProvider = ({ children }) => {
             const { members, totalBill } = await fetchMembersData(token, restaurantId, tableId);
             setMembers(members);
             setTotalBill(totalBill);
-            setDataLoaded(true);
+
             console.log("dataupaded");
         } catch (error) {
             console.error('Error updating table data:', error);
