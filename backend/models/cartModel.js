@@ -42,6 +42,11 @@ const cartSchema = mongoose.Schema({
     paymentVerified: {
         type: Boolean,
         default: false
+    },
+
+    payment: {
+        type: String,
+        enum: ['group', 'individual']
     }
 
 

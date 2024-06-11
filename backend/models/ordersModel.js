@@ -29,6 +29,11 @@ const orderSchema = mongoose.Schema({
         default: 0,
     },
 
+    totalVerified: {
+        type: Number,
+        default: 0,
+    },
+
 }, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema);

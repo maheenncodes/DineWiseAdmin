@@ -214,83 +214,53 @@ const getOrderStatus = asyncHandler(async (req, res) => {
         res.status(404).json({ message: "Order not found" });
     }
 })
-
 const PayIndividualBill = asyncHandler(async (req, res) => {
-    const { orderId, cartId } = req.query;
-    console.log("orderid:", orderId);
-    console.log("cartId:", cartId);
-
-    const { paymentMethod } = req.body;
+    const { orderId, cartId, paymentMethod } = req.query; // Include paymentMethod in the query
+    const { payment } = req.body; // Get payment type from the request body
     const order = await Order.findById(orderId);
-    console.log("order:", order);
     const cart = await Cart.findById(cartId);
-    console.log("cart:", cart);
     if (order && cart) {
         if (cart.paymentDone) {
-            res.status(400).json({
-                message: "Payment already done."
-            })
-        }
-        else {
+            return res.status(400).json({ message: "Payment already done." });
+        } else {
             cart.paymentDone = true;
             cart.status = "being_verified";
             cart.paymentMethod = paymentMethod;
-            order.totalPaid = order.totalPaid + cart.totalPrice;
+            cart.payment = payment; // Set the payment type
             await cart.save();
+            order.totalPaid += cart.totalPrice;
             await order.save();
-            res.status(200).json({
-                message: "Payment done successfully."
-            })
+            return res.status(200).json({ message: "Payment done successfully.", totalPaid: order.totalPaid });
         }
+    } else {
+        return res.status(404).json({ message: "Order or cart not found." });
     }
-    else {
-        res.status(404).json({
-            message: "Order or cart not found."
-        })
-    }
-})
+});
 
 const payFullBill = asyncHandler(async (req, res) => {
-    const { orderId } = req.query;
-    const { paymentMethod } = req.body;
-
+    const { orderId, paymentMethod } = req.query; // Include paymentMethod in the query
+    const { payment } = req.body; // Get payment type from the request body
     const order = await Order.findById(orderId);
     if (!order) {
-        return res.status(404).json({
-            message: "Order not found."
-        });
+        return res.status(404).json({ message: "Order not found." });
     }
-
     const carts = await Cart.find({ _id: { $in: order.cartList } });
-
-    let allPaymentsDone = true;
     let totalOrderPrice = 0;
-
     for (const cart of carts) {
         if (!cart.paymentDone) {
             cart.paymentDone = true;
             cart.status = "being_verified";
             cart.paymentMethod = paymentMethod;
-            totalOrderPrice += cart.totalPrice;
+            cart.payment = payment; // Set the payment type
             await cart.save();
-        } else {
-            allPaymentsDone = false;
+            totalOrderPrice += cart.totalPrice;
         }
     }
-
     order.totalPaid = totalOrderPrice;
     await order.save();
-
-    if (allPaymentsDone) {
-        res.status(200).json({
-            message: "Full payment done successfully."
-        });
-    } else {
-        res.status(200).json({
-            message: "Payment done successfully for unpaid members. Some members had already paid."
-        });
-    }
+    return res.status(200).json({ message: "Payment done successfully.", totalPaid: order.totalPaid });
 });
+
 
 module.exports = {
     addToTable,
