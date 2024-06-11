@@ -35,6 +35,8 @@ const TableMade = () => {
         const loadStatus = async () => {
             if (order && !isStatusLoaded) {
                 await loadOrderStatus(user.token, order);
+                console.log('Order Status Loaded', orderStatus);
+                isStatusLoaded(true);
             }
         };
 
@@ -76,13 +78,13 @@ const TableMade = () => {
                                     Payment Verified: {member.paymentVerified ? 'Yes' : 'No'}
                                 </Text>
                                 <Text style={styles.memberStatus}>
-                                    Total Paid: {member.paymentVerified ? totalBill : member.paymentDone ? totalBill : totalPaid}
+                                    Total Paid: {member.paymentVerified ? member.totalPrice : member.paymentDone ? member.totalPrice : 0}
                                 </Text>
                                 <Text style={styles.memberStatus}>
-                                    Total Verified: {member.paymentVerified ? totalBill : totalVerified}
+                                    Total Verified: {member.paymentVerified ? member.totalPrice : 0}
                                 </Text>
                                 <Text style={styles.memberStatus}>
-                                    Total Left: {member.paymentVerified ? '0' : totalBill - totalVerified}
+                                    Total Left: {member.paymentVerified ? '0' : member.totalPrice}
                                 </Text>
 
                                 <Text style={styles.memberTotalPrice}>Total Price: ${member.totalPrice}</Text>
@@ -95,6 +97,7 @@ const TableMade = () => {
                 <Text style={styles.totalText}>Total Bill: ${totalBill}</Text>
                 <Text style={styles.totalText}>Total Paid: ${totalPaid}</Text>
                 <Text style={styles.totalText}>Total Verified: ${totalVerified}</Text>
+                <Text style={styles.totalText}>Total Left: ${totalBill - totalVerified}</Text>
 
                 <TouchableOpacity style={styles.payButton} onPress={handlePayBill}>
                     <Text style={styles.payButtonText}>Pay Bill</Text>

@@ -64,6 +64,12 @@ const QRScanner = () => {
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                 }
 
+                else if ('totalVerified' in message.updatedFields) {
+                    //  console.log('Total paid updated:', message.updatedFields.totalPaid);
+                    setTableDataLoaded(false);
+                    updateTableData(user.token, scannedRestaurant._id, scannedTableId);
+                }
+
                 const statusKey = Object.keys(message.updatedFields).find(key => key === 'status');
                 if (statusKey) {
                     //   console.log('Order status updated:', message.updatedFields.status);
