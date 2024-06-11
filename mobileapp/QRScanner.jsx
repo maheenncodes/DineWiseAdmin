@@ -34,6 +34,7 @@ const QRScanner = () => {
             // console.log('Message received:', event.data);
             const message = JSON.parse(event.data);
             // console.log('Parsed message:', message);  // Debugging log
+            console.log("before updation:", scannedRestaurant._id, scannedTableId, user.token);
             if (message.operationType === 'insert') {
                 console.log('New order inserted:', message.updatedFields);
                 Alert.alert('Success', 'A new user has been added to a NEW ORDER');
@@ -70,7 +71,7 @@ const QRScanner = () => {
                     setIsStatusLoaded(false);
                     if (message.updatedFields.status === 'completed') {
                         alert('Order completed, Closing Table');
-                        handleScan(null, null, null, null);
+                        //  handleScan(null, null, null, null);
                         resetNavigation(navigation);
                         setIsScanned(false);
                     }

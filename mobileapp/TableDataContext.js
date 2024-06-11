@@ -9,26 +9,38 @@ export const TableDataProvider = ({ children }) => {
     const [members, setMembers] = useState([]);
     const [totalBill, setTotalBill] = useState(0);
     const [myShare, setMyShare] = useState(0);
-    const [orderStatus, setOrderStatus] = useState(null); // New state for order status
+    const [orderStatus, setOrderStatus] = useState(null);
     const { user } = useContext(AuthContext);
-    const [totalPaid, setTotalPaid] = useState(0); // New state for total paid
+    const [totalPaid, setTotalPaid] = useState(0);
+    const [totalVerified, setTotalVerified] = useState(0);
     const [isStatusLoaded, setIsStatusLoaded] = useState(false);
+
     const setTableDataLoaded = (value) => {
         setDataLoaded(value);
     };
 
     const updateTableData = async (token, restaurantId, tableId) => {
+        console.log('Updating table data');
+        console.log('Token:', token);
+        console.log('Restaurant ID:', restaurantId);
+        console.log('Table ID:', tableId);
         try {
-            const { members, totalBill } = await fetchMembersData(token, restaurantId, tableId);
+            const { members, totalBill, totalPaid, totalVerified } = await fetchMembersData(token, restaurantId, tableId);
             setMembers(members);
-
+            console.log('Members:', members);
             setTotalBill(totalBill);
+            console.log('Total Bill:', totalBill);
+            setTotalPaid(totalPaid);
+            console.log('Total Paid:', totalPaid);
+            setTotalVerified(totalVerified);
+            console.log('Total Verified:', totalVerified);
+
             const myDetails = members.find((member) => member.userId === user.userId);
             if (myDetails) {
-                console.log("my details", myDetails);
                 setMyShare(myDetails.totalPrice);
             }
-            setOrderStatus(null); // Reset order status when updating table data
+
+            setOrderStatus(null);
         } catch (error) {
             console.error('Error updating table data:', error);
         }
@@ -38,17 +50,30 @@ export const TableDataProvider = ({ children }) => {
         try {
             const status = await getOrderStatus(token, orderId);
             setOrderStatus(status);
-            //   console.log('Order status:', status);
+            setIsStatusLoaded(true);
         } catch (error) {
             console.error('Error loading order status:', error);
         }
     };
 
-
-
     return (
         <TableDataContext.Provider
-            value={{ dataLoaded, members, totalBill, setTableDataLoaded, updateTableData, myShare, setTotalBill, setMyShare, loadOrderStatus, isStatusLoaded, orderStatus, setIsStatusLoaded }}
+            value={{
+                dataLoaded,
+                members,
+                totalBill,
+                setTableDataLoaded,
+                updateTableData,
+                myShare,
+                setTotalBill,
+                setMyShare,
+                loadOrderStatus,
+                isStatusLoaded,
+                orderStatus,
+                totalPaid,
+                setTotalPaid,
+                totalVerified,
+            }}
         >
             {children}
         </TableDataContext.Provider>

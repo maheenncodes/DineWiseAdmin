@@ -20,6 +20,8 @@ const TableMade = () => {
         loadOrderStatus,
         isStatusLoaded,
         orderStatus,
+        totalPaid, // New variable
+        totalVerified, // New variable
     } = useContext(TableDataContext);
 
     useEffect(() => {
@@ -32,9 +34,7 @@ const TableMade = () => {
 
         const loadStatus = async () => {
             if (order && !isStatusLoaded) {
-                //    console.log('Loading order status:', order);
                 await loadOrderStatus(user.token, order);
-                // console.log('Order status loaded:', orderStatus);
             }
         };
 
@@ -76,8 +76,9 @@ const TableMade = () => {
                 ))}
             </ScrollView>
             <View style={styles.totalContainer}>
-
                 <Text style={styles.totalText}>Total Bill: ${totalBill}</Text>
+                <Text style={styles.totalText}>Total Paid: ${totalPaid}</Text>
+                <Text style={styles.totalText}>Total Verified: ${totalVerified}</Text>
                 <TouchableOpacity style={styles.payButton} onPress={handlePayBill}>
                     <Text style={styles.payButtonText}>Pay Bill</Text>
                 </TouchableOpacity>
