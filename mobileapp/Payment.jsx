@@ -30,6 +30,7 @@ const Payment = ({ navigation }) => {
                 },
                 params: {
                     orderId: order,
+                    payment: 'group', // Set payment type to 'group'
                 }
             };
 
@@ -37,7 +38,6 @@ const Payment = ({ navigation }) => {
 
             if (response.status === 200) {
                 Alert.alert('Payment Confirmation', response.data.message);
-
             } else {
                 Alert.alert('Error', 'Failed to pay the full bill. Please try again later.');
             }
@@ -67,6 +67,7 @@ const Payment = ({ navigation }) => {
                 params: {
                     orderId: order,
                     cartId: cartId,
+                    payment: 'individual', // Set payment type to 'individual'
                 }
             };
 
@@ -92,6 +93,7 @@ const Payment = ({ navigation }) => {
             }
         }
     };
+
 
 
 
