@@ -75,6 +75,7 @@ const TableMade = () => {
                 ))}
             </ScrollView>
             <View style={styles.totalContainer}>
+
                 <Text style={styles.totalText}>Total Bill: ${totalBill}</Text>
                 <TouchableOpacity style={styles.payButton} onPress={handlePayBill}>
                     <Text style={styles.payButtonText}>Pay Bill</Text>

@@ -21,9 +21,40 @@ const Payment = ({ navigation }) => {
     // const totalBill = 100; // Replace with the actual total bill amount
     //  const myShare = 25; // Replace with the actual share amount
 
-    const handlePayFullBill = () => {
-        Alert.alert('Payment Confirmation', 'Paid full bill successfully!');
-        // Implement payment gateway integration for full bill payment
+
+    const handlePayFullBill = async () => {
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+                params: {
+                    orderId: order,
+                }
+            };
+
+            const response = await axios.post('http://192.168.1.13:5000/api/orders/pay_full_bill', { paymentMethod: selectedGateway }, config);
+
+            if (response.status === 200) {
+                Alert.alert('Payment Confirmation', response.data.message);
+
+            } else {
+                Alert.alert('Error', 'Failed to pay the full bill. Please try again later.');
+            }
+        } catch (error) {
+            if (error.response) {
+                console.log('Server Error:', error.response.data);
+                console.log('Status:', error.response.status);
+                console.log('Headers:', error.response.headers);
+                Alert.alert('Error', 'Failed to pay the full bill. Please try again later.');
+            } else if (error.request) {
+                console.log('Request Error:', error.request);
+                Alert.alert('Error', 'No response from server. Please check your network connection and try again.');
+            } else {
+                console.log('Error:', error.message);
+                Alert.alert('Error', 'An unexpected error occurred. Please try again later.');
+            }
+        }
     };
 
     const handlePayYourShare = async () => {

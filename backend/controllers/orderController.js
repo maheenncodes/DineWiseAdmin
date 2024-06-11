@@ -249,6 +249,49 @@ const PayIndividualBill = asyncHandler(async (req, res) => {
         })
     }
 })
+
+const payFullBill = asyncHandler(async (req, res) => {
+    const { orderId } = req.query;
+    const { paymentMethod } = req.body;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+        return res.status(404).json({
+            message: "Order not found."
+        });
+    }
+
+    const carts = await Cart.find({ _id: { $in: order.cartList } });
+
+    let allPaymentsDone = true;
+    let totalOrderPrice = 0;
+
+    for (const cart of carts) {
+        if (!cart.paymentDone) {
+            cart.paymentDone = true;
+            cart.status = "being_verified";
+            cart.paymentMethod = paymentMethod;
+            totalOrderPrice += cart.totalPrice;
+            await cart.save();
+        } else {
+            allPaymentsDone = false;
+        }
+    }
+
+    order.totalPaid = totalOrderPrice;
+    await order.save();
+
+    if (allPaymentsDone) {
+        res.status(200).json({
+            message: "Full payment done successfully."
+        });
+    } else {
+        res.status(200).json({
+            message: "Payment done successfully for unpaid members. Some members had already paid."
+        });
+    }
+});
+
 module.exports = {
     addToTable,
     placeOrder,
@@ -256,5 +299,6 @@ module.exports = {
     changeStatus,
     viewCurrentOrdersRestaurant,
     getOrderStatus,
-    PayIndividualBill
-}
+    PayIndividualBill,
+    payFullBill
+};

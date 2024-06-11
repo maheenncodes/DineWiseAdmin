@@ -11,7 +11,7 @@ export const TableDataProvider = ({ children }) => {
     const [myShare, setMyShare] = useState(0);
     const [orderStatus, setOrderStatus] = useState(null); // New state for order status
     const { user } = useContext(AuthContext);
-
+    const [totalPaid, setTotalPaid] = useState(0); // New state for total paid
     const setTableDataLoaded = (value) => {
         setDataLoaded(value);
     };
