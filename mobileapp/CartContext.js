@@ -14,7 +14,7 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
 
     const addToCart = (item) => {
-        const itemIndex = cartItems.findIndex((cartItem) => cartItem.id === item._id);
+        const itemIndex = cartItems.findIndex((cartItem) => cartItem._id === item._id);
 
         if (itemIndex !== -1) {
             // If item exists in the cart, update its quantity
@@ -29,11 +29,9 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-
-
     // Function to remove an item from the cart
     const removeFromCart = (id) => {
-        setCartItems(cartItems.filter((item) => item.id !== id));
+        setCartItems(cartItems.filter((item) => item._id !== id));
     };
 
     // Function to clear the cart

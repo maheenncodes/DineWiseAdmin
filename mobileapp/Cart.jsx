@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Alert } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import Footer from './Footer';
@@ -11,15 +11,11 @@ import { placeOrderAPI } from './api-order';
 import QRScanContext from './QRScanContext';
 
 const Cart = ({ navigation }) => {
-    const { cartItems, setCartItems } = useCart();
+    const { cartItems, setCartItems, removeFromCart } = useCart();
     const { user } = useContext(AuthContext);
     const { ongoingOrder } = useContext(OrderContext);
     const [orderPlaced, setOrderPlaced] = useState(false);
     const { scannedRestaurant, scannedTableId } = useContext(QRScanContext);
-
-    const removeFromCart = (id) => {
-        setCartItems(cartItems.filter(item => item._id !== id));
-    };
 
     const increaseQuantity = (id) => {
         const updatedCartItems = cartItems.map(item =>
@@ -74,8 +70,10 @@ const Cart = ({ navigation }) => {
             console.log('Order placed successfully:', result);
             setOrderPlaced(true);
             setTimeout(() => {
-                setOrderPlaced(false);
-                navigation.navigate('OrderStatus');
+                setOrderPlaced(true);
+                setCartItems([]);
+                //navigation.navigate('OrderStatus');
+
             }, 3000);
         } catch (error) {
             console.error('Error placing order:', error);
