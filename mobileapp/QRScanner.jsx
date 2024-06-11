@@ -1,3 +1,4 @@
+import { CommonActions } from '@react-navigation/native';
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
@@ -5,7 +6,7 @@ import { addToTable } from './api-scan'; // Import the API function
 import { AuthContext } from './authcontext'; // Import AuthContext
 import { useNavigation } from '@react-navigation/native';
 import QRScanContext from './QRScanContext';
-import TableDataContext from './TableDataContext'; // Correct import
+import TableDataContext from './TableDataContext'; // Correct import\
 
 
 const QRScanner = () => {
@@ -14,8 +15,8 @@ const QRScanner = () => {
     const [scanned, setScanned] = useState(false);
     const navigation = useNavigation();
     const { handleScan } = useContext(QRScanContext);
-    const { setTableDataLoaded, updateTableData, loadOrderStatus, isStatusLoaded } = useContext(TableDataContext);
-    const { scannedRestaurant, scannedTableId, order } = useContext(QRScanContext);
+    const { setTableDataLoaded, updateTableData, loadOrderStatus, isStatusLoaded, setIsStatusLoaded } = useContext(TableDataContext);
+    const { scannedRestaurant, scannedTableId, order, setIsScanned } = useContext(QRScanContext);
     useEffect(() => {
         (async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -66,7 +67,16 @@ const QRScanner = () => {
                 if (statusKey) {
                     //   console.log('Order status updated:', message.updatedFields.status);
                     loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
+                    setIsStatusLoaded(false);
+                    if (message.updatedFields.status === 'completed') {
+                        alert('Order completed, Closing Table');
+                        handleScan(null, null, null, null);
+                        resetNavigation(navigation);
+                        setIsScanned(false);
+                    }
                     alert('Order status Updated');
+
+
                 }
 
             }
@@ -84,6 +94,15 @@ const QRScanner = () => {
             ws.close();
         };
     }, []);
+
+    const resetNavigation = (navigation) => {
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'CustomerHomepage' }], // Replace with your initial screen's name
+            })
+        );
+    };
 
     const handleBarCodeScanned = async ({ data }) => {
         setScanned(true);

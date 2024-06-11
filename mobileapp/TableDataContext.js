@@ -12,6 +12,7 @@ export const TableDataProvider = ({ children }) => {
     const [orderStatus, setOrderStatus] = useState(null); // New state for order status
     const { user } = useContext(AuthContext);
     const [totalPaid, setTotalPaid] = useState(0); // New state for total paid
+    const [isStatusLoaded, setIsStatusLoaded] = useState(false);
     const setTableDataLoaded = (value) => {
         setDataLoaded(value);
     };
@@ -43,13 +44,11 @@ export const TableDataProvider = ({ children }) => {
         }
     };
 
-    const isStatusLoaded = () => {
-        return orderStatus !== null;
-    };
+
 
     return (
         <TableDataContext.Provider
-            value={{ dataLoaded, members, totalBill, setTableDataLoaded, updateTableData, myShare, setTotalBill, setMyShare, loadOrderStatus, isStatusLoaded, orderStatus }}
+            value={{ dataLoaded, members, totalBill, setTableDataLoaded, updateTableData, myShare, setTotalBill, setMyShare, loadOrderStatus, isStatusLoaded, orderStatus, setIsStatusLoaded }}
         >
             {children}
         </TableDataContext.Provider>
