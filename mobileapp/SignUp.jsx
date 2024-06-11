@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Image, ScrollView } from 'react-native';
-import { registerUser } from './api-user'; // Import the registerUser function
+import { AuthContext } from './authcontext'; // Import the AuthContext
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { registerUser } = useContext(AuthContext); // Access the login function from the context
 
   const handleRegister = async () => {
     // Basic input validations...

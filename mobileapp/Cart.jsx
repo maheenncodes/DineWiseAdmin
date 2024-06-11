@@ -70,9 +70,9 @@ const Cart = ({ navigation }) => {
             console.log('Order placed successfully:', result);
             setOrderPlaced(true);
             setTimeout(() => {
-                setOrderPlaced(true);
-                setCartItems([]);
-                //navigation.navigate('OrderStatus');
+                setOrderPlaced(false);
+                // setCartItems([]);
+                navigation.navigate('OrderStatus');
 
             }, 3000);
         } catch (error) {

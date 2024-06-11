@@ -40,6 +40,7 @@ const TableMade = () => {
 
         loadData();
         loadStatus();
+
     }, [scannedRestaurant, scannedTableId, dataLoaded, user.token, updateTableData, order, isStatusLoaded, loadOrderStatus, setTableDataLoaded]);
 
     const handlePayBill = () => {

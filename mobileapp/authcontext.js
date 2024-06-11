@@ -48,8 +48,20 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const registerUser = async (name, email, password) => {
+        try {
+            const userData = await registerUser({ name, email, password });
+            setUser(userData); // Update the user in the context
+            // Store the token in AsyncStorage
+            await AsyncStorage.setItem('token', userData.token);
+        } catch (error) {
+            console.error('Registration failed:', error.message);
+            throw error;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, registerUser }}>
             {children}
         </AuthContext.Provider>
     );

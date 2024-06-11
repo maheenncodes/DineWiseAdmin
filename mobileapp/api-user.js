@@ -45,7 +45,6 @@ export const logoutUser = async () => {
         const response = await axios.post(`${BASE_URL}/logout`);
 
         // Access the context to update user authentication
-        const { setUser } = useAuth();
         setUser(null); // Clear the user in the context
 
         return response.data; // Return the data upon successful logout
