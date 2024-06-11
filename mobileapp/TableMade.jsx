@@ -69,6 +69,22 @@ const TableMade = () => {
                                 <Text style={styles.memberStatus}>
                                     Status: {member.status === 'payment_pending' ? 'Payment Pending' : member.status}
                                 </Text>
+                                <Text style={styles.memberStatus}>
+                                    Payment Done: {member.paymentDone ? 'Yes' : 'No'}
+                                </Text>
+                                <Text style={styles.memberStatus}>
+                                    Payment Verified: {member.paymentVerified ? 'Yes' : 'No'}
+                                </Text>
+                                <Text style={styles.memberStatus}>
+                                    Total Paid: {member.paymentVerified ? totalBill : member.paymentDone ? totalBill : totalPaid}
+                                </Text>
+                                <Text style={styles.memberStatus}>
+                                    Total Verified: {member.paymentVerified ? totalBill : totalVerified}
+                                </Text>
+                                <Text style={styles.memberStatus}>
+                                    Total Left: {member.paymentVerified ? '0' : totalBill - totalVerified}
+                                </Text>
+
                                 <Text style={styles.memberTotalPrice}>Total Price: ${member.totalPrice}</Text>
                             </View>
                         </View>
@@ -79,6 +95,7 @@ const TableMade = () => {
                 <Text style={styles.totalText}>Total Bill: ${totalBill}</Text>
                 <Text style={styles.totalText}>Total Paid: ${totalPaid}</Text>
                 <Text style={styles.totalText}>Total Verified: ${totalVerified}</Text>
+
                 <TouchableOpacity style={styles.payButton} onPress={handlePayBill}>
                     <Text style={styles.payButtonText}>Pay Bill</Text>
                 </TouchableOpacity>
