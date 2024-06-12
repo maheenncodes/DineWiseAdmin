@@ -8,13 +8,14 @@ export const fetchMembersData = async (token, restaurantId, tableId) => {
                 Authorization: `Bearer ${token}`,
             },
         };
-        console.log(tableId, restaurantId);
+
         if (!tableId) {
-            console.log('TableId is null');
+
             return { members: [], totalBill: 0, totalPaid: 0, totalVerified: 0 };
         }
+        console.log('Fetching members data:');
         const response = await axios.get(`http://192.168.1.13:5000/api/orders/view_all?restaurantId=${restaurantId}&tableId=${tableId}`, config);
-        console.log('Response:', response.data);
+
         const membersData = response.data.members;
         const totalBill = response.data.totalBill;
         const totalPaid = response.data.totalPaid;
@@ -47,7 +48,9 @@ export const getOrderStatus = async (token, orderId) => {
                 Authorization: `Bearer ${token}`,
             },
         };
+        console.log("getting order status");
         const response = await axios.get(`http://192.168.1.13:5000/api/orders/get_order_status?orderId=${orderId}`, config);
+
         return response.data.status;
     } catch (error) {
         console.error('Error getting order status:', error.response ? error.response.data : error.message);

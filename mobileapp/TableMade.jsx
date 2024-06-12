@@ -22,6 +22,7 @@ const TableMade = () => {
         orderStatus,
         totalPaid, // New variable
         totalVerified, // New variable
+        setTableStatusLoaded,
     } = useContext(TableDataContext);
 
     useEffect(() => {
@@ -33,10 +34,12 @@ const TableMade = () => {
         };
 
         const loadStatus = async () => {
+
             if (order && !isStatusLoaded) {
+
                 await loadOrderStatus(user.token, order);
-                console.log('Order Status Loaded', orderStatus);
-                isStatusLoaded(true);
+
+                setTableStatusLoaded(true);
             }
         };
 

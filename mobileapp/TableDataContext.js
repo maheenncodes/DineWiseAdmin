@@ -19,28 +19,29 @@ export const TableDataProvider = ({ children }) => {
         setDataLoaded(value);
     };
 
+    const setTableStatusLoaded = (value) => {
+        setIsStatusLoaded(value);
+    };
     const updateTableData = async (token, restaurantId, tableId) => {
         console.log('Updating table data');
-        console.log('Token:', token);
-        console.log('Restaurant ID:', restaurantId);
-        console.log('Table ID:', tableId);
+
         try {
             const { members, totalBill, totalPaid, totalVerified } = await fetchMembersData(token, restaurantId, tableId);
             setMembers(members);
-            console.log('Members:', members);
+
             setTotalBill(totalBill);
-            console.log('Total Bill:', totalBill);
+
             setTotalPaid(totalPaid);
-            console.log('Total Paid:', totalPaid);
+
             setTotalVerified(totalVerified);
-            console.log('Total Verified:', totalVerified);
+
 
             const myDetails = members.find((member) => member.userId === user.userId);
             if (myDetails) {
                 setMyShare(myDetails.totalPrice);
             }
 
-            setOrderStatus(null);
+            setDataLoaded(true);
         } catch (error) {
             console.error('Error updating table data:', error);
         }
@@ -48,8 +49,10 @@ export const TableDataProvider = ({ children }) => {
 
     const loadOrderStatus = async (token, orderId) => {
         try {
+
             const status = await getOrderStatus(token, orderId);
             setOrderStatus(status);
+
             setIsStatusLoaded(true);
         } catch (error) {
             console.error('Error loading order status:', error);
@@ -73,6 +76,7 @@ export const TableDataProvider = ({ children }) => {
                 totalPaid,
                 setTotalPaid,
                 totalVerified,
+                setTableStatusLoaded,
             }}
         >
             {children}
