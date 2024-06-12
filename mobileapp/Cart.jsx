@@ -58,7 +58,7 @@ const Cart = ({ navigation }) => {
     const handlePlaceOrder = async () => {
         const restaurantId = scannedRestaurant._id;
         const tableId = scannedTableId; // Get the scanned table ID
-
+        console.log('Table ID:', tableId);
         const userId = user._id; // Assuming `user.id` is the user's ID
         const itemList = cartItems.map(item => ({
             item: item._id,
@@ -67,7 +67,7 @@ const Cart = ({ navigation }) => {
 
         try {
             const result = await placeOrderAPI(user.token, restaurantId, tableId, userId, itemList);
-
+            console.log('Order placed successfully:', result);
             setOrderPlaced(true);
             setTimeout(() => {
                 setOrderPlaced(false);

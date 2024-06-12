@@ -22,13 +22,13 @@ export const TableDataProvider = ({ children }) => {
     const setTableStatusLoaded = (value) => {
         setIsStatusLoaded(value);
     };
-
     const updateTableData = async (token, restaurantId, tableId) => {
         console.log('Updating table data');
 
         try {
             const { members, totalBill, totalPaid, totalVerified } = await fetchMembersData(token, restaurantId, tableId);
             setMembers(members);
+            console.log('Members:', members);
 
             setTotalBill(totalBill);
 
@@ -40,6 +40,10 @@ export const TableDataProvider = ({ children }) => {
             const myDetails = members.find((member) => member.userId === user.userId);
             if (myDetails) {
                 setMyShare(myDetails.totalPrice);
+            }
+            else {
+                console.log('My share not found');
+                setMyShare(0);
             }
 
             setDataLoaded(true);

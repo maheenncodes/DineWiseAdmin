@@ -16,7 +16,7 @@ const QRScanner = () => {
     const navigation = useNavigation();
     const { handleScan } = useContext(QRScanContext);
     const { setTableDataLoaded, updateTableData, loadOrderStatus, isStatusLoaded, setIsStatusLoaded, setTableStatusLoaded } = useContext(TableDataContext);
-    const { scannedRestaurant, scannedTableId, order, setIsScanned, setScannedTableId } = useContext(QRScanContext);
+    const { scannedRestaurant, scannedTableId, order, setIsScanned } = useContext(QRScanContext);
     useEffect(() => {
         (async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -33,27 +33,27 @@ const QRScanner = () => {
         ws.onmessage = (event) => {
 
             const message = JSON.parse(event.data);
-            console.log("Scanned table id", scannedTableId);
+
 
             if (message.operationType === 'insert') {
                 console.log('New order inserted:', message.updatedFields);
                 Alert.alert('Success', 'A new user has been added to a NEW ORDER');
-
+                setTableDataLoaded(false);
+                updateTableData(user.token, scannedRestaurant._id, scannedTableId);
             }
 
 
-            if (message.operationType === 'update' && message.updatedFields) {
+            else if (message.operationType === 'update' && message.updatedFields) {
                 console.log('Order updated:', message.updatedFields);
                 const cartListKey = Object.keys(message.updatedFields).find(key => key.startsWith('cartList.'));
                 const statusKey = Object.keys(message.updatedFields).find(key => key === 'status');
 
                 if (cartListKey) {
-                    console.log('Cart list updated:', message.updatedFields[cartListKey]);
                     Alert.alert('Success', 'A new user has been added');
                     setTableDataLoaded(false);
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                 }
-                if ('totalPrice' in message.updatedFields) {
+                else if ('totalPrice' in message.updatedFields) {
                     console.log('Total price updated:', message.updatedFields.totalPrice);
                     alert('Total Bill Updated');
                     setTableDataLoaded(false);
@@ -61,7 +61,7 @@ const QRScanner = () => {
 
 
                 }
-                if (statusKey) {
+                else if (statusKey) {
                     console.log('Order status updated:', message.updatedFields.status);
                     setTableStatusLoaded(false);
                     loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
@@ -75,13 +75,13 @@ const QRScanner = () => {
                     alert('Order status Updated');
                 }
 
-                if ('totalPaid' in message.updatedFields) {
+                else if ('totalPaid' in message.updatedFields) {
                     console.log('Total paid updated:', message.updatedFields.totalPaid);
                     setTableDataLoaded(false);
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                 }
 
-                if ('totalVerified' in message.updatedFields) {
+                else if ('totalVerified' in message.updatedFields) {
                     console.log('Total paid updated:', message.updatedFields.totalPaid);
                     setTableDataLoaded(false);
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
@@ -117,23 +117,22 @@ const QRScanner = () => {
     const handleBarCodeScanned = async ({ data }) => {
         setScanned(true);
         try {
-
+            console.log('Scanned data:', data);
             const { restaurantId, tableId } = JSON.parse(data);
-
+            console.log('Scanned Restaurant ID:', restaurantId);
+            console.log('Scanned Table ID:', tableId);
+            console.log('User ID:', user._id);
 
 
             // Make API call with decoded parameters
             data = await addToTable({ restaurantId, tableId, userId: user._id, token: user.token });
-
+            console.log("Added to table");
+            console.log('Data:', data);
             const orderID = data.orderId;
             const cartId = data.cartId;
-            setScannedTableId(tableId);
+            console.log('Order ID:', orderID);
 
             handleScan(restaurantId, tableId, orderID, cartId);
-            setTableDataLoaded(false);
-
-
-            updateTableData(user.token, restaurantId, tableId);
             navigation.navigate('Welcome');
 
             // Handle navigation or any other action after successful scan
