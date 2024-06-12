@@ -28,15 +28,18 @@ export const QRScanProvider = ({ children }) => {
     const handleScan = async (restaurantId, tableId, orderId, cartIdd) => {
         try {
             const restaurantData = await fetchRestaurantDetails(restaurantId);
-            console.log("SETTERS", restaurantData, tableId, orderId, cartId)
+            console.log("SETTERS", restaurantData, tableId, orderId, cartIdd)
             if (restaurantData) {
                 setScannedRestaurant(restaurantData);
                 console.log('Scanned restaurant:', scannedRestaurant);
                 setScannedTableId(tableId); // Set table ID after scanning
+                console.log('Seting table ID:', tableId);
                 console.log('Scanned table ID:', scannedTableId);
                 setOrder(orderId);
+                console.log('Seting Order Id', orderId);
                 console.log('Set Order Id', order);
                 setCartId(cartIdd);
+                console.log('Seting Cart Id', cartIdd);
                 console.log('Set Cart Id', cartId);
                 setIsScanned(true);
                 //   console.log('Scanned restaurant:', restaurantData);
