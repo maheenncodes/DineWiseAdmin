@@ -15,7 +15,7 @@ export const fetchMembersData = async (token, restaurantId, tableId) => {
         }
         console.log('Fetching members data:');
         const response = await axios.get(`http://192.168.1.13:5000/api/orders/view_all?restaurantId=${restaurantId}&tableId=${tableId}`, config);
-
+        console.log('Response:', response.data);
         const membersData = response.data.members;
         const totalBill = response.data.totalBill;
         const totalPaid = response.data.totalPaid;

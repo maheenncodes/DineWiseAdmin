@@ -31,10 +31,11 @@ export const TableDataProvider = ({ children }) => {
             console.log('Members:', members);
 
             setTotalBill(totalBill);
-
+            console.log('Total bill:', totalBill);
             setTotalPaid(totalPaid);
-
+            console.log('Total paid:', totalPaid);
             setTotalVerified(totalVerified);
+            console.log('Total verified:', totalVerified);
 
 
             const myDetails = members.find((member) => member.userId === user.userId);
