@@ -135,7 +135,8 @@ const viewAllMembers = asyncHandler(async (req, res) => {
                     paymentVerified: cartObj.paymentVerified, // Include paymentVerified
                     payment: cartObj.payment, // Include payment type
                     status: cartObj.status,
-                    photo: user.photo
+                    photo: user.photo,
+                    paymentMethod: cartObj.paymentMethod // Include paymentMethod
                 });
             }
         }
