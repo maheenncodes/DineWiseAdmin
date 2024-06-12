@@ -22,6 +22,7 @@ export const TableDataProvider = ({ children }) => {
     const setTableStatusLoaded = (value) => {
         setIsStatusLoaded(value);
     };
+
     const updateTableData = async (token, restaurantId, tableId) => {
         console.log('Updating table data');
 

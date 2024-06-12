@@ -10,8 +10,8 @@ export const fetchMembersData = async (token, restaurantId, tableId) => {
         };
 
         if (!tableId) {
-
-            return { members: [], totalBill: 0, totalPaid: 0, totalVerified: 0 };
+            console.log('Table ID is missing');
+            // return { members: [], totalBill: 0, totalPaid: 0, totalVerified: 0 };
         }
         console.log('Fetching members data:');
         const response = await axios.get(`http://192.168.1.13:5000/api/orders/view_all?restaurantId=${restaurantId}&tableId=${tableId}`, config);

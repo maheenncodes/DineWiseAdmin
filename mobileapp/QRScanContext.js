@@ -1,5 +1,4 @@
-// QRScanContext.js
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect, useTransition } from 'react';
 import { fetchRestaurantDetails } from './api-scan';
 
 const QRScanContext = createContext();
@@ -20,23 +19,30 @@ export const QRScanProvider = ({ children }) => {
         staff: [],
         tables: []
     });
-    const [scannedTableId, setScannedTableId] = useState(null); // Add table ID state
+    const [scannedTableId, setScannedTableId] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const [order, setOrder] = useState(null);
     const [cartId, setCartId] = useState(null);
+    const [isPending, startTransition] = useTransition();
+
+    useEffect(() => {
+        if (scannedTableId !== null) {
+            console.log("Scanned table ID updated: ", scannedTableId);
+        }
+    }, [scannedTableId]);
 
     const handleScan = async (restaurantId, tableId, orderId, cartId) => {
         try {
             const restaurantData = await fetchRestaurantDetails(restaurantId);
 
             if (restaurantData) {
-                setScannedRestaurant(restaurantData);
-                setScannedTableId(tableId); // Set table ID
-                setOrder(orderId);
-                setCartId(cartId);
-                setIsScanned(true);
-                //   console.log('Scanned restaurant:', restaurantData);
-                //   console.log('Set Order Id', order);
+                startTransition(() => {
+                    setScannedRestaurant(restaurantData);
+                    setScannedTableId(tableId);
+                    setOrder(orderId);
+                    setCartId(cartId);
+                    setIsScanned(true);
+                });
             } else {
                 throw new Error("Error fetching restaurant details");
             }
@@ -46,7 +52,7 @@ export const QRScanProvider = ({ children }) => {
     };
 
     return (
-        <QRScanContext.Provider value={{ isScanned, setIsScanned, scannedRestaurant, scannedTableId, handleScan, errorMessage, order, cartId }}>
+        <QRScanContext.Provider value={{ isScanned, setIsScanned, scannedRestaurant, scannedTableId, handleScan, errorMessage, order, cartId, setScannedTableId }}>
             {children}
         </QRScanContext.Provider>
     );
