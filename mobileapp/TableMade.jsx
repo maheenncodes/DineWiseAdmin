@@ -63,7 +63,7 @@ const TableMade = () => {
             <ScrollView>
                 {members.map((member, index) => (
                     <TouchableOpacity
-                        key={member.userId + index} // Ensure unique key
+                        key={member.userId || index.toString()} // Ensure unique key
                         style={styles.memberContainer}
                         onPress={() => navigation.navigate('MemberDetails', { member })}
                     >
