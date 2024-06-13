@@ -34,21 +34,22 @@ import WebSocketManager from './WebSocketManager'; // Import WebSocketManager co
 import OrderStatusProgress from './OrderStatusProgress';
 import MemberStatus from './MemberStatus';
 
-const originalWarn = console.warn;
-console.warn = (...args) => {
-  if (typeof args[0] === 'string' && args[0].includes('Each child in a list should have a unique "key" prop')) {
-    return;
-  }
-  originalWarn(...args);
-};
-
+// Suppress specific warning in development mode only
+if (__DEV__) {
+  const originalWarn = console.warn;
+  console.warn = (...args) => {
+    if (typeof args[0] === 'string' && args[0].includes('Each child in a list should have a unique "key" prop')) {
+      return;
+    }
+    originalWarn(...args);
+  };
+}
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <SafeAreaProvider>
-
       <AuthProvider>
         <TableDataProvider>
           <OrderProvider>
@@ -68,57 +69,24 @@ function App() {
                     <Stack.Screen name="SignUp" component={SignUpScreen} />
                     <Stack.Screen name="Login" component={LoginScreen} />
                     <Stack.Screen name="UpdateUser" component={UpdateUser} />
-                    <Stack.Screen
-                      name="CustomerHomepage"
-                      component={CustomerHomepage}
-                    />
-                    <Stack.Screen
-                      name="AllRestaurants"
-                      component={AllRestaurants}
-                    />
-                    <Stack.Screen
-                      name="HeaderComponent"
-                      component={HeaderComponent}
-                    />
+                    <Stack.Screen name="CustomerHomepage" component={CustomerHomepage} />
+                    <Stack.Screen name="AllRestaurants" component={AllRestaurants} />
+                    <Stack.Screen name="HeaderComponent" component={HeaderComponent} />
                     <Stack.Screen name="Table" component={ScanQRScreen} />
                     <Stack.Screen name="Cart" component={Cart} />
                     <Stack.Screen name="ChatBot" component={ChatBot} />
-                    <Stack.Screen
-                      name="RestaurantMenu"
-                      component={RestaurantMenu}
-                    />
+                    <Stack.Screen name="RestaurantMenu" component={RestaurantMenu} />
                     <Stack.Screen name="Item" component={Item} />
                     <Stack.Screen name="TableMade" component={TableMade} />
-                    <Stack.Screen
-                      name="RestaurantHeader"
-                      component={RestaurantHeader}
-                    />
-                    <Stack.Screen
-                      name="NotificationModal"
-                      component={NotificationModal}
-                    />
+                    <Stack.Screen name="RestaurantHeader" component={RestaurantHeader} />
+                    <Stack.Screen name="NotificationModal" component={NotificationModal} />
                     <Stack.Screen name="QRScanner" component={QRScanner} />
-                    <Stack.Screen
-                      name="OrderStatus"
-                      component={OrderStatus}
-                    />
+                    <Stack.Screen name="OrderStatus" component={OrderStatus} />
                     <Stack.Screen name="Payment" component={Payment} />
-                    <Stack.Screen
-                      name="MemberDetails"
-                      component={MemberDetails}
-                    />
-                    <Stack.Screen
-                      name="CartScanQRScreen"
-                      component={CartScanQRScreen}
-                    />
-                    <Stack.Screen
-                      name="OrderStatusProgress"
-                      component={OrderStatusProgress}
-                    />
-                    <Stack.Screen
-                      name="MemberStatus"
-                      component={MemberStatus}
-                    />
+                    <Stack.Screen name="MemberDetails" component={MemberDetails} />
+                    <Stack.Screen name="CartScanQRScreen" component={CartScanQRScreen} />
+                    <Stack.Screen name="OrderStatusProgress" component={OrderStatusProgress} />
+                    <Stack.Screen name="MemberStatus" component={MemberStatus} />
                   </Stack.Navigator>
                   <UserDropdownModal visible={false} />
                 </NavigationContainer>
@@ -127,7 +95,6 @@ function App() {
           </OrderProvider>
         </TableDataProvider>
       </AuthProvider>
-
     </SafeAreaProvider>
   );
 }

@@ -6,17 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from './authcontext';
 import QRScanContext from './QRScanContext';
 import TableDataContext from './TableDataContext';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import OrderStatusProgress from './OrderStatusProgress';
 import MemberStatus from './MemberStatus';
-
-const originalWarn = console.warn;
-console.warn = (...args) => {
-    if (typeof args[0] === 'string' && args[0].includes('Each child in a list should have a unique "key" prop.')) {
-        return;
-    }
-    originalWarn(...args);
-};
 
 const TableMade = () => {
     const navigation = useNavigation();
@@ -31,8 +22,8 @@ const TableMade = () => {
         loadOrderStatus,
         isStatusLoaded,
         orderStatus,
-        totalPaid, // New variable
-        totalVerified, // New variable
+        totalPaid,
+        totalVerified,
         setTableStatusLoaded
     } = useContext(TableDataContext);
 
@@ -70,9 +61,9 @@ const TableMade = () => {
                 </View>
             )}
             <ScrollView>
-                {members.map((member) => (
+                {members.map((member, index) => (
                     <TouchableOpacity
-                        key={member.userId}
+                        key={member.userId + index} // Ensure unique key
                         style={styles.memberContainer}
                         onPress={() => navigation.navigate('MemberDetails', { member })}
                     >
