@@ -34,6 +34,14 @@ import WebSocketManager from './WebSocketManager'; // Import WebSocketManager co
 import OrderStatusProgress from './OrderStatusProgress';
 import MemberStatus from './MemberStatus';
 
+const originalWarn = console.warn;
+console.warn = (...args) => {
+  if (typeof args[0] === 'string' && args[0].includes('Each child in a list should have a unique "key" prop')) {
+    return;
+  }
+  originalWarn(...args);
+};
+
 
 const Stack = createNativeStackNavigator();
 

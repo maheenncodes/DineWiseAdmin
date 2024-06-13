@@ -44,8 +44,21 @@ const QRScanner = () => {
             else if (message.operationType === 'update' && message.updatedFields) {
                 console.log('Order updated:', message.updatedFields);
                 const cartListKey = Object.keys(message.updatedFields).find(key => key.startsWith('cartList.'));
+                const statusKey = Object.keys(message.updatedFields).find(key => key === 'status');
 
-                if (cartListKey) {
+                if (statusKey && message.updatedFields.status === 'completed') {
+                    //   console.log('Order status updated:', message.updatedFields.status);
+
+
+                    alert('Order completed, Closing Table');
+                    //  handleScan(null, null, null, null);
+                    resetNavigation(navigation);
+                    setIsScanned(false);
+                    alert('Order status Updated');
+                    return;
+                }
+
+                else if (cartListKey) {
                     Alert.alert('Success', 'A new user has been added');
                     setTableDataLoaded(false);
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
@@ -70,22 +83,14 @@ const QRScanner = () => {
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                 }
 
-                const statusKey = Object.keys(message.updatedFields).find(key => key === 'status');
+
                 if (statusKey) {
                     //   console.log('Order status updated:', message.updatedFields.status);
 
-                    if (message.updatedFields.status === 'completed') {
-                        alert('Order completed, Closing Table');
-                        //  handleScan(null, null, null, null);
-                        resetNavigation(navigation);
-                        setIsScanned(false);
-                        alert('Order status Updated');
-                    }
 
-                    else {
-                        setTableStatusLoaded(false);
-                        loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
-                    }
+                    setTableStatusLoaded(false);
+                    loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
+
 
 
 
