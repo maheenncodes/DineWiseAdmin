@@ -19,6 +19,9 @@ export const TableDataProvider = ({ children }) => {
         setDataLoaded(value);
     };
 
+    const setTableStatusLoaded = (value) => {
+        setIsStatusLoaded(value);
+    };
     const updateTableData = async (token, restaurantId, tableId) => {
         console.log('Updating table data');
         console.log('Token:', token);
@@ -40,7 +43,7 @@ export const TableDataProvider = ({ children }) => {
                 setMyShare(myDetails.totalPrice);
             }
 
-            setOrderStatus(null);
+            // setOrderStatus(null);
         } catch (error) {
             console.error('Error updating table data:', error);
         }
@@ -73,6 +76,7 @@ export const TableDataProvider = ({ children }) => {
                 totalPaid,
                 setTotalPaid,
                 totalVerified,
+                setTableStatusLoaded,
             }}
         >
             {children}

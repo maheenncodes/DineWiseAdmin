@@ -22,6 +22,7 @@ const TableMade = () => {
         orderStatus,
         totalPaid, // New variable
         totalVerified, // New variable
+        setTableStatusLoaded
     } = useContext(TableDataContext);
 
     useEffect(() => {
@@ -36,7 +37,7 @@ const TableMade = () => {
             if (order && !isStatusLoaded) {
                 await loadOrderStatus(user.token, order);
                 console.log('Order Status Loaded', orderStatus);
-                isStatusLoaded(true);
+                setTableStatusLoaded(true);
             }
         };
 
@@ -68,25 +69,27 @@ const TableMade = () => {
                             <Image source={{ uri: member.photo }} style={styles.memberImage} />
                             <View style={styles.memberDetails}>
                                 <Text style={styles.memberName}>{member.user}</Text>
-                                <Text style={styles.memberStatus}>
-                                    Status: {member.status === 'payment_pending' ? 'Payment Pending' : member.status}
-                                </Text>
-                                <Text style={styles.memberStatus}>
-                                    Payment Done: {member.paymentDone ? 'Yes' : 'No'}
-                                </Text>
-                                <Text style={styles.memberStatus}>
-                                    Payment Verified: {member.paymentVerified ? 'Yes' : 'No'}
-                                </Text>
-                                <Text style={styles.memberStatus}>
-                                    Total Paid: {member.paymentVerified ? member.totalPrice : member.paymentDone ? member.totalPrice : 0}
-                                </Text>
-                                <Text style={styles.memberStatus}>
-                                    Total Verified: {member.paymentVerified ? member.totalPrice : 0}
-                                </Text>
-                                <Text style={styles.memberStatus}>
-                                    Total Left: {member.paymentVerified ? '0' : member.totalPrice}
-                                </Text>
-
+                                {totalBill > 0 && (
+                                    <>
+                                        <Text style={[styles.memberStatus, member.paymentVerified ? styles.paymentVerified : styles.paymentUnverified]}>
+                                            Status: {member.status === 'payment_pending' ? 'Payment Pending' : member.status}
+                                        </Text>
+                                        <Text style={[styles.memberStatus, member.paymentDone ? styles.paymentDone : styles.paymentPending]}>
+                                            Total Paid: {member.paymentVerified ? member.totalPrice : member.paymentDone ? member.totalPrice : 0}
+                                        </Text>
+                                        <Text style={[styles.memberStatus, member.paymentVerified ? styles.paymentVerified : styles.paymentUnverified]}>
+                                            Total Verified: {member.paymentVerified ? member.totalPrice : 0}
+                                        </Text>
+                                        <Text style={[styles.memberStatus, member.paymentVerified ? styles.paymentVerified : styles.paymentUnverified]}>
+                                            Total Left: {member.paymentVerified ? '0' : member.totalPrice}
+                                        </Text>
+                                        {member.paymentDone && (
+                                            <Text style={styles.memberStatus}>
+                                                Payment Method: {member.payment}
+                                            </Text>
+                                        )}
+                                    </>
+                                )}
                                 <Text style={styles.memberTotalPrice}>Total Price: ${member.totalPrice}</Text>
                             </View>
                         </View>
@@ -150,9 +153,21 @@ const styles = StyleSheet.create({
     memberStatus: {
         color: '#555',
     },
+    paymentDone: {
+        color: 'green',
+    },
+    paymentPending: {
+        color: 'red',
+    },
+    paymentVerified: {
+        color: 'green',
+    },
+    paymentUnverified: {
+        color: 'red',
+    },
     memberTotalPrice: {
         fontWeight: 'bold',
-        marginBottom: 5,
+        marginTop: 10,
     },
     totalContainer: {
         borderTopWidth: 1,
