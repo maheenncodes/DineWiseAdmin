@@ -14,7 +14,7 @@ const MemberStatus = ({ member }) => {
         icon = <Icon name="exclamation-circle" size={20} color="#ff6347" />;
     } else {
         statusText = 'Paid';
-        icon = <Icon name="check-circle" size={20} color="#32CD32" />;
+        icon = <Icon name="dollar" size={20} color="#32CD32" />;
     }
 
     if (member.paymentVerified) {

@@ -81,9 +81,6 @@ const TableMade = () => {
             <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>Total Bill: ${totalBill}</Text>
                 <Text style={styles.totalText}>Total Paid: ${totalPaid}</Text>
-                <Text style={styles.totalText}>Total Verified: ${totalVerified}</Text>
-                <Text style={styles.totalText}>Total Left: ${totalBill - totalVerified}</Text>
-
                 <TouchableOpacity style={styles.payButton} onPress={handlePayBill}>
                     <Text style={styles.payButtonText}>Pay Bill</Text>
                 </TouchableOpacity>
@@ -164,7 +161,6 @@ const styles = StyleSheet.create({
         bottom: 70,
         left: 0,
         right: 0,
-        backgroundColor: '#fff',
     },
     totalText: {
         fontSize: 18,
