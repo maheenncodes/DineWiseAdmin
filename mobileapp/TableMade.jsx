@@ -20,9 +20,8 @@ const TableMade = () => {
         loadOrderStatus,
         isStatusLoaded,
         orderStatus,
-        totalPaid,
-        totalVerified,
-        setTableStatusLoaded,
+        totalPaid, // New variable
+        totalVerified, // New variable
     } = useContext(TableDataContext);
 
     useEffect(() => {
@@ -36,57 +35,18 @@ const TableMade = () => {
         const loadStatus = async () => {
             if (order && !isStatusLoaded) {
                 await loadOrderStatus(user.token, order);
-                setTableStatusLoaded(true);
+                console.log('Order Status Loaded', orderStatus);
+                isStatusLoaded(true);
             }
         };
 
         loadData();
         loadStatus();
+
     }, [scannedRestaurant, scannedTableId, dataLoaded, user.token, updateTableData, order, isStatusLoaded, loadOrderStatus, setTableDataLoaded]);
 
     const handlePayBill = () => {
         navigation.navigate('Payment');
-    };
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'new':
-                return '#007bff'; // Blue
-            case 'preparing':
-                return '#ffa500'; // Orange
-            case 'served':
-                return '#28a745'; // Green
-            case 'cancelled':
-                return '#dc3545'; // Red
-            case 'payment_pending':
-                return '#ffc107'; // Yellow
-            case 'completed':
-                return '#800080'; // Purple
-            default:
-                return '#333'; // Default color
-        }
-    };
-
-    const renderMemberStatus = (member) => {
-        const paymentStatusColor = member.paymentDone ? '#28a745' : '#dc3545'; // Green for paid, Red for unpaid
-        const paymentVerifiedColor = member.paymentVerified ? '#28a745' : '#dc3545'; // Green for verified, Red for unverified
-
-        return (
-            <View style={styles.memberDetails}>
-                <Text style={styles.memberName}>{member.user}</Text>
-                <Text style={styles.memberStatus}>Status: <Text style={{ color: getStatusColor(member.status) }}>{member.status}</Text></Text>
-                <Text style={[styles.memberStatus, { color: paymentStatusColor }]}>
-                    Payment Done: {member.paymentDone ? 'Yes' : 'No'}
-                </Text>
-                <Text style={[styles.memberStatus, { color: paymentVerifiedColor }]}>
-                    Payment Verified: {member.paymentVerified ? 'Yes' : 'No'}
-                </Text>
-                <Text style={styles.memberStatus}>Total Paid: ${member.totalPrice}</Text>
-                <Text style={styles.memberStatus}>Total Verified: ${member.paymentVerified ? member.totalPrice : 0}</Text>
-                <Text style={styles.memberStatus}>Total Left: ${member.paymentVerified ? '0' : member.totalPrice}</Text>
-                <Text style={styles.memberTotalPrice}>Total Price: ${member.totalPrice}</Text>
-            </View>
-        );
     };
 
     return (
@@ -94,19 +54,41 @@ const TableMade = () => {
             <Header navigation={navigation} />
             {orderStatus !== null && (
                 <View style={styles.orderStatusContainer}>
-                    <Text style={styles.orderStatusText}>Order Status: <Text style={{ color: getStatusColor(orderStatus) }}>{orderStatus}</Text></Text>
+                    <Text style={styles.orderStatusText}>Order Status: {orderStatus}</Text>
                 </View>
             )}
             <ScrollView>
                 {members.map((member) => (
                     <TouchableOpacity
-                        key={member.userId} // Unique key
+                        key={member.userId}
                         style={styles.memberContainer}
                         onPress={() => navigation.navigate('MemberDetails', { member })}
                     >
                         <View style={styles.member}>
                             <Image source={{ uri: member.photo }} style={styles.memberImage} />
-                            {renderMemberStatus(member)}
+                            <View style={styles.memberDetails}>
+                                <Text style={styles.memberName}>{member.user}</Text>
+                                <Text style={styles.memberStatus}>
+                                    Status: {member.status === 'payment_pending' ? 'Payment Pending' : member.status}
+                                </Text>
+                                <Text style={styles.memberStatus}>
+                                    Payment Done: {member.paymentDone ? 'Yes' : 'No'}
+                                </Text>
+                                <Text style={styles.memberStatus}>
+                                    Payment Verified: {member.paymentVerified ? 'Yes' : 'No'}
+                                </Text>
+                                <Text style={styles.memberStatus}>
+                                    Total Paid: {member.paymentVerified ? member.totalPrice : member.paymentDone ? member.totalPrice : 0}
+                                </Text>
+                                <Text style={styles.memberStatus}>
+                                    Total Verified: {member.paymentVerified ? member.totalPrice : 0}
+                                </Text>
+                                <Text style={styles.memberStatus}>
+                                    Total Left: {member.paymentVerified ? '0' : member.totalPrice}
+                                </Text>
+
+                                <Text style={styles.memberTotalPrice}>Total Price: ${member.totalPrice}</Text>
+                            </View>
                         </View>
                     </TouchableOpacity>
                 ))}

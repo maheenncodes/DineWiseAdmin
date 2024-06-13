@@ -19,9 +19,9 @@ const RestaurantMenu = ({ navigation, route }) => {
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
-
+        console.log('Restaurant:', restaurant);
         if (restaurant && restaurant._id) {
-
+            console.log('Fetching menu data for restaurant:', restaurant);
             fetchMenuData(restaurant._id);
         }
     }, [restaurant]);

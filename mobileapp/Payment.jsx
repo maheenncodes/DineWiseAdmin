@@ -30,15 +30,11 @@ const Payment = ({ navigation }) => {
                 },
                 params: {
                     orderId: order,
-                    paymentMethod: selectedGateway, // Include payment method in query
-                },
+                    payment: 'group', // Set payment type to 'group'
+                }
             };
 
-            const response = await axios.post(
-                'http://192.168.1.13:5000/api/orders/pay_full_bill',
-                { payment: 'group' }, // Set payment type to 'group'
-                config
-            );
+            const response = await axios.post('http://192.168.1.13:5000/api/orders/pay_full_bill', { paymentMethod: selectedGateway }, config);
 
             if (response.status === 200) {
                 Alert.alert('Payment Confirmation', response.data.message);
@@ -46,11 +42,23 @@ const Payment = ({ navigation }) => {
                 Alert.alert('Error', 'Failed to pay the full bill. Please try again later.');
             }
         } catch (error) {
-            handlePaymentError(error);
+            if (error.response) {
+                console.log('Server Error:', error.response.data);
+                console.log('Status:', error.response.status);
+                console.log('Headers:', error.response.headers);
+                Alert.alert('Error', 'Failed to pay the full bill. Please try again later.');
+            } else if (error.request) {
+                console.log('Request Error:', error.request);
+                Alert.alert('Error', 'No response from server. Please check your network connection and try again.');
+            } else {
+                console.log('Error:', error.message);
+                Alert.alert('Error', 'An unexpected error occurred. Please try again later.');
+            }
         }
     };
 
     const handlePayYourShare = async () => {
+        console.log("token", user.token);
         try {
             const config = {
                 headers: {
@@ -59,15 +67,11 @@ const Payment = ({ navigation }) => {
                 params: {
                     orderId: order,
                     cartId: cartId,
-                    paymentMethod: selectedGateway, // Include payment method in query
-                },
+                    payment: 'individual', // Set payment type to 'individual'
+                }
             };
 
-            const response = await axios.post(
-                'http://192.168.1.13:5000/api/orders/pay_individual_bill',
-                { payment: 'individual' }, // Set payment type to 'individual'
-                config
-            );
+            const response = await axios.post('http://192.168.1.13:5000/api/orders/pay_individual_bill', { paymentMethod: selectedGateway }, config);
 
             if (response.status === 200) {
                 Alert.alert('Payment Confirmation', response.data.message);
@@ -75,22 +79,18 @@ const Payment = ({ navigation }) => {
                 Alert.alert('Error', 'Failed to pay your share. Please try again later.');
             }
         } catch (error) {
-            handlePaymentError(error);
-        }
-    };
-
-    const handlePaymentError = (error) => {
-        if (error.response) {
-            console.log('Server Error:', error.response.data);
-            console.log('Status:', error.response.status);
-            console.log('Headers:', error.response.headers);
-            Alert.alert('Error', 'Failed to process payment. Please try again later.');
-        } else if (error.request) {
-            console.log('Request Error:', error.request);
-            Alert.alert('Error', 'No response from server. Please check your network connection and try again.');
-        } else {
-            console.log('Error:', error.message);
-            Alert.alert('Error', 'An unexpected error occurred. Please try again later.');
+            if (error.response) {
+                console.log('Server Error:', error.response.data);
+                console.log('Status:', error.response.status);
+                console.log('Headers:', error.response.headers);
+                Alert.alert('Error', 'Failed to pay your share. Please try again later.');
+            } else if (error.request) {
+                console.log('Request Error:', error.request);
+                Alert.alert('Error', 'No response from server. Please check your network connection and try again.');
+            } else {
+                console.log('Error:', error.message);
+                Alert.alert('Error', 'An unexpected error occurred. Please try again later.');
+            }
         }
     };
 

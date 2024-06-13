@@ -15,7 +15,7 @@ const QRScanner = () => {
     const [scanned, setScanned] = useState(false);
     const navigation = useNavigation();
     const { handleScan } = useContext(QRScanContext);
-    const { setTableDataLoaded, updateTableData, loadOrderStatus, isStatusLoaded, setIsStatusLoaded, setTableStatusLoaded } = useContext(TableDataContext);
+    const { setTableDataLoaded, updateTableData, loadOrderStatus, isStatusLoaded, setIsStatusLoaded } = useContext(TableDataContext);
     const { scannedRestaurant, scannedTableId, order, setIsScanned } = useContext(QRScanContext);
     useEffect(() => {
         (async () => {
@@ -31,22 +31,19 @@ const QRScanner = () => {
         };
 
         ws.onmessage = (event) => {
-
+            // console.log('Message received:', event.data);
             const message = JSON.parse(event.data);
-
-
+            // console.log('Parsed message:', message);  // Debugging log
+            console.log("before updation:", scannedRestaurant._id, scannedTableId, user.token);
             if (message.operationType === 'insert') {
                 console.log('New order inserted:', message.updatedFields);
                 Alert.alert('Success', 'A new user has been added to a NEW ORDER');
                 setTableDataLoaded(false);
                 updateTableData(user.token, scannedRestaurant._id, scannedTableId);
             }
-
-
             else if (message.operationType === 'update' && message.updatedFields) {
                 console.log('Order updated:', message.updatedFields);
                 const cartListKey = Object.keys(message.updatedFields).find(key => key.startsWith('cartList.'));
-                const statusKey = Object.keys(message.updatedFields).find(key => key === 'status');
 
                 if (cartListKey) {
                     Alert.alert('Success', 'A new user has been added');
@@ -54,18 +51,30 @@ const QRScanner = () => {
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
                 }
                 else if ('totalPrice' in message.updatedFields) {
-                    console.log('Total price updated:', message.updatedFields.totalPrice);
+                    //  console.log('Total price updated:', message.updatedFields.totalPrice);
                     alert('Total Bill Updated');
                     setTableDataLoaded(false);
                     updateTableData(user.token, scannedRestaurant._id, scannedTableId);
-
+                    // Handle total price update
 
                 }
-                else if (statusKey) {
-                    console.log('Order status updated:', message.updatedFields.status);
-                    setTableStatusLoaded(false);
-                    loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
+                else if ('totalPaid' in message.updatedFields) {
+                    //  console.log('Total paid updated:', message.updatedFields.totalPaid);
+                    setTableDataLoaded(false);
+                    updateTableData(user.token, scannedRestaurant._id, scannedTableId);
+                }
 
+                else if ('totalVerified' in message.updatedFields) {
+                    //  console.log('Total paid updated:', message.updatedFields.totalPaid);
+                    setTableDataLoaded(false);
+                    updateTableData(user.token, scannedRestaurant._id, scannedTableId);
+                }
+
+                const statusKey = Object.keys(message.updatedFields).find(key => key === 'status');
+                if (statusKey) {
+                    //   console.log('Order status updated:', message.updatedFields.status);
+                    loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
+                    setIsStatusLoaded(false);
                     if (message.updatedFields.status === 'completed') {
                         alert('Order completed, Closing Table');
                         //  handleScan(null, null, null, null);
@@ -73,21 +82,9 @@ const QRScanner = () => {
                         setIsScanned(false);
                     }
                     alert('Order status Updated');
+
+
                 }
-
-                else if ('totalPaid' in message.updatedFields) {
-                    console.log('Total paid updated:', message.updatedFields.totalPaid);
-                    setTableDataLoaded(false);
-                    updateTableData(user.token, scannedRestaurant._id, scannedTableId);
-                }
-
-                else if ('totalVerified' in message.updatedFields) {
-                    console.log('Total paid updated:', message.updatedFields.totalPaid);
-                    setTableDataLoaded(false);
-                    updateTableData(user.token, scannedRestaurant._id, scannedTableId);
-                }
-
-
 
             }
         };
