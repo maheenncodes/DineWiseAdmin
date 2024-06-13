@@ -31,6 +31,8 @@ import CartScanQRScreen from './CartScanQRScreen';
 import UpdateUser from './Updateuser';
 import Welcome from './Welcome';
 import WebSocketManager from './WebSocketManager'; // Import WebSocketManager component
+import OrderStatusProgress from './OrderStatusProgress';
+import MemberStatus from './MemberStatus';
 
 
 const Stack = createNativeStackNavigator();
@@ -100,6 +102,14 @@ function App() {
                     <Stack.Screen
                       name="CartScanQRScreen"
                       component={CartScanQRScreen}
+                    />
+                    <Stack.Screen
+                      name="OrderStatusProgress"
+                      component={OrderStatusProgress}
+                    />
+                    <Stack.Screen
+                      name="MemberStatus"
+                      component={MemberStatus}
                     />
                   </Stack.Navigator>
                   <UserDropdownModal visible={false} />

@@ -15,7 +15,7 @@ const QRScanner = () => {
     const [scanned, setScanned] = useState(false);
     const navigation = useNavigation();
     const { handleScan } = useContext(QRScanContext);
-    const { setTableDataLoaded, updateTableData, loadOrderStatus, isStatusLoaded, setIsStatusLoaded } = useContext(TableDataContext);
+    const { setTableDataLoaded, updateTableData, loadOrderStatus, isStatusLoaded, setIsStatusLoaded, setTableStatusLoaded } = useContext(TableDataContext);
     const { scannedRestaurant, scannedTableId, order, setIsScanned } = useContext(QRScanContext);
     useEffect(() => {
         (async () => {
@@ -73,15 +73,20 @@ const QRScanner = () => {
                 const statusKey = Object.keys(message.updatedFields).find(key => key === 'status');
                 if (statusKey) {
                     //   console.log('Order status updated:', message.updatedFields.status);
-                    loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
-                    setIsStatusLoaded(false);
+
                     if (message.updatedFields.status === 'completed') {
                         alert('Order completed, Closing Table');
                         //  handleScan(null, null, null, null);
                         resetNavigation(navigation);
                         setIsScanned(false);
+                        alert('Order status Updated');
                     }
-                    alert('Order status Updated');
+
+                    else {
+                        setTableStatusLoaded(false);
+                        loadOrderStatus(user.token, order); // Assuming order ID is present in documentKey
+                    }
+
 
 
                 }

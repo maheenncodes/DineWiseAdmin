@@ -6,6 +6,9 @@ import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from './authcontext';
 import QRScanContext from './QRScanContext';
 import TableDataContext from './TableDataContext';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import OrderStatusProgress from './OrderStatusProgress';
+import MemberStatus from './MemberStatus';
 
 const TableMade = () => {
     const navigation = useNavigation();
@@ -55,7 +58,7 @@ const TableMade = () => {
             <Header navigation={navigation} />
             {orderStatus !== null && (
                 <View style={styles.orderStatusContainer}>
-                    <Text style={styles.orderStatusText}>Order Status: {orderStatus}</Text>
+                    <OrderStatusProgress currentStatus={orderStatus} orderId={order} />
                 </View>
             )}
             <ScrollView>
@@ -69,28 +72,7 @@ const TableMade = () => {
                             <Image source={{ uri: member.photo }} style={styles.memberImage} />
                             <View style={styles.memberDetails}>
                                 <Text style={styles.memberName}>{member.user}</Text>
-                                {totalBill > 0 && (
-                                    <>
-                                        <Text style={[styles.memberStatus, member.paymentVerified ? styles.paymentVerified : styles.paymentUnverified]}>
-                                            Status: {member.status === 'payment_pending' ? 'Payment Pending' : member.status}
-                                        </Text>
-                                        <Text style={[styles.memberStatus, member.paymentDone ? styles.paymentDone : styles.paymentPending]}>
-                                            Total Paid: {member.paymentVerified ? member.totalPrice : member.paymentDone ? member.totalPrice : 0}
-                                        </Text>
-                                        <Text style={[styles.memberStatus, member.paymentVerified ? styles.paymentVerified : styles.paymentUnverified]}>
-                                            Total Verified: {member.paymentVerified ? member.totalPrice : 0}
-                                        </Text>
-                                        <Text style={[styles.memberStatus, member.paymentVerified ? styles.paymentVerified : styles.paymentUnverified]}>
-                                            Total Left: {member.paymentVerified ? '0' : member.totalPrice}
-                                        </Text>
-                                        {member.paymentDone && (
-                                            <Text style={styles.memberStatus}>
-                                                Payment Method: {member.payment}
-                                            </Text>
-                                        )}
-                                    </>
-                                )}
-                                <Text style={styles.memberTotalPrice}>Total Price: ${member.totalPrice}</Text>
+                                <MemberStatus member={member} />
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -124,9 +106,10 @@ const styles = StyleSheet.create({
         borderBottomColor: '#ccc',
     },
     orderStatusText: {
-        fontSize: 26,
+        fontSize: 20,
         fontWeight: 'bold',
         color: '#333',
+        marginTop: 10,
     },
     memberContainer: {
         borderBottomWidth: 1,
@@ -149,9 +132,11 @@ const styles = StyleSheet.create({
     memberName: {
         fontSize: 18,
         fontWeight: 'bold',
+        color: '#333',
     },
     memberStatus: {
         color: '#555',
+        marginVertical: 2,
     },
     paymentDone: {
         color: 'green',
@@ -168,6 +153,7 @@ const styles = StyleSheet.create({
     memberTotalPrice: {
         fontWeight: 'bold',
         marginTop: 10,
+        color: '#333',
     },
     totalContainer: {
         borderTopWidth: 1,
@@ -178,11 +164,13 @@ const styles = StyleSheet.create({
         bottom: 70,
         left: 0,
         right: 0,
+        backgroundColor: '#fff',
     },
     totalText: {
         fontSize: 18,
         marginBottom: 10,
         fontWeight: 'bold',
+        color: '#333',
     },
     payButton: {
         backgroundColor: '#eb5b53',
